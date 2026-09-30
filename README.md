@@ -1,122 +1,299 @@
-# envirotypeR
-*A Framework for Plant and Animal Enviromics*
+# EnvRtype <img src="https://img.shields.io/badge/version-0.1.0-blue" align="right"/>
 
+### Envirotyping for Quantitative Genetics and Plant Breeding
 
-## Objective
+**EnvRtype** is an R package for **enviromics** — the study of the *envirome*, the set of
+environmental conditions linked to the biological performance of living beings. It collects
+worldwide daily weather and soil data, derives agro-meteorological parameters, builds
+environmental covariable matrices and relatedness kernels, mines environmental typologies,
+delineates soil zones with Gaussian mixture models, and runs a FAO-56 soil water balance for
+use in enviromics and genotype-by-environment (GxE) analyses.
 
-**Enviromics** is the field of biometry and data analytics dedicated to the study of the [enviromes](https://en.wikipedia.org/wiki/Envirome), that is, the core of environmental conditions with the successful biological performance of living beings. **Envirotyping** (environmental + typing) involves a pool of processes and techniques to conduct enviromics, specifically in terms of characterizing environmental conditions and discovering descriptors that help identify the non-genetic drivers of phenotypic adaptation in plants, animals, or humans.Here, we introduce **envirotypeR** as a new toolkit to streamline the implementation of open-source enviromics in R. This R package was developed to enhance [EnvRtype](https://github.com/allogamous/EnvRtype) in order to accomodate many suggestions made by users, but also to include new applications who arose since 2021 (EnvRtype's publication year).
+This is a fully re-engineered successor to the original
+[EnvRtype (allogamous/EnvRtype, 2021)](https://github.com/allogamous/EnvRtype), extending it
+from a weather-typing toolbox into an end-to-end envirotyping, simulation and prediction
+framework.
 
+---
 
-## Installation 
+## Installation
 
-Current version of this package (v0.1.4, Feb 2024)  can be installed directly from this repository
-using the `devtools` package:
-
+```r
+if (!require("devtools")) install.packages("devtools")
+devtools::install_github("gcostaneto/EnvRtype")
 ```
-if (!require("devtools")) install.packages("remotes")
-remotes::install_github("gcostaneto/envirotypeR",force=TRUE)
+
+```r
+library(EnvRtype)
 ```
 
-## Current Resources
+---
 
-Current version of this package (v0.1.5, Jun 2024) has the following modules: 
+## What's new compared to the original EnvRtype (2021)
 
-(1) Generation of a wide number of **environmental features** using remote-data collection based on geographic coordinates and time windows (e.g., planting dates).
+The original [EnvRtype](https://github.com/allogamous/EnvRtype) (Costa-Neto et al., 2021,
+*G3*) focused on collecting NASA POWER weather data, computing environmental typologies
+and building environmental kernels for reaction-norm models. This version keeps that workflow and
+adds several new layers:
 
-* `envirotypeR::process_synthetic()`
-* `envirotypeR::get_soil()`
-* `envirotypeR::get_spatial()`
-* `envirotypeR::get_weather()`
-* `envirotypeR::WC_Bioclimate`  # not available for  v0.1.4, Feb 2024
-* `envirotypeR::SRTM_elevation` # not available for  v0.1.4, Feb 2024, please use  wc_elev <- terra::rast("https://raw.githubusercontent.com/gcostaneto/envirotypeR/main/inst/extdata/wc2.1_2.5m_elev.tif")
-* `envirotypeR::GAEZ_AEZ`       # not available for  v0.1.4, Feb 2024
+| Area | Original EnvRtype (2021) | EnvRtype (this version) |
+|------|--------------------------|-------------------------|
+| **Weather data** | `get_weather()` (NASA POWER, daily) | `get_weather()` + hourly (`get_weather_hourly()`) and **resumable / restartable** downloads (`get_weather_resumable()`, `read_progress_log()`, `restart_from_log()`) |
+| **Soil data** | — | `get_soil()`, `get_soil_resumable()`, `soil_classification()` (Gaussian-mixture soil zoning) |
+| **Other geodata** | — | `get_elevation()`, `get_bioclim()`, `get_spatial()`, `get_AEZ()`, `get_climate_scenario()` |
+| **Processing** | `processWTH()`, `param_temperature/radiation/atmospheric()`, `summaryWTH()` | Same, plus a full **FAO-56 water balance** (`water_balance()`, `summary_water_balance()`) and **phenology** (`env_phenology()`, `phenology_templates()`, `planting_window_table()`, `best_planting_date()`) |
+| **Characterisation** | `W_matrix()`, `env_typing()` | Adds `T_matrix()`, `env_indices()`, a full **PCA suite** (`env_pca()`, `env_pca_biplot()`, `env_pca_scree()`, `env_loading_curve()`, `env_pc_associate()`), correlation tools (`env_cor()`, `env_cor_heatmap()`) and coverage/target diagnostics |
+| **Risk & TPE** | — | `env_risk_profile()`, `env_copula()`, `tpe_weights()`, `project_risk()`, `env_target_importance()` |
+| **Kernels** | `env_kernel()`, `get_kernel()` | Adds `decompose_kernels()`, `undecompose_kernels()`, `truncate_gxe_kernel()` and a soil kernel path in `get_kernel()` |
+| **Modelling** | `kernel_model()` | Adds `kernel_cv()`, `kernel_model_clustered()`, `kernel_model_mc()`, `varcomp_summary()`, environment clustering (`env_cluster()`, `cluster_environments()`) |
+| **Untested environments** | — | `scan_untested_envs()`, `grid_scan()`, `map_scan()`, `scan_spatial_table()` |
+| **Simulation** | — | Ground-truth simulator: `sim_met()`, `sim_met_C()`, `sim_W()`, `sim_W_grid()` to validate every layer against a known truth |
+| **License** | MIT | GPL-3 (CRAN-ready) |
 
-## History
+---
 
-* #020 **envirotypeR v0.1.5**  we added envirotypeR::process_synthetic() and created documentations for other functions.
+## Package modules & workflow
 
-* #019 **envirotypeR v0.1.4**  raster package migrating to geodata, so EnvRtype::get_weather() is facing some issues.
-  
-* #018 **envirotypeR v0.1.4**  we removed the data objects (based on raster files / GeoTiff) for further maintenance).
-  
-* #018 **envirotypeR v0.1.3**  includes a new data set of 19 features from WorldClim Bioclimate`envirotypeR::WC_Bioclimate`/ data("WC_Bioclimate")
+The package is organised in five layers, plus a simulation engine that generates ground-truth
+data to validate each layer.
 
-* #017 **envirotypeR v0.1.2**  includes a new data set of 27 features from FAO-GAEZ`envirotypeR::GAEZ_AEZ`/ data("GAEZ_AEZ")
-  
-* #016 **envirotypeR v0.1.1**  correction of bugs on envirotypeR::get_climate() and includes worldwide 250m elevation data from `envirotypeR::SRTM_elevation`/ data("SRTM_elevation") and to run examples using `envirotypeR::get_spatial()`
-  
-* #015 **envirotypeR v0.1.0** includes `envirotypeR::get_climate()` based on `nasapower` to collect climatological data (monthly scales)
-  
-* #014 **envirotypeR v0.0.1** updates `envirotypeR::get_spatial()` to collect info from `.nc` files
-  
-* #013 **envirotypeR v0.0.9** updates `envirotypeR::get_spatial()` to collect info from multiple rasters (`rasterStack` format)
- 
-* #012 **envirotypeR v0.0.8** updates `envirotypeR::get_spatial()` to run using `sf` and `terra` packages
-  
-* #011 **envirotypeR v0.0.7** includes `envirotypeR::get_spatial()` to collect point-estimates from raster files (digital image files)
-  
-* #010 **envirotypeR v0.0.6** updates `envirotypeR::get_soil()` to collect soil data
-  
-* #009 **envirotypeR v0.0.5** updates `envirotypeR::get_soil()` to collect soil data
-  
-* #008 **envirotypeR v0.0.4** includes `envirotypeR::get_soil()` to collect soil data from [SoilGrids](https://soilgrids.org/) using codes developed by [B.Monier](https://github.com/btmonier) (Buckler Lab Hackathon)
-  
-* rgdal is retired! We fixed it by Oct 21 2023. More info about rgdal's retirement [here](https://r-spatial.org/r/2022/04/12/evolution.html)
+### Overview — the five layers
 
-* #007 **envirotypeR v0.0.3** updates `EnvRtype::get_weather()` to include more environmental features (either from NASA POWER and computed variables)
-  
-* #006 **envirotypeR v0.0.2** updates `envirotypeR::get_weather()` to incorporate  `EnvRtype::get_weather()` and `EnvRtype::processWTH()`
+```mermaid
+flowchart TB
+  L1["<b>1 · ACQUIRE</b><br/>get_weather · get_soil · get_elevation<br/>get_bioclim · get_spatial · get_AEZ<br/>get_climate_scenario · + resumable/hourly variants"]
+  L2["<b>2 · PROCESS</b><br/>processWTH · summaryWTH · param_*<br/>water_balance · env_phenology"]
+  L3["<b>3 · CHARACTERISE</b><br/>W_matrix · T_matrix · env_indices · env_pca<br/>soil_classification · env_typing · env_risk_profile"]
+  L4["<b>4 · MODEL &amp; SCAN</b><br/>env_kernel · get_kernel · kernel_model<br/>kernel_cv · scan_untested_envs · map_scan"]
+  SIM["<b>SIMULATE</b><br/>sim_met() → C_env → sim_W()<br/><i>ground truth for every layer</i>"]
 
-* #005 **envirotypeR v0.0.1** repo was created using `EnvRtype` as reference (Sep 2023)
+  L1 --> L2 --> L3 --> L4
+  SIM -.->|"validates"| L3
+  SIM -.->|"validates"| L4
 
-* #004 **EnvRtype** : `EnvRtype::get_weather()`  is updated by [T.Olivoto](https://github.com/TiagoOlivoto)
+  classDef l1 fill:#1565c0,stroke:#0d47a1,color:#fff
+  classDef l2 fill:#1976d2,stroke:#0d47a1,color:#fff
+  classDef l3 fill:#2e7d32,stroke:#1b5e20,color:#fff
+  classDef l4 fill:#c62828,stroke:#b71c1c,color:#fff
+  classDef sim fill:#6a1b9a,stroke:#4a148c,color:#fff
+  class L1 l1
+  class L2 l2
+  class L3 l3
+  class L4 l4
+  class SIM sim
+```
 
-* #003 **EnvRtype** published at G3 Journal: Feb 2021
-  
-* #002 **EnvRtype** published at BiorXv : Oct 2020
+### 1–2 · Data acquisition and processing
 
-* #001 **EnvRtype** repo was created (Jan 2020)
+```mermaid
+flowchart LR
+  GW["get_weather()"]
+  GWH["get_weather_hourly()"]
+  GS["get_soil()"]
+  GEL["get_elevation()"]
+  GBC["get_bioclim()"]
+  GSP["get_spatial()"]
+  GAEZ["get_AEZ()"]
+  GCS["get_climate_scenario()"]
 
-## Coming Soon
+  PRAD["param_radiation()"]
+  PATM["param_atmospheric()"]
+  PTMP["param_temperature()"]
+  PWT["processWTH()"]
+  SWT["summaryWTH()"]
 
-* Tutorials and Getting Help
-* Publication
-* CRAN
-* process_cleaning()
-* process_index()
-* process_stages()
-* variable_selection()
-* fit_frequency()
-* fit_Wmatrix()
-* fit_Smatrix() 
-* fit_Rmatrix()
-* fit_Tmatrix() 
-* fit_Mmatrix() 
-* fit_Nmatrix() 
-* plot_envirotype()
+  EPH["env_phenology()"]
+  PHT["phenology_templates()"]
+  PWD["planting_window_table()"]
+  BPD["best_planting_date()"]
 
+  WBAL["water_balance()"]
+  SWB["summary_water_balance()"]
+
+  GW --> PWT
+  PRAD --> PWT
+  PTMP --> PWT
+  GEL --> PATM
+  PATM --> PWT
+  PWT --> SWT
+  PWT --> EPH
+  PHT --> EPH
+  EPH --> PWD
+  PWD --> BPD
+  PWT --> WBAL
+  GS --> WBAL
+  GEL --> WBAL
+  WBAL --> SWB
+
+  classDef collect fill:#1565c0,stroke:#0d47a1,color:#fff
+  classDef char fill:#2e7d32,stroke:#1b5e20,color:#fff
+  classDef wb fill:#0097a7,stroke:#006064,color:#fff
+  class GW,GWH,GS,GEL,GBC,GSP,GAEZ,GCS,PRAD,PATM,PTMP,PWT,SWT collect
+  class EPH,PHT,PWD,BPD char
+  class WBAL,SWB wb
+```
+
+### 3 · Characterisation and dissection
+
+```mermaid
+flowchart LR
+  SWT["summaryWTH()"]
+  WM["W_matrix()"]
+  ETYP["env_typing()"]
+  TM["T_matrix()"]
+  ECOP["env_copula()"]
+  ERP["env_risk_profile()"]
+  TPW["tpe_weights()"]
+  PRK["project_risk()"]
+  GCS["get_climate_scenario()"]
+  SCL["soil_classification()"]
+
+  EIX["env_indices()"]
+  EPC["env_pca()"]
+  EPS["env_pca_scree()"]
+  EPB["env_pca_biplot()"]
+  ELC["env_loading_curve()"]
+  ECH["env_cor_heatmap()"]
+  EPA["env_pc_associate()"]
+
+  SWT --> WM
+  ETYP --> TM
+  WM --> ECOP
+  ERP --> TPW
+  ERP --> PRK
+  GCS --> PRK
+  EIX --> WM
+  EIX --> EPC
+  EIX --> ECH
+  EPC --> EPS
+  EPC --> EPB
+  EPC --> ELC
+  EPC --> EPA
+
+  classDef char fill:#2e7d32,stroke:#1b5e20,color:#fff
+  classDef dis fill:#6a1b9a,stroke:#4a148c,color:#fff
+  classDef collect fill:#1565c0,stroke:#0d47a1,color:#fff
+  class WM,ETYP,TM,ECOP,ERP,TPW,PRK,SCL char
+  class EIX,EPC,EPS,EPB,ELC,ECH,EPA dis
+  class SWT,GCS collect
+```
+
+### 4 · Prediction and scanning
+
+```mermaid
+flowchart TB
+  EK["env_kernel()"]
+  GK["get_kernel()<br/>K_G · K_E · K_S"]
+  DK["decompose_kernels()"]
+  TGK["truncate_gxe_kernel()"]
+  KM["kernel_model()"]
+  KCV["kernel_cv()"]
+  KMC["kernel_model_clustered()"]
+  KMM["kernel_model_mc()"]
+  ECL["env_cluster()"]
+  CLE["cluster_environments()"]
+  VCS["varcomp_summary()"]
+  SUE["scan_untested_envs()"]
+  GSC["grid_scan()"]
+  MSC["map_scan()"]
+  SST["scan_spatial_table()"]
+
+  EK --> GK
+  GK --> DK
+  DK --> TGK
+  TGK --> KM
+  DK --> KM
+  KM --> KCV
+  KM --> VCS
+  KM --> SUE
+  ECL --> KMC
+  CLE --> KMC
+  KM --> KMM
+  SUE --> GSC
+  SUE --> MSC
+  SUE --> SST
+
+  classDef pred fill:#c62828,stroke:#b71c1c,color:#fff
+  classDef rel fill:#ef6c00,stroke:#e65100,color:#fff
+  classDef char fill:#2e7d32,stroke:#1b5e20,color:#fff
+  class GK,DK,TGK,KM,KCV,KMC,KMM,VCS,SUE,GSC,MSC,SST pred
+  class EK rel
+  class ECL,CLE char
+```
+
+### Simulation — closing the validation loop
+
+```mermaid
+flowchart LR
+  K["genomic kinship K<br/><i>n × n lines</i>"]
+  SMC["sim_met_C()<br/><i>q × q envs</i>"]
+  SM["sim_met()"]
+  CE["$C_env<br/><i>q × q correlation<br/>among environments</i>"]
+  PH["$data<br/>env · gid · rep · value"]
+  SW["sim_W()"]
+  SWG["sim_W_grid()"]
+  W["simulated W<br/><i>known % explained</i>"]
+  GK["get_kernel()"]
+  KM["kernel_model()"]
+  VCS["varcomp_summary()"]
+  CHK{{"compare to<br/>known truth"}}
+
+  K --> SM
+  SMC --> SM
+  SM --> CE
+  SM --> PH
+  CE --> SW
+  SW --> W
+  SWG --> W
+  W --> GK
+  PH --> KM
+  GK --> KM
+  KM --> VCS
+  VCS --> CHK
+  SM -.->|"$truth"| CHK
+
+  classDef sim fill:#6a1b9a,stroke:#4a148c,color:#fff
+  classDef pred fill:#c62828,stroke:#b71c1c,color:#fff
+  classDef data fill:#455a64,stroke:#263238,color:#fff
+  classDef chk fill:#f9a825,stroke:#f57f17,color:#000
+  class SM,SW,SWG,SMC sim
+  class GK,KM,VCS pred
+  class K,CE,PH,W data
+  class CHK chk
+```
+
+---
+
+## Acknowledgements
+
+### Original EnvRtype team (2020–2021)
+
+EnvRtype began in 2020 and was first published as
+[allogamous/EnvRtype](https://github.com/allogamous/EnvRtype) in Costa-Neto, G., Galli, G.,
+Carvalho, H. F., Crossa, J., & Fritsche-Neto, R. (2021).
+*EnvRtype: a software to interplay enviromics and quantitative genomics in agriculture.*
+**G3: Genes|Genomes|Genetics**, 11(4), jkab040. We gratefully acknowledge the original authors
+and the community of users whose feedback shaped this new version.
+
+### Current maintainers and developers
+
+- **Germano Costa-Neto** — maintainer & lead developer &lt;germano.cneto@gmail.com&gt;
+- **Fernanda Pontes** — developer &lt;ferpoontes@gmail.com&gt;
+
+---
 
 ## Citation
 
-**Original Pipeline**
+```r
+citation("EnvRtype")
+```
 
-Costa-Neto, G., Galli, G., Carvalho, H. F., Crossa, J., and Fritsche-Neto, R. (2021). EnvRtype: a software to interplay enviromics and quantitative genomics in agriculture. **G3 Genes|Genomes|Genetics**. doi:10.1093/g3journal/jkab040.
+Please cite the package when using it in publications, and kindly let the maintainer know when
+you are using EnvRtype (contact **germano.cneto@gmail.com**).
 
-## Institutions / Contributors
+---
 
-* University of Sao Paulo / ESALQ USP (EnvRtype, from my PhD)
-* CIMMYT (EnvRtype, from my PhD)
-* Cornell University / Buckler Lab
-* Wonderful community of users who always gave a sincere feedback!
-  
-# Usage
+## License
 
-Please contact <germano.cneto@gmail.com> for more detail about the usage, suggestions, bugs or help.
-
-<div align='center'>
-  
-<a href='https://www.free-website-hit-counter.com'><img src='https://www.free-website-hit-counter.com/c.php?d=9&id=159092&s=1' border='0' alt='Free Website Hit Counter'></a><br / ><small><a href='https://www.free-website-hit-counter.com' title="Free Website Hit Counter">Free website hit counter</a></small>
-
-</div>
-
-
+Released under the **GPL-3** license — free and open source. You may use, study, modify and
+redistribute the code, provided derivative works remain under the same terms.

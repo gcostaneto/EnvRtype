@@ -1,27 +1,47 @@
-Package: envirotypeR
+Package: EnvRtype
 Type: Package
-Title: A Framework for Plant and Animal Enviromics
-Version: 0.1.5
-Author: Germano Costa-Neto
-Maintainer: Germano Costa-Neto <germano.cneto@gmail.com>
-Description: A software package has been developed to facilitate enviromics research in plant and animal science, with a specific emphasis on genetic improvement (breeding) and ecology. 
-    This comprehensive tool is designed to support various stages of the research process, including the steps of
-    (1) Data Collection, Utilizing remote sensing tools and geographic datasets.
-    (2) Data Processing, Performing computations for a diverse range of environmental indexes, synthetic environmental features, and ensuring data quality control.
-    (3) Envirotyping Studies, Conducting analyses that combine environmental factors with typing information, encompassing the characterization of envirotypes in terms of frequency and distribution.
-    (4) Modeling, Fitting spatial or climate-enriched models for applied quantitative genetics and conducting research on phenotype prediction.
-    This software package aims to stYreamline and enhance the efficiency of research activities in the field of enviromics.
-License: MIT
+Title: Envirotyping for Quantitative Genetics and Plant Breeding
+Version: 0.1.0
+Authors@R: c(
+    person(
+      "Germano", "Costa-Neto",
+      email = "germano.cneto@gmail.com",
+      role = c("aut", "cre")
+    ),
+    person(
+      "Fernanda", "Pontes",
+      email = "ferpoontes@gmail.com",
+      role = "aut"
+    )
+  )
+Description: Collects worldwide daily weather and soil data, derives
+    agro-meteorological parameters, builds environmental covariable matrices and
+    relatedness kernels, mines environmental typologies, delineates soil zones
+    with Gaussian mixture models, and runs a FAO-56 soil water balance for use in
+    enviromics and genotype-by-environment analyses.
+License: GPL-3
+URL: https://github.com/gcostaneto/EnvRtype
+BugReports: https://github.com/gcostaneto/EnvRtype/issues
 Encoding: UTF-8
 LazyData: true
+Config/roxygen2/version: 8.1.0
 Imports:
-    nasapower,
-    plyr,
-    doParallel,
-    parallel,
-    foreach,
-    raster,
-    terra,
+    ggplot2,
+    grDevices,
+    graphics,
     reshape2,
-    sf
-RoxygenNote: 7.3.1
+    stats,
+    tools,
+    utils
+Suggests:
+    cluster,
+    curl,
+    ggrepel,
+    httr,
+    jsonlite,
+    mclust,
+    nasapower,
+    parallel,
+    randomForest,
+    sf,
+    terra
