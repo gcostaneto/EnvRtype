@@ -39,9 +39,12 @@ Suggests:
     ggrepel,
     httr,
     jsonlite,
+    knitr,
     mclust,
     nasapower,
     parallel,
     randomForest,
+    rmarkdown,
     sf,
     terra
+VignetteBuilder: knitr

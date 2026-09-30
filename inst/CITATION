@@ -1,0 +1,17 @@
+citHeader(
+  "To cite the EnvRtype package in publications, please use the reference below.",
+  "The authors also kindly ask that you let them know when you are using EnvRtype",
+  "by contacting Germano Costa-Neto <germano.cneto@gmail.com>."
+)
+
+bibentry(
+  bibtype  = "Manual",
+  title    = "EnvRtype: Envirotyping for Quantitative Genetics and Plant Breeding",
+  author   = c(
+    person("Germano", "Costa-Neto", email = "germano.cneto@gmail.com"),
+    person("Fernanda", "Pontes", email = "ferpoontes@gmail.com")
+  ),
+  year     = "2026",
+  note     = "R package version 0.1.0",
+  url      = "https://github.com/gcostaneto/EnvRtype"
+)
