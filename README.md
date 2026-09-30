@@ -41,8 +41,8 @@ adds several new layers:
 | **Weather data** | `get_weather()` (NASA POWER, daily) | `get_weather()` + hourly (`get_weather_hourly()`) and **resumable / restartable** downloads (`get_weather_resumable()`, `read_progress_log()`, `restart_from_log()`) |
 | **Soil data** | — | `get_soil()`, `get_soil_resumable()`, `soil_classification()` (Gaussian-mixture soil zoning) |
 | **Other geodata** | — | `get_elevation()`, `get_bioclim()`, `get_spatial()`, `get_AEZ()`, `get_climate_scenario()` |
-| **Processing** | `processWTH()`, `param_temperature/radiation/atmospheric()`, `summaryWTH()` | Same, plus a full **FAO-56 water balance** (`water_balance()`, `summary_water_balance()`) and **phenology** (`env_phenology()`, `phenology_templates()`, `planting_window_table()`, `best_planting_date()`) |
-| **Characterisation** | `W_matrix()`, `env_typing()` | Adds `T_matrix()`, `env_indices()`, a full **PCA suite** (`env_pca()`, `env_pca_biplot()`, `env_pca_scree()`, `env_loading_curve()`, `env_pc_associate()`), correlation tools (`env_cor()`, `env_cor_heatmap()`) and coverage/target diagnostics |
+| **Processing** | `processWTH()`, `param_temperature/radiation/atmospheric()`, `summaryWTH()` | Same, plus a full **FAO-56 water balance** (`water_balance()`, `summary_water_balance()`) and **phenology** (`env_phenology()`, `phenology_templates()`, `planting_window_table()`, `best_planting_date()`, `show_phenology()`, `plot_planting_window()`) |
+| **Characterisation** | `W_matrix()`, `env_typing()` | Adds `T_matrix()`, `env_indices()`, `env_expand()`, a full **PCA suite** (`env_pca()`, `env_pca_biplot()`, `env_pca_scree()`, `env_loading_curve()`, `env_pc_associate()`), correlation tools (`env_cor()`, `env_cor_heatmap()`) and coverage/target diagnostics (`coverage_summary()`, `env_target_importance()`) |
 | **Risk & TPE** | — | `env_risk_profile()`, `env_copula()`, `tpe_weights()`, `project_risk()`, `env_target_importance()` |
 | **Kernels** | `env_kernel()`, `get_kernel()` | Adds `decompose_kernels()`, `undecompose_kernels()`, `truncate_gxe_kernel()` and a soil kernel path in `get_kernel()` |
 | **Modelling** | `kernel_model()` | Adds `kernel_cv()`, `kernel_model_clustered()`, `kernel_model_mc()`, `varcomp_summary()`, environment clustering (`env_cluster()`, `cluster_environments()`) |
@@ -54,10 +54,14 @@ adds several new layers:
 
 ## Package modules & workflow
 
-The package is organised in five layers, plus a simulation engine that generates ground-truth
-data to validate each layer.
+The package is organised in four data layers — acquisition, processing, characterisation and
+prediction — plus a simulation engine that generates ground-truth data to validate each layer.
+Each subsection lists the functions involved and the primary references used to build them.
 
-### Overview — the five layers
+### Overview — the four layers + simulation
+
+*Design follows the enviromics reaction-norm framework of Costa-Neto et al. (2021, G3) and its
+envirome-wide extension (Costa-Neto et al., 2023, G3).*
 
 ```mermaid
 flowchart TB
@@ -85,11 +89,22 @@ flowchart TB
 
 ### 1–2 · Data acquisition and processing
 
+*Weather and geodata come from NASA POWER via nasapower (Sparks, 2018), SoilGrids 2.0 (Poggio et
+al., 2021), WorldClim 2 (Fick & Hijmans, 2017), bioclimatic predictors (O'Donnell & Ignizio, 2012),
+CMIP6 / ScenarioMIP scenarios (Hawkins et al., 2013; O'Neill et al., 2016) and GAEZ v4 (FAO &
+IIASA, 2021). Agro-meteorological processing, the FAO-56 soil water balance and phenology follow
+Allen et al. (1998), Pereira et al. (2021), Doorenbos & Kassam (1979), Steduto et al. (2012), Borg
+& Grimes (1986), Forsythe et al. (1995), Zadoks et al. (1974) and Counce et al. (2000).*
+
 ```mermaid
 flowchart LR
   GW["get_weather()"]
   GWH["get_weather_hourly()"]
+  GWR["get_weather_resumable()"]
+  RPL["read_progress_log()"]
+  RFL["restart_from_log()"]
   GS["get_soil()"]
+  GSR["get_soil_resumable()"]
   GEL["get_elevation()"]
   GBC["get_bioclim()"]
   GSP["get_spatial()"]
@@ -106,11 +121,15 @@ flowchart LR
   PHT["phenology_templates()"]
   PWD["planting_window_table()"]
   BPD["best_planting_date()"]
+  SPH["show_phenology()"]
+  PPW["plot_planting_window()"]
 
   WBAL["water_balance()"]
   SWB["summary_water_balance()"]
 
+  GWR --> RPL --> RFL --> GW
   GW --> PWT
+  GWH --> PWT
   PRAD --> PWT
   PTMP --> PWT
   GEL --> PATM
@@ -119,8 +138,11 @@ flowchart LR
   PWT --> EPH
   PHT --> EPH
   EPH --> PWD
+  EPH --> SPH
   PWD --> BPD
+  PWD --> PPW
   PWT --> WBAL
+  GSR --> GS
   GS --> WBAL
   GEL --> WBAL
   WBAL --> SWB
@@ -128,23 +150,34 @@ flowchart LR
   classDef collect fill:#1565c0,stroke:#0d47a1,color:#fff
   classDef char fill:#2e7d32,stroke:#1b5e20,color:#fff
   classDef wb fill:#0097a7,stroke:#006064,color:#fff
-  class GW,GWH,GS,GEL,GBC,GSP,GAEZ,GCS,PRAD,PATM,PTMP,PWT,SWT collect
-  class EPH,PHT,PWD,BPD char
+  class GW,GWH,GWR,RPL,RFL,GS,GSR,GEL,GBC,GSP,GAEZ,GCS,PRAD,PATM,PTMP,PWT,SWT collect
+  class EPH,PHT,PWD,BPD,SPH,PPW char
   class WBAL,SWB wb
 ```
 
 ### 3 · Characterisation and dissection
 
+*Environmental covariables, typologies and kernels follow Costa-Neto et al. (2021, G3);
+interval-resolved indices follow Della Coletta et al. (2023); breeding-zone typologies and
+target-population importance follow Costa-Neto et al. (2023, Agronomy Journal); copula
+reparameterisation follows Sklar (1959), Genest & Rivest (1993) and Salvadori et al. (2007);
+Gaussian-mixture soil zoning follows Fraley & Raftery (2002), Scrucca et al. (2016) and Egozcue
+et al. (2003).*
+
 ```mermaid
 flowchart LR
   SWT["summaryWTH()"]
+  GS["get_soil()"]
   WM["W_matrix()"]
   ETYP["env_typing()"]
   TM["T_matrix()"]
+  EEX["env_expand()"]
   ECOP["env_copula()"]
   ERP["env_risk_profile()"]
   TPW["tpe_weights()"]
   PRK["project_risk()"]
+  ETI["env_target_importance()"]
+  CVS["coverage_summary()"]
   GCS["get_climate_scenario()"]
   SCL["soil_classification()"]
 
@@ -153,18 +186,25 @@ flowchart LR
   EPS["env_pca_scree()"]
   EPB["env_pca_biplot()"]
   ELC["env_loading_curve()"]
+  ECOR["env_cor()"]
   ECH["env_cor_heatmap()"]
   EPA["env_pc_associate()"]
 
   SWT --> WM
+  WM --> ETYP
   ETYP --> TM
+  WM --> EEX
   WM --> ECOP
+  WM --> ETI
   ERP --> TPW
   ERP --> PRK
   GCS --> PRK
+  TPW --> CVS
+  GS --> SCL
   EIX --> WM
   EIX --> EPC
-  EIX --> ECH
+  EIX --> ECOR
+  ECOR --> ECH
   EPC --> EPS
   EPC --> EPB
   EPC --> ELC
@@ -173,18 +213,24 @@ flowchart LR
   classDef char fill:#2e7d32,stroke:#1b5e20,color:#fff
   classDef dis fill:#6a1b9a,stroke:#4a148c,color:#fff
   classDef collect fill:#1565c0,stroke:#0d47a1,color:#fff
-  class WM,ETYP,TM,ECOP,ERP,TPW,PRK,SCL char
-  class EIX,EPC,EPS,EPB,ELC,ECH,EPA dis
-  class SWT,GCS collect
+  class WM,ETYP,TM,EEX,ECOP,ERP,TPW,PRK,ETI,CVS,SCL char
+  class EIX,EPC,EPS,EPB,ELC,ECOR,ECH,EPA dis
+  class SWT,GS,GCS collect
 ```
 
 ### 4 · Prediction and scanning
+
+*Reaction-norm and kernel models follow Costa-Neto et al. (2021, G3), the nonlinear / Gaussian
+kernels of Costa-Neto, Fritsche-Neto & Crossa (2021, Heredity) and the deep kernels of Cuevas et
+al. (2019); the GxE modelling engine follows the BGGE approach of Granato et al. (2018); scanning
+of untested environments follows the envirome-wide prediction of Costa-Neto et al. (2023, G3).*
 
 ```mermaid
 flowchart TB
   EK["env_kernel()"]
   GK["get_kernel()<br/>K_G · K_E · K_S"]
   DK["decompose_kernels()"]
+  UDK["undecompose_kernels()"]
   TGK["truncate_gxe_kernel()"]
   KM["kernel_model()"]
   KCV["kernel_cv()"]
@@ -197,31 +243,38 @@ flowchart TB
   GSC["grid_scan()"]
   MSC["map_scan()"]
   SST["scan_spatial_table()"]
+  CVS["coverage_summary()"]
 
   EK --> GK
   GK --> DK
+  DK --> UDK
   DK --> TGK
   TGK --> KM
   DK --> KM
   KM --> KCV
   KM --> VCS
   KM --> SUE
-  ECL --> KMC
+  ECL --> CLE
   CLE --> KMC
   KM --> KMM
   SUE --> GSC
   SUE --> MSC
   SUE --> SST
+  SUE --> CVS
 
   classDef pred fill:#c62828,stroke:#b71c1c,color:#fff
   classDef rel fill:#ef6c00,stroke:#e65100,color:#fff
   classDef char fill:#2e7d32,stroke:#1b5e20,color:#fff
-  class GK,DK,TGK,KM,KCV,KMC,KMM,VCS,SUE,GSC,MSC,SST pred
+  class GK,DK,UDK,TGK,KM,KCV,KMC,KMM,VCS,SUE,GSC,MSC,SST,CVS pred
   class EK rel
   class ECL,CLE char
 ```
 
 ### Simulation — closing the validation loop
+
+*The simulator encodes a known environmental covariance and reaction-norm structure to benchmark
+every layer, following the envirome-wide prediction framework of Costa-Neto et al. (2023, G3) and
+the kernel models of Costa-Neto et al. (2021, G3).*
 
 ```mermaid
 flowchart LR
@@ -264,6 +317,31 @@ flowchart LR
 
 ---
 
+## Prediction
+
+EnvRtype fits **enviromics-enabled reaction-norm models** in which phenotypes are regressed on
+genomic, environmental and GxE relatedness kernels. The current prediction workflow provides:
+
+- **Kernel construction** — `get_kernel()` assembles genomic (K_G), environmental (K_E) and soil
+  (K_S) kernels; `env_kernel()` builds Gaussian / linear environmental kernels; `decompose_kernels()`,
+  `undecompose_kernels()` and `truncate_gxe_kernel()` manage the GxE block structure.
+- **Model fitting** — `kernel_model()` fits the multi-kernel Bayesian reaction-norm model;
+  `kernel_model_mc()` runs multiple chains; `kernel_model_clustered()` fits environment-clustered
+  models built with `env_cluster()` / `cluster_environments()`.
+- **Validation & variance** — `kernel_cv()` runs cross-validation (CV1 / CV2 / CV0 schemes) and
+  `varcomp_summary()` reports variance components and the share of variance explained by each kernel.
+- **Untested environments** — `scan_untested_envs()` predicts genotype performance in environments
+  with no phenotypes, while `grid_scan()`, `map_scan()`, `scan_spatial_table()` and
+  `coverage_summary()` summarise the target population of environments (TPE).
+
+These tools implement the reaction-norm and kernel methods of Costa-Neto et al. (2021, *G3*), the
+nonlinear / Gaussian kernels of Costa-Neto, Fritsche-Neto & Crossa (2021, *Heredity*), the deep
+kernels of Cuevas et al. (2019, *G3*), the BGGE GxE engine of Granato et al. (2018, *G3*), and the
+envirome-wide prediction of untested environments of Costa-Neto et al. (2023, *G3*). Full citations
+are listed under **References for the new functions** below.
+
+---
+
 ## Acknowledgements
 
 ### Original EnvRtype team (2020–2021)
@@ -279,6 +357,61 @@ and the community of users whose feedback shaped this new version.
 
 - **Germano Costa-Neto** — maintainer & lead developer &lt;germano.cneto@gmail.com&gt;
 - **Fernanda Pontes** — developer &lt;ferpoontes@gmail.com&gt;
+
+---
+
+## References for the new functions
+
+The methods and data sources underlying the new and extended functions are documented below,
+grouped by module.
+
+### Enviromics framework, kernels and genomic prediction
+
+- Costa-Neto, G., Galli, G., Carvalho, H. F., Crossa, J., & Fritsche-Neto, R. (2021). EnvRtype: a software to interplay enviromics and quantitative genomics in agriculture. *G3: Genes|Genomes|Genetics*, 11(4), jkab040. https://doi.org/10.1093/g3journal/jkab040
+- Costa-Neto, G., Fritsche-Neto, R., & Crossa, J. (2021). Nonlinear kernels, dominance, and envirotyping data increase the accuracy of genome-based prediction in multi-environment trials. *Heredity*, 126, 92–106. https://doi.org/10.1038/s41437-020-00353-1
+- Costa-Neto, G., Galli, G., Carvalho, H. F., Crossa, J., & Fritsche-Neto, R. (2023). Envirome-wide associations enhance multi-environment prediction. *G3: Genes|Genomes|Genetics*, 13(2), jkac313. https://doi.org/10.1093/g3journal/jkac313
+- Cuevas, J., Montesinos-López, O., Juliana, P., Guzmán, C., Pérez-Rodríguez, P., González-Bucio, J., Burgueño, J., Montesinos-López, A., & Crossa, J. (2019). Deep kernel for genomic and near infrared predictions in multi-environment breeding trials. *G3: Genes|Genomes|Genetics*, 9(9), 2913–2924. https://doi.org/10.1534/g3.119.400493
+- Granato, I., Cuevas, J., Luna-Vázquez, F., Crossa, J., Montesinos-López, O., Burgueño, J., & Fritsche-Neto, R. (2018). BGGE: a new package for genomic-enabled prediction incorporating genotype × environment interaction models. *G3: Genes|Genomes|Genetics*, 8(9), 3039–3047. https://doi.org/10.1534/g3.118.200435
+
+### Environmental characterisation, typologies and target-population importance
+
+- Costa-Neto, G., da Matta, D., Fernandes, I. K., & Heinemann, A. B. (2023). Environmental clusters defining breeding zones for tropical irrigated rice in Brazil. *Agronomy Journal*, 115(5). https://doi.org/10.1002/agj2.21481
+- Della Coletta, R., Liese, S. E., Fernandes, S. B., Mikel, M. A., Bohn, M. O., Lipka, A. E., & Hirsch, C. N. (2023). Linking genetic and environmental factors through marker effect networks to understand trait plasticity. *GENETICS*, 224(4), iyad103. https://doi.org/10.1093/genetics/iyad103
+
+### Copula-based environmental indices (`env_copula`)
+
+- Sklar, A. (1959). Fonctions de répartition à n dimensions et leurs marges. *Publications de l'Institut de Statistique de l'Université de Paris*, 8, 229–231.
+- Genest, C., & Rivest, L.-P. (1993). Statistical inference procedures for bivariate Archimedean copulas. *Journal of the American Statistical Association*, 88(423), 1034–1043. https://doi.org/10.1080/01621459.1993.10476372
+- Salvadori, G., De Michele, C., Kottegoda, N. T., & Rosso, R. (2007). *Extremes in Nature: An Approach Using Copulas*. Springer.
+
+### Environmental data acquisition (weather, soil, elevation, bioclimate, scenarios, agro-ecological zones)
+
+- Sparks, A. H. (2018). nasapower: NASA-POWER Data from R. *Journal of Open Source Software*, 3(30), 1035. https://doi.org/10.21105/joss.01035
+- Forsythe, W. C., Rykiel, E. J., Stahl, R. S., Wu, H., & Schoolfield, R. M. (1995). A model comparison for daylength as a function of latitude and day of the year. *Ecological Modelling*, 80(1), 87–95. https://doi.org/10.1016/0304-3800(94)00034-F
+- Peng, S., Huang, J., Sheehy, J. E., Laza, R. C., Visperas, R. M., Zhong, X., Centeno, G. S., Khush, G. S., & Cassman, K. G. (2004). Rice yields decline with higher night temperature from global warming. *Proceedings of the National Academy of Sciences*, 101(27), 9971–9975. https://doi.org/10.1073/pnas.0403720101
+- Poggio, L., de Sousa, L. M., Batjes, N. H., Heuvelink, G. B. M., Kempen, B., Ribeiro, E., & Rossiter, D. (2021). SoilGrids 2.0: producing soil information for the globe with quantified spatial uncertainty. *SOIL*, 7(1), 217–240. https://doi.org/10.5194/soil-7-217-2021
+- Fick, S. E., & Hijmans, R. J. (2017). WorldClim 2: new 1-km spatial resolution climate surfaces for global land areas. *International Journal of Climatology*, 37(12), 4302–4315. https://doi.org/10.1002/joc.5086
+- O'Donnell, M. S., & Ignizio, D. A. (2012). Bioclimatic predictors for supporting ecological applications in the conterminous United States. *U.S. Geological Survey Data Series*, 691. https://doi.org/10.3133/ds691
+- Hawkins, E., Osborne, T. M., Ho, C. K., & Challinor, A. J. (2013). Calibration and bias correction of climate projections for crop modelling: an idealised case study over Europe. *Agricultural and Forest Meteorology*, 170, 19–31. https://doi.org/10.1016/j.agrformet.2012.04.007
+- O'Neill, B. C., Tebaldi, C., van Vuuren, D. P., Eyring, V., Friedlingstein, P., Hurtt, G., Knutti, R., Kriegler, E., Lamarque, J.-F., Lowe, J., Meehl, G. A., Moss, R., Riahi, K., & Sanderson, B. M. (2016). The Scenario Model Intercomparison Project (ScenarioMIP) for CMIP6. *Geoscientific Model Development*, 9(9), 3461–3482. https://doi.org/10.5194/gmd-9-3461-2016
+- FAO & IIASA (2021). *Global Agro-Ecological Zones (GAEZ v4)*. FAO, Rome. https://gaez.fao.org
+
+### Water balance, evapotranspiration and phenology
+
+- Allen, R. G., Pereira, L. S., Raes, D., & Smith, M. (1998). Crop evapotranspiration: guidelines for computing crop water requirements. *FAO Irrigation and Drainage Paper 56*. FAO, Rome.
+- Pereira, L. S., Paredes, P., López-Urrea, R., Hunsaker, D. J., Mota, M., & Mohammadi Shad, Z. (2021). Standard single and basal crop coefficients for field crops. Updates and advances to the FAO56 crop water requirements method. *Agricultural Water Management*, 243, 106466. https://doi.org/10.1016/j.agwat.2020.106466
+- Doorenbos, J., & Kassam, A. H. (1979). Yield response to water. *FAO Irrigation and Drainage Paper 33*. FAO, Rome.
+- Steduto, P., Hsiao, T. C., Fereres, E., & Raes, D. (2012). Crop yield response to water. *FAO Irrigation and Drainage Paper 66*. FAO, Rome.
+- Borg, H., & Grimes, D. W. (1986). Depth development of roots with time: an empirical description. *Transactions of the ASAE*, 29(1), 194–197. https://doi.org/10.13031/2013.30125
+- Zadoks, J. C., Chang, T. T., & Konzak, C. F. (1974). A decimal code for the growth stages of cereals. *Weed Research*, 14(6), 415–421. https://doi.org/10.1111/j.1365-3180.1974.tb01084.x
+- Counce, P. A., Keisling, T. C., & Mitchell, A. J. (2000). A uniform, objective, and adaptive system for expressing rice development. *Crop Science*, 40(2), 436–443. https://doi.org/10.2135/cropsci2000.402436x
+
+### Soil classification and Gaussian-mixture risk zoning
+
+- Fraley, C., & Raftery, A. E. (2002). Model-based clustering, discriminant analysis, and density estimation. *Journal of the American Statistical Association*, 97(458), 611–631. https://doi.org/10.1198/016214502760047131
+- Scrucca, L., Fop, M., Murphy, T. B., & Raftery, A. E. (2016). mclust 5: clustering, classification and density estimation using Gaussian finite mixture models. *The R Journal*, 8(1), 205–233. https://doi.org/10.32614/RJ-2016-021
+- Egozcue, J. J., Pawlowsky-Glahn, V., Mateu-Figueras, G., & Barceló-Vidal, C. (2003). Isometric logratio transformations for compositional data analysis. *Mathematical Geology*, 35(3), 279–300. https://doi.org/10.1023/A:1023818214614
+- Zhang, F., Jia, Z., Wu, S., Chen, C., Chen, X., Zheng, C., & Xu, M. (2025). Machine learning and Gaussian mixture model for delineating soil cadmium risk zones. *Ecosystem Health and Sustainability*. https://doi.org/10.34133/ehs.0402
 
 ---
 
