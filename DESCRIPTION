@@ -1,7 +1,7 @@
 Package: EnvRtype
 Type: Package
 Title: Envirotyping for Quantitative Genetics and Plant Breeding
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
     person(
       "Germano", "Costa-Neto",
