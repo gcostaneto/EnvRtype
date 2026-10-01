@@ -3246,7 +3246,7 @@ get_climate_scenario <- function(env.id = NULL, lat = NULL, lon = NULL,
 #' @keywords internal
 #' @noRd
 .aez_bundled <- function() {
-  system.file("extdata", .AEZ_BUNDLED_FILE, package = "etTest")
+  system.file("extdata", .AEZ_BUNDLED_FILE, package = "EnvRtype")
 }
 
 #' The 57-class GAEZ agro-ecological zone legend
@@ -3436,7 +3436,7 @@ aez_legend <- function(classes = 57) {
 #' @param file character. Path to a GAEZ GeoTIFF already on disk. If \code{NULL}
 #'   (default), \code{get_AEZ} uses the raster \strong{shipped with the package}
 #'   (\code{system.file("extdata", "aez_v9v2red_5m_CRUTS32_Hist_8110_100_avg.tif",
-#'   package = "etTest")}). Only if that bundled file is unavailable does it fall
+#'   package = "EnvRtype")}). Only if that bundled file is unavailable does it fall
 #'   back to downloading from \code{url}. Supply \code{file} to use a different
 #'   GAEZ release or scenario.
 #' @param url character. Download URL for a GAEZ raster, used only when \code{file}

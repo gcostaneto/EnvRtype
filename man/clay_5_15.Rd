@@ -14,7 +14,7 @@ with \pkg{terra}.
 }
 \examples{
 \dontrun{
-f <- system.file("extdata", "clay_5_15.tif", package = "etTest")
+f <- system.file("extdata", "clay_5_15.tif", package = "EnvRtype")
 clay <- terra::rast(f)
 terra::plot(clay)
 }

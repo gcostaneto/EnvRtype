@@ -1,7 +1,7 @@
 Package: EnvRtype
 Type: Package
 Title: Envirotyping for Quantitative Genetics and Plant Breeding
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person(
       "Germano", "Costa-Neto",
@@ -14,11 +14,25 @@ Authors@R: c(
       role = "aut"
     )
   )
-Description: Collects worldwide daily weather and soil data, derives
-    agro-meteorological parameters, builds environmental covariable matrices and
-    relatedness kernels, mines environmental typologies, delineates soil zones
-    with Gaussian mixture models, and runs a FAO-56 soil water balance for use in
-    enviromics and genotype-by-environment analyses.
+Description: An enviromics toolkit for genotype-by-environment analysis and
+    envirotype-informed genomic prediction. Collects worldwide daily and hourly
+    weather from 'NASA POWER', soil profiles from 'SoilGrids', elevation and
+    bioclimatic layers from 'WorldClim', agro-ecological zones from 'FAO GAEZ',
+    and downscaled 'CMIP6' climate scenarios, with checkpointed retrieval that
+    can resume after an interrupted run. Derives agro-meteorological parameters
+    (solar radiation, evapotranspiration, thermal time, atmospheric demand),
+    runs a FAO-56 single crop coefficient soil water balance, and maps daily
+    weather onto crop developmental stages. Builds environmental covariable
+    matrices, envirotype typologies and frequency matrices, mega-environment
+    clusters, historical risk profiles and target population of environments
+    weights. Reduces interval-resolved envirotypes by principal component
+    analysis, delineates soil zones with Gaussian mixture models, and constructs
+    linear, Gaussian and arc-cosine environmental relatedness kernels. Fits
+    Bayesian reaction-norm kernel models and predicts trained genotypes at
+    untested locations and planting dates, with coverage diagnostics, spatial
+    mapping and planting-window optimisation. Simulation functions generate
+    multi-environment trials and enviromes with known architecture for power
+    analysis.
 License: GPL-3
 URL: https://github.com/gcostaneto/EnvRtype
 BugReports: https://github.com/gcostaneto/EnvRtype/issues
@@ -46,5 +60,7 @@ Suggests:
     randomForest,
     rmarkdown,
     sf,
-    terra
+    terra,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
+Config/testthat/edition: 3

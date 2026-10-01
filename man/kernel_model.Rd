@@ -3,6 +3,32 @@
 \name{kernel_model}
 \alias{kernel_model}
 \title{Kernel Models for Predicting Phenotypes across Multi-Environment Conditions}
+\usage{
+kernel_model(
+  y,
+  data = NULL,
+  random = NULL,
+  fixed = NULL,
+  env,
+  gid,
+  verbose = FALSE,
+  iterations = 1000,
+  burnin = 200,
+  thining = 10,
+  tol = 1e-10,
+  R2 = 0.5,
+  digits = 4,
+  seed = NULL,
+  probs = c(0.025, 0.975),
+  variance = c("realized", "scale"),
+  scale_kernels = TRUE,
+  keep_effects = FALSE,
+  compute_CI = TRUE,
+  R2_split = c("per_kernel", "shared"),
+  prior_scale = c("eigen", "diag"),
+  varcomp_method = c("postmean", "gibbs")
+)
+}
 \arguments{
 \item{y}{character. Name of the phenotype column in \code{data}.}
 

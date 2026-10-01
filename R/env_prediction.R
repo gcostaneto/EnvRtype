@@ -1305,6 +1305,8 @@ truncate_gxe_kernel <- function(random, keep_prop = 0.75, pattern = "GE") {
 ## kernel_model
 ## ===========================================================================
 
+#' @rdname kernel_model
+#' @export
 kernel_model <- function(y, data = NULL, random = NULL, fixed = NULL, env, gid,
                          verbose = FALSE, iterations = 1E3, burnin = 2E2,
                          thining = 10, tol = 1e-10, R2 = 0.5, digits = 4,
@@ -2238,26 +2240,134 @@ kernel_model_mc <- function(..., n_chains = 3, seed = 1,
 ## Environment clustering
 ## ===========================================================================
 
-#' Cluster environments into mega-environments from a kernel_model fit
+#' Group environments into mega-environments (clusters)
 #'
-#' Uses the genetic correlation among environments ($genetic_cor_env, which
-#' requires keep_effects = TRUE) to group environments in which genotypes rank
-#' similarly. Distance d = 1 - rg ("one_minus") or sqrt(1 - rg) ("sqrt").
-#' k is chosen by maximising average silhouette width when not supplied.
+#' @description
+#' Delineates mega-environments by clustering the \strong{genetic correlation}
+#' among environments, i.e. how similarly genotypes rank from one environment to
+#' another. Environments in which genotypes respond alike are placed in the same
+#' cluster, which is the operational definition of a mega-environment in a
+#' target population of environments (TPE).
 #'
-#' @param object a \code{kernel_model} fit (carrying \code{$genetic_cor_env}) or a
-#'   square environment correlation matrix.
-#' @param k integer or NULL. Number of clusters. Chosen by maximum average silhouette
-#'   width over \code{k_range} when \code{NULL}.
-#' @param method character. Clustering algorithm: \code{"hclust"} (default), \code{"pam"}
-#'   or \code{"kmeans"}.
-#' @param distance character. Distance from the genetic correlation: \code{"one_minus"}
-#'   (\eqn{1 - r_g}, default) or \code{"sqrt"} (\eqn{\sqrt{1 - r_g}}).
-#' @param hclust_linkage character. Linkage method for \code{method = "hclust"}.
-#'   Default \code{"ward.D2"}.
-#' @param k_range integer vector. Candidate numbers of clusters tested when \code{k}
-#'   is \code{NULL}. Default \code{2:6}.
-#' @param seed integer or NULL. Optional seed for reproducibility.
+#' The input is either a fitted \code{\link{kernel_model}} (carrying the
+#' environment genetic-correlation matrix in \code{$genetic_cor_env}, produced
+#' with \code{keep_effects = TRUE}) or any square environment correlation matrix
+#' you already have (for example from \code{\link{env_cor}} or an external GxE
+#' analysis).
+#'
+#' @details
+#' The genetic correlation \eqn{r_g} is turned into a distance and the chosen
+#' algorithm is run on that distance:
+#' \itemize{
+#'   \item \code{distance = "one_minus"} uses \eqn{d = 1 - r_g} (default).
+#'   \item \code{distance = "sqrt"} uses \eqn{d = \sqrt{1 - r_g}}, which spreads
+#'         out highly correlated environments.
+#' }
+#' Correlations are clamped to \eqn{[-1, 1]} and the distance matrix is
+#' symmetrised before clustering. Three algorithms are available through
+#' \code{method}: agglomerative hierarchical clustering (\code{"hclust"},
+#' controlled by \code{hclust_linkage}), partitioning around medoids
+#' (\code{"pam"}), and \code{"kmeans"} run on a classical MDS embedding of the
+#' distance matrix.
+#'
+#' When \code{k} is \code{NULL} the number of clusters is selected automatically
+#' by maximising the \strong{average silhouette width} over the candidate values
+#' in \code{k_range}; supplying \code{k} skips this search. At least three
+#' environments are required.
+#'
+#' @param object a \code{\link{kernel_model}} fit carrying
+#'   \code{$genetic_cor_env} (fit with \code{keep_effects = TRUE}), or a square
+#'   environment-by-environment correlation matrix.
+#' @param k integer or NULL. Number of clusters. When \code{NULL} (default) it is
+#'   chosen by maximum average silhouette width over \code{k_range}.
+#' @param method character. Clustering algorithm: \code{"hclust"} (default),
+#'   \code{"pam"} or \code{"kmeans"}.
+#' @param distance character. Distance built from the genetic correlation:
+#'   \code{"one_minus"} (\eqn{1 - r_g}, default) or \code{"sqrt"}
+#'   (\eqn{\sqrt{1 - r_g}}).
+#' @param hclust_linkage character. Linkage passed to \code{\link[stats]{hclust}}
+#'   when \code{method = "hclust"}. Default \code{"ward.D2"}.
+#' @param k_range integer vector. Candidate numbers of clusters tested when
+#'   \code{k} is \code{NULL}. Default \code{2:6}.
+#' @param seed integer or NULL. Optional seed for reproducibility of the
+#'   randomised starts in \code{"pam"} and \code{"kmeans"}.
+#'
+#' @return A list with:
+#' \describe{
+#'   \item{clusters}{named integer vector giving the cluster of each environment.}
+#'   \item{k}{the number of clusters used (selected or supplied).}
+#'   \item{method}{the clustering algorithm used.}
+#'   \item{distance}{the symmetric distance matrix that was clustered.}
+#'   \item{silhouette}{per-environment silhouette widths plus their
+#'     \code{average} (higher is a tighter, better-separated solution).}
+#'   \item{medoids}{representative environment of each cluster
+#'     (\code{"pam"}/\code{"kmeans"}; \code{NULL} for \code{"hclust"}).}
+#'   \item{hclust}{the \code{\link[stats]{hclust}} tree for \code{method = "hclust"},
+#'     otherwise \code{NULL}.}
+#'   \item{table}{a data.frame (\code{env}, \code{cluster}, \code{sil_width})
+#'     ordered by cluster and decreasing silhouette width.}
+#' }
+#'
+#' @seealso \code{\link{kernel_model}} (fit with \code{keep_effects = TRUE} to
+#'   obtain \code{$genetic_cor_env}), \code{\link{kernel_model_clustered}} to fit
+#'   a model informed by the clusters, \code{\link{env_cluster}} for clustering
+#'   from an environmental covariable matrix, and \code{\link{env_cor}}.
+#'
+#' @examples
+#' ## ------------------------------------------------------------------
+#' ## 1. Cluster a genetic-correlation matrix directly (no model needed)
+#' ## ------------------------------------------------------------------
+#' ## Six environments forming two obvious groups
+#' R <- matrix(0.2, 6, 6)
+#' R[1:3, 1:3] <- 0.9
+#' R[4:6, 4:6] <- 0.85
+#' diag(R) <- 1
+#' dimnames(R) <- list(paste0("E", 1:6), paste0("E", 1:6))
+#'
+#' ## Automatic number of clusters via silhouette width
+#' cl <- cluster_environments(R)
+#' cl$k
+#' cl$table
+#' cl$silhouette["average"]
+#'
+#' ## ------------------------------------------------------------------
+#' ## 2. Force a specific number of clusters
+#' ## ------------------------------------------------------------------
+#' cluster_environments(R, k = 2)$clusters
+#'
+#' ## ------------------------------------------------------------------
+#' ## 3. Try different algorithms and distances
+#' ## ------------------------------------------------------------------
+#' cluster_environments(R, k = 2, method = "pam", seed = 1)$medoids
+#' cluster_environments(R, method = "kmeans", k_range = 2:4, seed = 1)$clusters
+#' cluster_environments(R, distance = "sqrt",
+#'                      hclust_linkage = "complete")$clusters
+#'
+#' \dontrun{
+#' ## ------------------------------------------------------------------
+#' ## 4. Full workflow from phenotypes, kernels and a fitted model
+#' ## ------------------------------------------------------------------
+#' data("maizeYield"); data("maizeG"); data("maizeWTH")
+#'
+#' ECs <- W_matrix(env.data = maizeWTH[maizeWTH$daysFromStart < 100, ],
+#'                 var.id = c("FRUE", "PETP", "SRAD", "T2M_MAX"))
+#' K <- get_kernel(K_G = list(G = maizeG),
+#'                 K_E = list(W = env_kernel(env.data = ECs)[[2]]),
+#'                 data = maizeYield, model = "RNMM")
+#'
+#' ## keep_effects = TRUE is required for $genetic_cor_env
+#' fit <- kernel_model(y = "value", env = "env", gid = "gid",
+#'                     data = maizeYield, random = K,
+#'                     keep_effects = TRUE)
+#'
+#' megaenv <- cluster_environments(fit)
+#' megaenv$table
+#'
+#' ## 5. Feed the clusters into a cluster-aware model
+#' fit_cl <- kernel_model_clustered(y = "value", data = maizeYield,
+#'                                  random = K, env = "env", gid = "gid",
+#'                                  clusters = megaenv, use = "block")
+#' }
 #' @export
 cluster_environments <- function(object, k = NULL,
                                  method = c("hclust", "pam", "kmeans"),
