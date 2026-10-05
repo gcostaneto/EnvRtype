@@ -1,0 +1,17 @@
+# Exact spectral decomposition of a Hadamard GxE kernel via its Kronecker form.
+
+The GxE kernel is built as an ELEMENTWISE product of two expanded
+kernels: Kern\[a,b\] = Kg\[ig\[a\], ig\[b\]\] \* Ke\[ie\[a\], ie\[b\]\]
+The Hadamard product of two expansions IS the expansion of the Kronecker
+product. With B = Ke (x) Kg and the composite index j = (ie - 1) \* ng +
+ig, Kern = B\[j, j\] exactly, so .kd_eig_expanded()'s logic applies – we
+never need the n x n eigen and never even form B. When the grid is
+complete the eigenpairs are known in closed form (eigenvalues = d_e (x)
+d_g, eigenvectors = rows of Ue (x) Ug); otherwise we go through the
+small Gram matrix.
+
+## Usage
+
+``` r
+.kd_eig_hadamard(Kg, ig, Ke, ie, tol = 1e-10, keep_var = 1, verbose = FALSE)
+```

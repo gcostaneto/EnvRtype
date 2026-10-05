@@ -1,0 +1,205 @@
+# Correlate Environmental PCs with a Per-Environment Variable
+
+Pearson correlation between each environmental PC and an external
+per-environment quantity – in the paper, module eigenmarkers; equally, a
+trait mean, heritability or predictive ability per environment. P-values
+are FDR-adjusted across PCs, as in the paper.
+
+## Usage
+
+``` r
+env_pc_associate(
+  x,
+  y,
+  n.pc = NULL,
+  method = "pearson",
+  p.adjust = "BH",
+  verbose = TRUE
+)
+```
+
+## Arguments
+
+- x:
+
+  an
+  [`env_pca`](https://gcostaneto.github.io/EnvRtype/reference/env_pca.md)
+  object.
+
+- y:
+
+  numeric vector or matrix. One value (or column of values) per
+  environment. Names, or rownames, are matched against the environments
+  in `x`.
+
+- n.pc:
+
+  integer. How many PCs to test. Default `min(9, available)`, 9 being
+  the paper's choice.
+
+- method:
+
+  character. Correlation method passed to
+  [`cor.test`](https://rdrr.io/r/stats/cor.test.html). Default
+  `"pearson"`.
+
+- p.adjust:
+
+  character. Multiple-testing correction. Default `"BH"`
+  (Benjamini-Hochberg), as in the paper.
+
+- verbose:
+
+  boolean. Report the strongest association. Default `TRUE`.
+
+## Value
+
+A data.frame with `column`, `PC`, `r`, `p`, `p.adj` and `n`, sorted by
+adjusted p-value.
+
+## Details
+
+**Power warning.** With \\q\\ environments each correlation has \\q -
+2\\ degrees of freedom. At the paper's \\q = 9\\ even \\r = 0.86\\ gives
+an unadjusted \\p \approx 0.003\\, and a handful of PCs tested against a
+handful of modules exhausts the evidence quickly. Treat these
+associations as hypothesis- generating, not confirmatory, and prefer
+many environments.
+
+**FDR does not cover module selection.** The adjustment applied here
+accounts for testing several PCs. It does *not* account for the
+eigenmarker being PC1 of a module that was itself chosen by clustering
+the same effect matrix. That selection inflates correlations and is
+invisible to any p-value computed from the observed data. See the worked
+example below for a permutation check, and for a demonstration that the
+permutation check is itself insufficient.
+
+## Examples
+
+``` r
+# \donttest{
+pc <- env_pca(env_indices(maizeWTH, end.day = 130))
+#> ---------------------------------------------------------------
+#> env_pca -- runs PCA on the environmental index matrix
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#> ---------------------------------------------------------------
+#> env_indices -- builds interval-resolved environmental indices
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#> ------------------------------------------------------------
+#> env_indices(): 5 environments x 21 factors x 44 intervals = 924 indices
+#>   interval width : 3 day(s), days 1..130
+#>   discarded      : 106 record(s) outside 1..130
+#> ------------------------------------------------------------
+#> ------------------------------------------------------------
+#> env_pca(): 5 environments x 924 indices
+#>   informative PCs: 4 (= n.env - 1)
+#>   PC1 54.3%, PC2 21.1%, cumulative 75.4%
+#> ------------------------------------------------------------
+
+## Trait mean per environment
+ybar <- tapply(maizeYield$value, maizeYield$env, mean)
+env_pc_associate(pc, ybar)
+#> ---------------------------------------------------------------
+#> env_pc_associate -- correlates PCs with an external variable
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#> Strongest: y1 ~ PC2, r = -0.93, p = 0.0243, FDR p = 0.097 (n = 5)
+#>   Note: n = 5 environments. Low power; treat as hypothesis-generating.
+#>   column  PC          r          p      p.adj n
+#> 1     y1 PC2 -0.9252402 0.02426079 0.09704317 5
+#> 2     y1 PC4 -0.3163203 0.60406959 0.83213929 5
+#> 3     y1 PC3 -0.1624467 0.79407975 0.83213929 5
+#> 4     y1 PC1  0.1322238 0.83213929 0.83213929 5
+# }
+
+if (FALSE) { # \dontrun{
+## ----------------------------------------------------------------------
+## WORKED EXAMPLE: marker effect networks -> eigenmarkers -> environmental PCs
+##
+## The full analysis chain of Della Coletta et al. (2023), on simulated data
+## where the answer is known in advance so the method can be checked.
+##
+## Planted truth:
+##   module A markers respond to mid-season TEMPERATURE
+##   module B markers respond to late-season PRECIPITATION
+##   module C markers have real but environment-INDEPENDENT effects
+## ----------------------------------------------------------------------
+
+## --- 1. Marker effects per environment (RR-BLUP) ----------------------
+## Solve via the n x n system: with p markers >> n genotypes this is far
+## cheaper than the p x p form and gives the same ridge solution.
+rrblup_effects <- function(y, Z, h2 = 0.5) {
+  yc <- as.numeric(y) - mean(y)
+  lambda <- ncol(Z) * (1 - h2) / h2
+  a <- solve(tcrossprod(Z) + lambda * diag(nrow(Z)), yc)
+  as.numeric(crossprod(Z, a))
+}
+beta.hat <- sapply(colnames(Y), function(e) rrblup_effects(Y[, e], M, h2 = 0.55))
+dimnames(beta.hat) <- list(colnames(M), colnames(Y))
+
+## --- 2. Marker effect network -> modules ------------------------------
+## Markers whose effects do not VARY across environments cannot covary with
+## anything; screening them out first avoids NA correlations and spurious
+## modules. The paper used WGCNA; this is the same idea in base R.
+eff.sd <- apply(beta.hat, 1, sd)
+Bk     <- beta.hat[eff.sd > quantile(eff.sd, 0.35), , drop = FALSE]
+adj    <- abs(cor(t(Bk)))^6                 # soft-thresholding power
+mods   <- cutree(hclust(as.dist(1 - adj), method = "average"), h = 0.92)
+mods   <- mods[mods %in% as.integer(names(table(mods))[table(mods) >= 15])]
+
+## --- 3. Eigenmarkers --------------------------------------------------
+## PC1 of a module's effect profiles, the analogue of a WGCNA module
+## eigengene. Sign is arbitrary in PCA, so orient it deterministically --
+## otherwise a module can flip between runs and reverse every downstream
+## correlation.
+eigenmarker <- function(B.mod) {
+  X  <- scale(t(B.mod))
+  em <- prcomp(X, center = FALSE, scale. = FALSE)$x[, 1]
+  if (mean(cor(em, X)) < 0) em <- -em
+  em
+}
+ids <- sort(unique(mods))
+EM  <- sapply(ids, function(m) eigenmarker(Bk[names(mods)[mods == m], , drop = FALSE]))
+dimnames(EM) <- list(colnames(beta.hat), paste0("ME", ids))
+
+## --- 4. Environmental PCA and association -----------------------------
+W  <- env_indices(wth, interval = 3, end.day = 151,
+                  statistic.by = c(PRECTOT = "sum", ETP = "sum"))
+pc <- env_pca(W)
+assoc <- env_pc_associate(pc, EM, n.pc = 9, p.adjust = "BH")
+head(assoc)
+##  column  PC     r        p    p.adj  n
+##     ME1 PC1  0.99 1.91e-17 6.88e-16 20
+##     ME9 PC2  0.94 1.27e-09 2.29e-08 20
+##    ME12 PC2 -0.73 2.77e-04 3.33e-03 20
+
+## --- 5. Name the drivers of an associated PC (paper Fig. 6c) ----------
+k <- 1
+L <- data.frame(factor = pc$meta$factor, day = pc$meta$day,
+                loading = pc$loadings[, k])
+sort(tapply(abs(L$loading), L$factor, mean), decreasing = TRUE)[1:4]
+##  PC1 -> T2M, GDD, T2M_MIN, T2M_MAX   (temperature: module A recovered)
+##  PC2 -> PRECTOT, PETP, RH2M          (precipitation: module B recovered)
+env_loading_curve(pc, pc = k)
+
+## --- 6. Permutation null, and why it is NOT enough --------------------
+## Permuting environment labels of the eigenmarker breaks the
+## environment<->module link while preserving both structures.
+perm.max <- replicate(500, {
+  EMp <- EM[sample(nrow(EM)), , drop = FALSE]
+  rownames(EMp) <- rownames(EM)
+  max(abs(env_pc_associate(pc, EMp, n.pc = 9, verbose = FALSE)$r))
+})
+quantile(perm.max, 0.95)   # ~0.66: any |r| below this is noise-compatible
+
+## IMPORTANT NEGATIVE RESULT. In this simulation module ME12 contained no
+## enriched markers at all -- it is a clustering artefact -- yet it reached
+## r = -0.73 (FDR q = 0.003) AND passed this permutation test (p = 0.008).
+## The permutation preserves the module definitions, so it cannot detect a
+## module that was spuriously assembled in the first place. Guard against
+## this with module stability across resampled genotypes, or by requiring
+## an independent set of environments -- not with permutation alone.
+} # }
+```
