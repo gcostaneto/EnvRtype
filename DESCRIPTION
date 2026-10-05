@@ -34,7 +34,7 @@ Description: An enviromics toolkit for genotype-by-environment analysis and
     multi-environment trials and enviromes with known architecture for power
     analysis.
 License: GPL-3
-URL: https://github.com/gcostaneto/EnvRtype
+URL: https://github.com/gcostaneto/EnvRtype, https://gcostaneto.github.io/EnvRtype/
 BugReports: https://github.com/gcostaneto/EnvRtype/issues
 Encoding: UTF-8
 LazyData: true
