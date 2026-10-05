@@ -1,9 +1,19 @@
 # EnvRtype <img src="man/figures/logo.png" align="right" height="139" alt="EnvRtype logo" />
 
+<!-- badges: start -->
+[![version](https://img.shields.io/github/r-package/v/gcostaneto/EnvRtype?label=version&color=blue)](https://github.com/gcostaneto/EnvRtype)
+[![G3 paper](https://img.shields.io/badge/G3-jkab040-1f77b4)](https://academic.oup.com/g3journal/article/11/4/jkab040/6129777)
+[![DOI](https://img.shields.io/badge/DOI-10.1093%2Fg3journal%2Fjkab040-orange)](https://doi.org/10.1093/g3journal/jkab040)
+[![License: GPL-3](https://img.shields.io/badge/license-GPL--3-green.svg)](https://cran.r-project.org/web/licenses/GPL-3)
+[![pkgdown](https://img.shields.io/badge/docs-pkgdown-brightgreen)](https://gcostaneto.github.io/EnvRtype/)
+![Visitors](https://visitor-badge.laobi.icu/badge?page_id=gcostaneto.EnvRtype)
+[![GitHub stars](https://img.shields.io/github/stars/gcostaneto/EnvRtype?style=social)](https://github.com/gcostaneto/EnvRtype/stargazers)
+<!-- badges: end -->
+
 ### Envirotyping for Quantitative Genetics and Plant Breeding
 
 **EnvRtype** is an R package for **enviromics** — the study of the *envirome*, the set of
-environmental conditions linked to the biological performance of living beings (Costa-Neto and Fritsche-Neto, 2021; Crossa et al.,2021). It collects
+environmental conditions linked to the biological performance of living beings (Costa-Neto and Fritsche-Neto, 2021; Crossa et al., 2021). It collects
 worldwide daily weather and soil data, derives agro-meteorological parameters, builds
 environmental covariable matrices and relatedness kernels, mines environmental typologies,
 delineates soil zones with Gaussian mixture models, and runs a FAO-56 soil water balance for
@@ -14,6 +24,12 @@ This is a fully re-engineered successor to the original
 from a weather-typing toolbox into an end-to-end envirotyping, simulation and prediction
 framework.
 
+> 📄 **Original publication:** Costa-Neto, G., Galli, G., Carvalho, H. F., Crossa, J., &
+> Fritsche-Neto, R. (2021). *EnvRtype: a software to interplay enviromics and quantitative
+> genomics in agriculture.* **G3 Genes|Genomes|Genetics**, 11(4), jkab040.
+> [Read the paper →](https://academic.oup.com/g3journal/article/11/4/jkab040/6129777)
+
+📖 **Documentation:** <https://gcostaneto.github.io/EnvRtype/>
 ---
 
 ## Installation
@@ -417,12 +433,43 @@ grouped by module.
 
 ## Citation
 
+If you use **EnvRtype** in your research, please cite the original publication:
+
+> Costa-Neto, G., Galli, G., Carvalho, H. F., Crossa, J., & Fritsche-Neto, R. (2021).
+> *EnvRtype: a software to interplay enviromics and quantitative genomics in agriculture.*
+> **G3 Genes|Genomes|Genetics**, 11(4), jkab040.
+> <https://doi.org/10.1093/g3journal/jkab040>
+>
+> 🔗 [academic.oup.com/g3journal/article/11/4/jkab040/6129777](https://academic.oup.com/g3journal/article/11/4/jkab040/6129777)
+
+<details>
+<summary>BibTeX</summary>
+
+```bibtex
+@article{costaneto2021envrtype,
+  title   = {EnvRtype: a software to interplay enviromics and quantitative genomics in agriculture},
+  author  = {Costa-Neto, Germano and Galli, Giovanni and Carvalho, Humberto Fanelli
+             and Crossa, Jos{\'e} and Fritsche-Neto, Roberto},
+  journal = {G3 Genes|Genomes|Genetics},
+  volume  = {11},
+  number  = {4},
+  pages   = {jkab040},
+  year    = {2021},
+  doi     = {10.1093/g3journal/jkab040},
+  url     = {https://academic.oup.com/g3journal/article/11/4/jkab040/6129777}
+}
+```
+
+</details>
+
+From within R:
+
 ```r
 citation("EnvRtype")
 ```
 
-Please cite the package when using it in publications, and kindly let the maintainer know when
-you are using EnvRtype (contact **germano.cneto@gmail.com**).
+Please also kindly let the maintainer know when you are using EnvRtype
+(contact **germano.cneto@gmail.com**).
 
 ---
 
