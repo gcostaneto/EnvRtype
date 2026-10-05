@@ -1,4 +1,15 @@
 url: https://gcostaneto.github.io/EnvRtype/
+
 template:
   bootstrap: 5
 
+navbar:
+  structure:
+    left:  [intro, reference, articles, news]
+    right: [paper, search, github]
+  components:
+    paper:
+      icon: fa-file-alt
+      text: "Paper"
+      href: https://academic.oup.com/g3journal/article/11/4/jkab040/6129777
+      aria-label: "G3 paper"
