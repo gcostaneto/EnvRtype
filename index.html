@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Envirotyping for Quantitative Genetics and Plant Breeding • EnvRtype</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -13,6 +18,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Envirotyping for Quantitative Genetics and Plant Breeding">
 <meta name="description" content="An enviromics toolkit for genotype-by-environment analysis and envirotype-informed genomic prediction. Collects worldwide daily and hourly weather from NASA POWER, soil profiles from SoilGrids, elevation and bioclimatic layers from WorldClim, agro-ecological zones from FAO GAEZ, and downscaled CMIP6 climate scenarios, with checkpointed retrieval that can resume after an interrupted run. Derives agro-meteorological parameters (solar radiation, evapotranspiration, thermal time, atmospheric demand), runs a FAO-56 single crop coefficient soil water balance, and maps daily weather onto crop developmental stages. Builds environmental covariable matrices, envirotype typologies and frequency matrices, mega-environment clusters, historical risk profiles and target population of environments weights. Reduces interval-resolved envirotypes by principal component analysis, delineates soil zones with Gaussian mixture models, and constructs linear, Gaussian and arc-cosine environmental relatedness kernels. Fits Bayesian reaction-norm kernel models and predicts trained genotypes at untested locations and planting dates, with coverage diagnostics, spatial mapping and planting-window optimisation. Simulation functions generate multi-environment trials and enviromes with known architecture for power analysis.">
 <meta property="og:description" content="An enviromics toolkit for genotype-by-environment analysis and envirotype-informed genomic prediction. Collects worldwide daily and hourly weather from NASA POWER, soil profiles from SoilGrids, elevation and bioclimatic layers from WorldClim, agro-ecological zones from FAO GAEZ, and downscaled CMIP6 climate scenarios, with checkpointed retrieval that can resume after an interrupted run. Derives agro-meteorological parameters (solar radiation, evapotranspiration, thermal time, atmospheric demand), runs a FAO-56 single crop coefficient soil water balance, and maps daily weather onto crop developmental stages. Builds environmental covariable matrices, envirotype typologies and frequency matrices, mega-environment clusters, historical risk profiles and target population of environments weights. Reduces interval-resolved envirotypes by principal component analysis, delineates soil zones with Gaussian mixture models, and constructs linear, Gaussian and arc-cosine environmental relatedness kernels. Fits Bayesian reaction-norm kernel models and predicts trained genotypes at untested locations and planting dates, with coverage diagnostics, spatial mapping and planting-window optimisation. Simulation functions generate multi-environment trials and enviromes with known architecture for power analysis.">
+<meta property="og:image" content="https://gcostaneto.github.io/EnvRtype/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -47,12 +53,14 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="envrtype-">EnvRtype <img src="https://img.shields.io/badge/version-0.1.0-blue" align="right"><a class="anchor" aria-label="anchor" href="#envrtype-"></a>
-</h1></div>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="envrtype-">EnvRtype <a class="anchor" aria-label="anchor" href="#envrtype-"></a>
+</h1>
+</div>
 <div class="section level3">
 <h3 id="envirotyping-for-quantitative-genetics-and-plant-breeding">Envirotyping for Quantitative Genetics and Plant Breeding<a class="anchor" aria-label="anchor" href="#envirotyping-for-quantitative-genetics-and-plant-breeding"></a>
 </h3>
-<p><strong>EnvRtype</strong> is an R package for <strong>enviromics</strong> — the study of the <em>envirome</em>, the set of environmental conditions linked to the biological performance of living beings. It collects worldwide daily weather and soil data, derives agro-meteorological parameters, builds environmental covariable matrices and relatedness kernels, mines environmental typologies, delineates soil zones with Gaussian mixture models, and runs a FAO-56 soil water balance for use in enviromics and genotype-by-environment (GxE) analyses.</p>
+<p><strong>EnvRtype</strong> is an R package for <strong>enviromics</strong> — the study of the <em>envirome</em>, the set of environmental conditions linked to the biological performance of living beings (Costa-Neto and Fritsche-Neto, 2021; Crossa et al.,2021). It collects worldwide daily weather and soil data, derives agro-meteorological parameters, builds environmental covariable matrices and relatedness kernels, mines environmental typologies, delineates soil zones with Gaussian mixture models, and runs a FAO-56 soil water balance for use in enviromics and genotype-by-environment (GxE) analyses.</p>
 <p>This is a fully re-engineered successor to the original <a href="https://github.com/allogamous/EnvRtype" class="external-link">EnvRtype (allogamous/EnvRtype, 2021)</a>, extending it from a weather-typing toolbox into an end-to-end envirotyping, simulation and prediction framework.</p>
 <hr>
 </div>

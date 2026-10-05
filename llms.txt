@@ -1,15 +1,15 @@
-# EnvRtype ![](https://img.shields.io/badge/version-0.1.0-blue)
+# EnvRtype
 
 ### Envirotyping for Quantitative Genetics and Plant Breeding
 
 **EnvRtype** is an R package for **enviromics** — the study of the
 *envirome*, the set of environmental conditions linked to the biological
-performance of living beings. It collects worldwide daily weather and
-soil data, derives agro-meteorological parameters, builds environmental
-covariable matrices and relatedness kernels, mines environmental
-typologies, delineates soil zones with Gaussian mixture models, and runs
-a FAO-56 soil water balance for use in enviromics and
-genotype-by-environment (GxE) analyses.
+performance of living beings (Costa-Neto and Fritsche-Neto, 2021; Crossa
+et al.,2021). It collects worldwide daily weather and soil data, derives
+agro-meteorological parameters, builds environmental covariable matrices
+and relatedness kernels, mines environmental typologies, delineates soil
+zones with Gaussian mixture models, and runs a FAO-56 soil water balance
+for use in enviromics and genotype-by-environment (GxE) analyses.
 
 This is a fully re-engineered successor to the original [EnvRtype
 (allogamous/EnvRtype, 2021)](https://github.com/allogamous/EnvRtype),
