@@ -58,12 +58,21 @@
 <img src="logo.png" class="logo" alt=""><h1 id="envrtype-">EnvRtype <a class="anchor" aria-label="anchor" href="#envrtype-"></a>
 </h1>
 </div>
+<!-- badges: start -->
+
 <div class="section level3">
 <h3 id="envirotyping-for-quantitative-genetics-and-plant-breeding">Envirotyping for Quantitative Genetics and Plant Breeding<a class="anchor" aria-label="anchor" href="#envirotyping-for-quantitative-genetics-and-plant-breeding"></a>
 </h3>
-<p><strong>EnvRtype</strong> is an R package for <strong>enviromics</strong> — the study of the <em>envirome</em>, the set of environmental conditions linked to the biological performance of living beings (Costa-Neto and Fritsche-Neto, 2021; Crossa et al.,2021). It collects worldwide daily weather and soil data, derives agro-meteorological parameters, builds environmental covariable matrices and relatedness kernels, mines environmental typologies, delineates soil zones with Gaussian mixture models, and runs a FAO-56 soil water balance for use in enviromics and genotype-by-environment (GxE) analyses.</p>
+<p><strong>EnvRtype</strong> is an R package for <strong>enviromics</strong> — the study of the <em>envirome</em>, the set of environmental conditions linked to the biological performance of living beings (Costa-Neto and Fritsche-Neto, 2021; Crossa et al., 2021). It collects worldwide daily weather and soil data, derives agro-meteorological parameters, builds environmental covariable matrices and relatedness kernels, mines environmental typologies, delineates soil zones with Gaussian mixture models, and runs a FAO-56 soil water balance for use in enviromics and genotype-by-environment (GxE) analyses.</p>
 <p>This is a fully re-engineered successor to the original <a href="https://github.com/allogamous/EnvRtype" class="external-link">EnvRtype (allogamous/EnvRtype, 2021)</a>, extending it from a weather-typing toolbox into an end-to-end envirotyping, simulation and prediction framework.</p>
-<hr>
+<blockquote>
+<p>📄 <strong>Original publication:</strong> Costa-Neto, G., Galli, G., Carvalho, H. F., Crossa, J., &amp; Fritsche-Neto, R. (2021). <em>EnvRtype: a software to interplay enviromics and quantitative genomics in agriculture.</em> <strong>G3 Genes|Genomes|Genetics</strong>, 11(4), jkab040. <a href="https://academic.oup.com/g3journal/article/11/4/jkab040/6129777" class="external-link">Read the paper →</a></p>
+</blockquote>
+</div>
+<div class="section level2">
+<h2 id="open_book-documentation-httpsgcostanetogithubioenvrtype">📖 <strong>Documentation:</strong> <a href="https://gcostaneto.github.io/EnvRtype/" class="uri">https://gcostaneto.github.io/EnvRtype/</a>
+<a class="anchor" aria-label="anchor" href="#open_book-documentation-httpsgcostanetogithubioenvrtype"></a>
+</h2>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -540,9 +549,29 @@
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>If you use <strong>EnvRtype</strong> in your research, please cite the original publication:</p>
+<blockquote>
+<p>Costa-Neto, G., Galli, G., Carvalho, H. F., Crossa, J., &amp; Fritsche-Neto, R. (2021). <em>EnvRtype: a software to interplay enviromics and quantitative genomics in agriculture.</em> <strong>G3 Genes|Genomes|Genetics</strong>, 11(4), jkab040. <a href="https://doi.org/10.1093/g3journal/jkab040" class="external-link uri">https://doi.org/10.1093/g3journal/jkab040</a></p>
+<p>🔗 <a href="https://academic.oup.com/g3journal/article/11/4/jkab040/6129777" class="external-link">academic.oup.com/g3journal/article/11/4/jkab040/6129777</a></p>
+</blockquote>
+<details><summary>
+BibTeX
+</summary><div class="sourceCode" id="cb8"><pre class="sourceCode bibtex"><code class="sourceCode bibtex"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="va">@article</span>{<span class="ot">costaneto2021envrtype</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="dt">title</span>   = {EnvRtype: a software to interplay enviromics and quantitative genomics in agriculture},</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="dt">author</span>  = {Costa-Neto, Germano and Galli, Giovanni and Carvalho, Humberto Fanelli</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>             and Crossa, Jos{<span class="ch">\'</span>e} and Fritsche-Neto, Roberto},</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="dt">journal</span> = {G3 Genes|Genomes|Genetics},</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="dt">volume</span>  = {11},</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="dt">number</span>  = {4},</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  <span class="dt">pages</span>   = {jkab040},</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>  <span class="dt">year</span>    = {2021},</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>  <span class="dt">doi</span>     = {10.1093/g3journal/jkab040},</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>  <span class="dt">url</span>     = {https://academic.oup.com/g3journal/article/11/4/jkab040/6129777}</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>}</span></code></pre></div>
+</details><p>From within R:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"EnvRtype"</span><span class="op">)</span></span></code></pre></div>
-<p>Please cite the package when using it in publications, and kindly let the maintainer know when you are using EnvRtype (contact <strong><a href="mailto:germano.cneto@gmail.com" class="email">germano.cneto@gmail.com</a></strong>).</p>
+<p>Please also kindly let the maintainer know when you are using EnvRtype (contact <strong><a href="mailto:germano.cneto@gmail.com" class="email">germano.cneto@gmail.com</a></strong>).</p>
 <hr>
 </div>
 <div class="section level2">
@@ -582,7 +611,17 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/gcostaneto/EnvRtype" class="external-link"><img src="https://img.shields.io/github/r-package/v/gcostaneto/EnvRtype?label=version&amp;color=blue" alt="version"></a></li>
+<li><a href="https://academic.oup.com/g3journal/article/11/4/jkab040/6129777" class="external-link"><img src="https://img.shields.io/badge/G3-jkab040-1f77b4" alt="G3 paper"></a></li>
+<li><a href="https://doi.org/10.1093/g3journal/jkab040" class="external-link"><img src="https://img.shields.io/badge/DOI-10.1093%2Fg3journal%2Fjkab040-orange" alt="DOI"></a></li>
+<li><a href="https://cran.r-project.org/web/licenses/GPL-3" class="external-link"><img src="https://img.shields.io/badge/license-GPL--3-green.svg" alt="License: GPL-3"></a></li>
+<li><a href="https://gcostaneto.github.io/EnvRtype/"><img src="https://img.shields.io/badge/docs-pkgdown-brightgreen" alt="pkgdown"></a></li>
+<li><a href="https://github.com/gcostaneto/EnvRtype/stargazers" class="external-link"><img src="https://img.shields.io/github/stars/gcostaneto/EnvRtype?style=social" alt="GitHub stars"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>
