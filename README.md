@@ -56,14 +56,14 @@ adds several new layers:
 |------|--------------------------|-------------------------|
 | **Weather data** | `get_weather()` (NASA POWER, daily) | `get_weather()` + hourly (`get_weather_hourly()`) and **resumable / restartable** downloads (`get_weather_resumable()`, `read_progress_log()`, `restart_from_log()`) |
 | **Soil data** | — | `get_soil()`, `get_soil_resumable()`, `soil_classification()` (Gaussian-mixture soil zoning) |
-| **Other geodata** | — | `get_elevation()`, `get_bioclim()`, `get_spatial()`, `get_AEZ()`, `get_climate_scenario()` |
+| **Other geodata** | — | `get_elevation()`, `get_bioclim()`, `get_spatial()`, `get_AEZ()` (with helpers `aez_legend()`, `aez_default_url()`), `get_climate_scenario()` |
 | **Processing** | `processWTH()`, `param_temperature/radiation/atmospheric()`, `summaryWTH()` | Same, plus a full **FAO-56 water balance** (`water_balance()`, `summary_water_balance()`) and **phenology** (`env_phenology()`, `phenology_templates()`, `planting_window_table()`, `best_planting_date()`, `show_phenology()`, `plot_planting_window()`) |
 | **Characterisation** | `W_matrix()`, `env_typing()` | Adds `T_matrix()`, `env_indices()`, `env_expand()`, a full **PCA suite** (`env_pca()`, `env_pca_biplot()`, `env_pca_scree()`, `env_loading_curve()`, `env_pc_associate()`), correlation tools (`env_cor()`, `env_cor_heatmap()`) and coverage/target diagnostics (`coverage_summary()`, `env_target_importance()`) |
 | **Risk & TPE** | — | `env_risk_profile()`, `env_copula()`, `tpe_weights()`, `project_risk()`, `env_target_importance()` |
 | **Kernels** | `env_kernel()`, `get_kernel()` | Adds `decompose_kernels()`, `undecompose_kernels()`, `truncate_gxe_kernel()` and a soil kernel path in `get_kernel()` |
 | **Modelling** | `kernel_model()` | Adds `kernel_cv()`, `kernel_model_clustered()`, `kernel_model_mc()`, `varcomp_summary()`, environment clustering (`env_cluster()`, `cluster_environments()`) |
 | **Untested environments** | — | `scan_untested_envs()`, `grid_scan()`, `map_scan()`, `scan_spatial_table()` |
-| **Simulation** | — | Ground-truth simulator: `sim_met()`, `sim_met_C()`, `sim_W()`, `sim_W_grid()` to validate every layer against a known truth |
+| **Simulation** | — | Ground-truth simulator: `sim_met()`, `sim_met_C()`, `sim_W()`, `sim_W_grid()`, plus controllable-diversity data generators `sim_markers()` (genetic diversity) and `sim_envirome()` (environmental diversity), to validate every layer against a known truth |
 | **License** | MIT | GPL-3 (CRAN-ready) |
 
 ---
@@ -85,7 +85,7 @@ flowchart TB
   L2["<b>2 · PROCESS</b><br/>processWTH · summaryWTH · param_*<br/>water_balance · env_phenology"]
   L3["<b>3 · CHARACTERISE</b><br/>W_matrix · T_matrix · env_indices · env_pca<br/>soil_classification · env_typing · env_risk_profile"]
   L4["<b>4 · MODEL &amp; SCAN</b><br/>env_kernel · get_kernel · kernel_model<br/>kernel_cv · scan_untested_envs · map_scan"]
-  SIM["<b>SIMULATE</b><br/>sim_met() → C_env → sim_W()<br/><i>ground truth for every layer</i>"]
+  SIM["<b>SIMULATE</b><br/>sim_markers · sim_envirome<br/>sim_met() → C_env → sim_W()<br/><i>ground truth for every layer</i>"]
 
   L1 --> L2 --> L3 --> L4
   SIM -.->|"validates"| L3
@@ -290,11 +290,16 @@ flowchart TB
 
 *The simulator encodes a known environmental covariance and reaction-norm structure to benchmark
 every layer, following the envirome-wide prediction framework of Costa-Neto et al. (2023, G3) and
-the kernel models of Costa-Neto et al. (2021, G3).*
+the kernel models of Costa-Neto et al. (2021, G3). `sim_markers()` and `sim_envirome()` additionally
+generate marker and envirome data with controllable genetic and environmental diversity (MAF
+spectrum, population structure, linkage; mega-environments, gradients and covariable redundancy),
+feeding `sim_met()` and `get_kernel()` directly.*
 
 ```mermaid
 flowchart LR
+  SMK["sim_markers()<br/><i>genetic diversity</i>"]
   K["genomic kinship K<br/><i>n × n lines</i>"]
+  SEV["sim_envirome()<br/><i>environmental diversity</i>"]
   SMC["sim_met_C()<br/><i>q × q envs</i>"]
   SM["sim_met()"]
   CE["$C_env<br/><i>q × q correlation<br/>among environments</i>"]
@@ -307,7 +312,11 @@ flowchart LR
   VCS["varcomp_summary()"]
   CHK{{"compare to<br/>known truth"}}
 
+  SMK --> K
   K --> SM
+  K --> GK
+  SEV --> SM
+  SEV --> GK
   SMC --> SM
   SM --> CE
   SM --> PH
@@ -325,7 +334,7 @@ flowchart LR
   classDef pred fill:#c62828,stroke:#b71c1c,color:#fff
   classDef data fill:#455a64,stroke:#263238,color:#fff
   classDef chk fill:#f9a825,stroke:#f57f17,color:#000
-  class SM,SW,SWG,SMC sim
+  class SM,SW,SWG,SMC,SMK,SEV sim
   class GK,KM,VCS pred
   class K,CE,PH,W data
   class CHK chk
