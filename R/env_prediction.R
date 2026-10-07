@@ -8,7 +8,7 @@
 ## This file is a CONCATENATION of five tested source files. The code is
 ## byte-identical to the versions that passed testing; only section banners
 ## have been inserted. Nothing was re-typed.
-##
+## # Organized by F. Pontes
 ## ----------------------------------------------------------------------------
 ## TYPICAL WORKFLOW
 ## ----------------------------------------------------------------------------
