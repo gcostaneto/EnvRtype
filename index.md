@@ -52,14 +52,14 @@ adds several new layers:
 |----|----|----|
 | **Weather data** | [`get_weather()`](https://gcostaneto.github.io/EnvRtype/reference/get_weather.md) (NASA POWER, daily) | [`get_weather()`](https://gcostaneto.github.io/EnvRtype/reference/get_weather.md) + hourly ([`get_weather_hourly()`](https://gcostaneto.github.io/EnvRtype/reference/get_weather_hourly.md)) and **resumable / restartable** downloads ([`get_weather_resumable()`](https://gcostaneto.github.io/EnvRtype/reference/get_weather_resumable.md), [`read_progress_log()`](https://gcostaneto.github.io/EnvRtype/reference/read_progress_log.md), [`restart_from_log()`](https://gcostaneto.github.io/EnvRtype/reference/restart_from_log.md)) |
 | **Soil data** | — | [`get_soil()`](https://gcostaneto.github.io/EnvRtype/reference/get_soil.md), [`get_soil_resumable()`](https://gcostaneto.github.io/EnvRtype/reference/get_soil_resumable.md), [`soil_classification()`](https://gcostaneto.github.io/EnvRtype/reference/soil_classification.md) (Gaussian-mixture soil zoning) |
-| **Other geodata** | — | [`get_elevation()`](https://gcostaneto.github.io/EnvRtype/reference/get_elevation.md), [`get_bioclim()`](https://gcostaneto.github.io/EnvRtype/reference/get_bioclim.md), [`get_spatial()`](https://gcostaneto.github.io/EnvRtype/reference/get_spatial.md), [`get_AEZ()`](https://gcostaneto.github.io/EnvRtype/reference/get_AEZ.md), [`get_climate_scenario()`](https://gcostaneto.github.io/EnvRtype/reference/get_climate_scenario.md) |
+| **Other geodata** | — | [`get_elevation()`](https://gcostaneto.github.io/EnvRtype/reference/get_elevation.md), [`get_bioclim()`](https://gcostaneto.github.io/EnvRtype/reference/get_bioclim.md), [`get_spatial()`](https://gcostaneto.github.io/EnvRtype/reference/get_spatial.md), [`get_AEZ()`](https://gcostaneto.github.io/EnvRtype/reference/get_AEZ.md) (with helpers [`aez_legend()`](https://gcostaneto.github.io/EnvRtype/reference/aez_legend.md), [`aez_default_url()`](https://gcostaneto.github.io/EnvRtype/reference/aez_default_url.md)), [`get_climate_scenario()`](https://gcostaneto.github.io/EnvRtype/reference/get_climate_scenario.md) |
 | **Processing** | [`processWTH()`](https://gcostaneto.github.io/EnvRtype/reference/processWTH.md), `param_temperature/radiation/atmospheric()`, [`summaryWTH()`](https://gcostaneto.github.io/EnvRtype/reference/summaryWTH.md) | Same, plus a full **FAO-56 water balance** ([`water_balance()`](https://gcostaneto.github.io/EnvRtype/reference/water_balance.md), [`summary_water_balance()`](https://gcostaneto.github.io/EnvRtype/reference/summary_water_balance.md)) and **phenology** ([`env_phenology()`](https://gcostaneto.github.io/EnvRtype/reference/env_phenology.md), [`phenology_templates()`](https://gcostaneto.github.io/EnvRtype/reference/phenology_templates.md), [`planting_window_table()`](https://gcostaneto.github.io/EnvRtype/reference/planting_window_table.md), [`best_planting_date()`](https://gcostaneto.github.io/EnvRtype/reference/best_planting_date.md), [`show_phenology()`](https://gcostaneto.github.io/EnvRtype/reference/phenology_templates.md), [`plot_planting_window()`](https://gcostaneto.github.io/EnvRtype/reference/plot_planting_window.md)) |
 | **Characterisation** | [`W_matrix()`](https://gcostaneto.github.io/EnvRtype/reference/W_matrix.md), [`env_typing()`](https://gcostaneto.github.io/EnvRtype/reference/env_typing.md) | Adds [`T_matrix()`](https://gcostaneto.github.io/EnvRtype/reference/T_matrix.md), [`env_indices()`](https://gcostaneto.github.io/EnvRtype/reference/env_indices.md), [`env_expand()`](https://gcostaneto.github.io/EnvRtype/reference/env_expand.md), a full **PCA suite** ([`env_pca()`](https://gcostaneto.github.io/EnvRtype/reference/env_pca.md), [`env_pca_biplot()`](https://gcostaneto.github.io/EnvRtype/reference/env_pca_biplot.md), [`env_pca_scree()`](https://gcostaneto.github.io/EnvRtype/reference/env_pca_scree.md), [`env_loading_curve()`](https://gcostaneto.github.io/EnvRtype/reference/env_loading_curve.md), [`env_pc_associate()`](https://gcostaneto.github.io/EnvRtype/reference/env_pc_associate.md)), correlation tools ([`env_cor()`](https://gcostaneto.github.io/EnvRtype/reference/env_cor.md), [`env_cor_heatmap()`](https://gcostaneto.github.io/EnvRtype/reference/env_cor_heatmap.md)) and coverage/target diagnostics ([`coverage_summary()`](https://gcostaneto.github.io/EnvRtype/reference/coverage_summary.md), [`env_target_importance()`](https://gcostaneto.github.io/EnvRtype/reference/env_target_importance.md)) |
 | **Risk & TPE** | — | [`env_risk_profile()`](https://gcostaneto.github.io/EnvRtype/reference/env_risk_profile.md), [`env_copula()`](https://gcostaneto.github.io/EnvRtype/reference/env_copula.md), [`tpe_weights()`](https://gcostaneto.github.io/EnvRtype/reference/tpe_weights.md), [`project_risk()`](https://gcostaneto.github.io/EnvRtype/reference/project_risk.md), [`env_target_importance()`](https://gcostaneto.github.io/EnvRtype/reference/env_target_importance.md) |
 | **Kernels** | [`env_kernel()`](https://gcostaneto.github.io/EnvRtype/reference/env_kernel.md), [`get_kernel()`](https://gcostaneto.github.io/EnvRtype/reference/get_kernel.md) | Adds [`decompose_kernels()`](https://gcostaneto.github.io/EnvRtype/reference/decompose_kernels.md), [`undecompose_kernels()`](https://gcostaneto.github.io/EnvRtype/reference/undecompose_kernels.md), [`truncate_gxe_kernel()`](https://gcostaneto.github.io/EnvRtype/reference/truncate_gxe_kernel.md) and a soil kernel path in [`get_kernel()`](https://gcostaneto.github.io/EnvRtype/reference/get_kernel.md) |
 | **Modelling** | [`kernel_model()`](https://gcostaneto.github.io/EnvRtype/reference/kernel_model.md) | Adds [`kernel_cv()`](https://gcostaneto.github.io/EnvRtype/reference/kernel_cv.md), [`kernel_model_clustered()`](https://gcostaneto.github.io/EnvRtype/reference/kernel_model_clustered.md), [`kernel_model_mc()`](https://gcostaneto.github.io/EnvRtype/reference/kernel_model_mc.md), [`varcomp_summary()`](https://gcostaneto.github.io/EnvRtype/reference/varcomp_summary.md), environment clustering ([`env_cluster()`](https://gcostaneto.github.io/EnvRtype/reference/env_cluster.md), [`cluster_environments()`](https://gcostaneto.github.io/EnvRtype/reference/cluster_environments.md)) |
 | **Untested environments** | — | [`scan_untested_envs()`](https://gcostaneto.github.io/EnvRtype/reference/scan_untested_envs.md), [`grid_scan()`](https://gcostaneto.github.io/EnvRtype/reference/grid_scan.md), [`map_scan()`](https://gcostaneto.github.io/EnvRtype/reference/map_scan.md), [`scan_spatial_table()`](https://gcostaneto.github.io/EnvRtype/reference/scan_spatial_table.md) |
-| **Simulation** | — | Ground-truth simulator: [`sim_met()`](https://gcostaneto.github.io/EnvRtype/reference/sim_met.md), [`sim_met_C()`](https://gcostaneto.github.io/EnvRtype/reference/sim_met_C.md), [`sim_W()`](https://gcostaneto.github.io/EnvRtype/reference/sim_W.md), [`sim_W_grid()`](https://gcostaneto.github.io/EnvRtype/reference/sim_W_grid.md) to validate every layer against a known truth |
+| **Simulation** | — | Ground-truth simulator: [`sim_met()`](https://gcostaneto.github.io/EnvRtype/reference/sim_met.md), [`sim_met_C()`](https://gcostaneto.github.io/EnvRtype/reference/sim_met_C.md), [`sim_W()`](https://gcostaneto.github.io/EnvRtype/reference/sim_W.md), [`sim_W_grid()`](https://gcostaneto.github.io/EnvRtype/reference/sim_W_grid.md), plus controllable-diversity data generators [`sim_markers()`](https://gcostaneto.github.io/EnvRtype/reference/sim_markers.md) (genetic diversity) and [`sim_envirome()`](https://gcostaneto.github.io/EnvRtype/reference/sim_envirome.md) (environmental diversity), to validate every layer against a known truth |
 | **License** | MIT | GPL-3 (CRAN-ready) |
 
 ------------------------------------------------------------------------
@@ -84,7 +84,7 @@ flowchart TB
   L2["<b>2 · PROCESS</b><br/>processWTH · summaryWTH · param_*<br/>water_balance · env_phenology"]
   L3["<b>3 · CHARACTERISE</b><br/>W_matrix · T_matrix · env_indices · env_pca<br/>soil_classification · env_typing · env_risk_profile"]
   L4["<b>4 · MODEL &amp; SCAN</b><br/>env_kernel · get_kernel · kernel_model<br/>kernel_cv · scan_untested_envs · map_scan"]
-  SIM["<b>SIMULATE</b><br/>sim_met() → C_env → sim_W()<br/><i>ground truth for every layer</i>"]
+  SIM["<b>SIMULATE</b><br/>sim_markers · sim_envirome<br/>sim_met() → C_env → sim_W()<br/><i>ground truth for every layer</i>"]
 
   L1 --> L2 --> L3 --> L4
   SIM -.->|"validates"| L3
@@ -295,11 +295,24 @@ flowchart TB
 *The simulator encodes a known environmental covariance and
 reaction-norm structure to benchmark every layer, following the
 envirome-wide prediction framework of Costa-Neto et al. (2023, G3) and
-the kernel models of Costa-Neto et al. (2021, G3).*
+the kernel models of Costa-Neto et al. (2021, G3).
+[`sim_markers()`](https://gcostaneto.github.io/EnvRtype/reference/sim_markers.md)
+and
+[`sim_envirome()`](https://gcostaneto.github.io/EnvRtype/reference/sim_envirome.md)
+additionally generate marker and envirome data with controllable genetic
+and environmental diversity (MAF spectrum, population structure,
+linkage; mega-environments, gradients and covariable redundancy),
+feeding
+[`sim_met()`](https://gcostaneto.github.io/EnvRtype/reference/sim_met.md)
+and
+[`get_kernel()`](https://gcostaneto.github.io/EnvRtype/reference/get_kernel.md)
+directly.*
 
 ``` mermaid
 flowchart LR
+  SMK["sim_markers()<br/><i>genetic diversity</i>"]
   K["genomic kinship K<br/><i>n × n lines</i>"]
+  SEV["sim_envirome()<br/><i>environmental diversity</i>"]
   SMC["sim_met_C()<br/><i>q × q envs</i>"]
   SM["sim_met()"]
   CE["$C_env<br/><i>q × q correlation<br/>among environments</i>"]
@@ -312,7 +325,11 @@ flowchart LR
   VCS["varcomp_summary()"]
   CHK{{"compare to<br/>known truth"}}
 
+  SMK --> K
   K --> SM
+  K --> GK
+  SEV --> SM
+  SEV --> GK
   SMC --> SM
   SM --> CE
   SM --> PH
@@ -330,7 +347,7 @@ flowchart LR
   classDef pred fill:#c62828,stroke:#b71c1c,color:#fff
   classDef data fill:#455a64,stroke:#263238,color:#fff
   classDef chk fill:#f9a825,stroke:#f57f17,color:#000
-  class SM,SW,SWG,SMC sim
+  class SM,SW,SWG,SMC,SMK,SEV sim
   class GK,KM,VCS pred
   class K,CE,PH,W data
   class CHK chk

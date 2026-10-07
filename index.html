@@ -117,7 +117,7 @@
 <td><strong>Other geodata</strong></td>
 <td>—</td>
 <td>
-<code><a href="reference/get_elevation.html">get_elevation()</a></code>, <code><a href="reference/get_bioclim.html">get_bioclim()</a></code>, <code><a href="reference/get_spatial.html">get_spatial()</a></code>, <code><a href="reference/get_AEZ.html">get_AEZ()</a></code>, <code><a href="reference/get_climate_scenario.html">get_climate_scenario()</a></code>
+<code><a href="reference/get_elevation.html">get_elevation()</a></code>, <code><a href="reference/get_bioclim.html">get_bioclim()</a></code>, <code><a href="reference/get_spatial.html">get_spatial()</a></code>, <code><a href="reference/get_AEZ.html">get_AEZ()</a></code> (with helpers <code><a href="reference/aez_legend.html">aez_legend()</a></code>, <code><a href="reference/aez_default_url.html">aez_default_url()</a></code>), <code><a href="reference/get_climate_scenario.html">get_climate_scenario()</a></code>
 </td>
 </tr>
 <tr>
@@ -164,7 +164,7 @@
 <tr>
 <td><strong>Simulation</strong></td>
 <td>—</td>
-<td>Ground-truth simulator: <code><a href="reference/sim_met.html">sim_met()</a></code>, <code><a href="reference/sim_met_C.html">sim_met_C()</a></code>, <code><a href="reference/sim_W.html">sim_W()</a></code>, <code><a href="reference/sim_W_grid.html">sim_W_grid()</a></code> to validate every layer against a known truth</td>
+<td>Ground-truth simulator: <code><a href="reference/sim_met.html">sim_met()</a></code>, <code><a href="reference/sim_met_C.html">sim_met_C()</a></code>, <code><a href="reference/sim_W.html">sim_W()</a></code>, <code><a href="reference/sim_W_grid.html">sim_W_grid()</a></code>, plus controllable-diversity data generators <code><a href="reference/sim_markers.html">sim_markers()</a></code> (genetic diversity) and <code><a href="reference/sim_envirome.html">sim_envirome()</a></code> (environmental diversity), to validate every layer against a known truth</td>
 </tr>
 <tr>
 <td><strong>License</strong></td>
@@ -188,7 +188,7 @@
   L2["&lt;b&gt;2 · PROCESS&lt;/b&gt;&lt;br/&gt;processWTH · summaryWTH · param_*&lt;br/&gt;water_balance · env_phenology"]
   L3["&lt;b&gt;3 · CHARACTERISE&lt;/b&gt;&lt;br/&gt;W_matrix · T_matrix · env_indices · env_pca&lt;br/&gt;soil_classification · env_typing · env_risk_profile"]
   L4["&lt;b&gt;4 · MODEL &amp;amp; SCAN&lt;/b&gt;&lt;br/&gt;env_kernel · get_kernel · kernel_model&lt;br/&gt;kernel_cv · scan_untested_envs · map_scan"]
-  SIM["&lt;b&gt;SIMULATE&lt;/b&gt;&lt;br/&gt;sim_met() → C_env → sim_W()&lt;br/&gt;&lt;i&gt;ground truth for every layer&lt;/i&gt;"]
+  SIM["&lt;b&gt;SIMULATE&lt;/b&gt;&lt;br/&gt;sim_markers · sim_envirome&lt;br/&gt;sim_met() → C_env → sim_W()&lt;br/&gt;&lt;i&gt;ground truth for every layer&lt;/i&gt;"]
 
   L1 --&gt; L2 --&gt; L3 --&gt; L4
   SIM -.-&gt;|"validates"| L3
@@ -372,9 +372,11 @@
 <div class="section level3">
 <h3 id="simulation--closing-the-validation-loop">Simulation — closing the validation loop<a class="anchor" aria-label="anchor" href="#simulation--closing-the-validation-loop"></a>
 </h3>
-<p><em>The simulator encodes a known environmental covariance and reaction-norm structure to benchmark every layer, following the envirome-wide prediction framework of Costa-Neto et al. (2023, G3) and the kernel models of Costa-Neto et al. (2021, G3).</em></p>
+<p><em>The simulator encodes a known environmental covariance and reaction-norm structure to benchmark every layer, following the envirome-wide prediction framework of Costa-Neto et al. (2023, G3) and the kernel models of Costa-Neto et al. (2021, G3). <code><a href="reference/sim_markers.html">sim_markers()</a></code> and <code><a href="reference/sim_envirome.html">sim_envirome()</a></code> additionally generate marker and envirome data with controllable genetic and environmental diversity (MAF spectrum, population structure, linkage; mega-environments, gradients and covariable redundancy), feeding <code><a href="reference/sim_met.html">sim_met()</a></code> and <code><a href="reference/get_kernel.html">get_kernel()</a></code> directly.</em></p>
 <pre class="mermaid"><code>flowchart LR
+  SMK["sim_markers()&lt;br/&gt;&lt;i&gt;genetic diversity&lt;/i&gt;"]
   K["genomic kinship K&lt;br/&gt;&lt;i&gt;n × n lines&lt;/i&gt;"]
+  SEV["sim_envirome()&lt;br/&gt;&lt;i&gt;environmental diversity&lt;/i&gt;"]
   SMC["sim_met_C()&lt;br/&gt;&lt;i&gt;q × q envs&lt;/i&gt;"]
   SM["sim_met()"]
   CE["$C_env&lt;br/&gt;&lt;i&gt;q × q correlation&lt;br/&gt;among environments&lt;/i&gt;"]
@@ -387,7 +389,11 @@
   VCS["varcomp_summary()"]
   CHK{{"compare to&lt;br/&gt;known truth"}}
 
+  SMK --&gt; K
   K --&gt; SM
+  K --&gt; GK
+  SEV --&gt; SM
+  SEV --&gt; GK
   SMC --&gt; SM
   SM --&gt; CE
   SM --&gt; PH
@@ -405,7 +411,7 @@
   classDef pred fill:#c62828,stroke:#b71c1c,color:#fff
   classDef data fill:#455a64,stroke:#263238,color:#fff
   classDef chk fill:#f9a825,stroke:#f57f17,color:#000
-  class SM,SW,SWG,SMC sim
+  class SM,SW,SWG,SMC,SMK,SEV sim
   class GK,KM,VCS pred
   class K,CE,PH,W data
   class CHK chk</code></pre>
