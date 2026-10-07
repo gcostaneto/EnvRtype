@@ -61,6 +61,12 @@ would it recover? Pairs with <code><a href="sim_met.html">sim_met</a></code>.</p
 <span>  collinearity <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  n_blocks <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  calibrate <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cal.nrep <span class="op">=</span> <span class="fl">15L</span>,</span>
+<span>  marginal <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gaussian"</span>, <span class="st">"right-skewed"</span>, <span class="st">"heavy-tailed"</span>, <span class="st">"bounded"</span><span class="op">)</span>,</span>
+<span>  kernel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"linear"</span>, <span class="st">"rbf"</span><span class="op">)</span>,</span>
+<span>  bandwidth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  na.frac <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  family.sizes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  var_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  env_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -89,7 +95,8 @@ off-diagonal correlation between the simulated kernel and <code>C_env</code> is
 
 
 <dt id="arg-collinearity">collinearity<a class="anchor" aria-label="anchor" href="#arg-collinearity"></a></dt>
-<dd><p>numeric in [0, 1). Share of columns collapsed onto drivers.</p></dd>
+<dd><p>numeric in [0, 1). Share of columns collapsed onto drivers
+(also the within-family strength when <code>family.sizes</code> is used).</p></dd>
 
 
 <dt id="arg-n-blocks">n_blocks<a class="anchor" aria-label="anchor" href="#arg-n-blocks"></a></dt>
@@ -101,12 +108,43 @@ off-diagonal correlation between the simulated kernel and <code>C_env</code> is
 numerically so <code>noise</code> is on the outcome scale. Default <code>TRUE</code>.</p></dd>
 
 
+<dt id="arg-cal-nrep">cal.nrep<a class="anchor" aria-label="anchor" href="#arg-cal-nrep"></a></dt>
+<dd><p>integer. Monte-Carlo replicates used during calibration.</p></dd>
+
+
+<dt id="arg-marginal">marginal<a class="anchor" aria-label="anchor" href="#arg-marginal"></a></dt>
+<dd><p>character. Marginal distribution of the covariables:
+<code>"gaussian"</code> (default), <code>"right-skewed"</code>, <code>"heavy-tailed"</code>
+or <code>"bounded"</code>. Applied rank-preserving, so recovery is barely changed.</p></dd>
+
+
+<dt id="arg-kernel">kernel<a class="anchor" aria-label="anchor" href="#arg-kernel"></a></dt>
+<dd><p>character. Environmental kernel: <code>"linear"</code> (default,
+\(WW^\top\)) or <code>"rbf"</code> (Gaussian).</p></dd>
+
+
+<dt id="arg-bandwidth">bandwidth<a class="anchor" aria-label="anchor" href="#arg-bandwidth"></a></dt>
+<dd><p>numeric or <code>NULL</code>. RBF bandwidth; <code>NULL</code> uses the
+median heuristic.</p></dd>
+
+
+<dt id="arg-na-frac">na.frac<a class="anchor" aria-label="anchor" href="#arg-na-frac"></a></dt>
+<dd><p>numeric in [0, 1). Fraction of entries set to <code>NA</code> in the
+returned \(W\) (truth is computed on the complete matrix first).</p></dd>
+
+
+<dt id="arg-family-sizes">family.sizes<a class="anchor" aria-label="anchor" href="#arg-family-sizes"></a></dt>
+<dd><p>integer vector (optionally named). Column counts per
+covariable family; must sum to <code>n_var</code>. Overrides <code>n_blocks</code>
+redundancy and names the columns by family.</p></dd>
+
+
 <dt id="arg-var-names-env-names">var_names, env_names<a class="anchor" aria-label="anchor" href="#arg-var-names-env-names"></a></dt>
 <dd><p>character. Optional names for columns / rows.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
-<dd><p>integer. RNG seed.</p></dd>
+<dd><p>integer. RNG seed. The caller's RNG stream is restored on exit.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -118,8 +156,9 @@ numerically so <code>noise</code> is on the outcome scale. Default <code>TRUE</c
     <p>A \(q \times n_{var}\) matrix of class <code>"sim_W"</code>. Attributes:
 <code>"C_env"</code> (the target), <code>"K_W"</code> (the realised kernel) and
 <code>"explained"</code> (a list with <code>r</code>, <code>r2</code>, per-PC variance shares,
-effective rank <code>eff_rank</code>, the internal share <code>a_internal</code>, and the
-requested/target values).</p>
+effective rank <code>eff_rank</code>, the internal share <code>a_internal</code>, the
+<code>marginal</code>/<code>kernel</code>/<code>na.frac</code> used, and the requested/target
+values).</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -141,6 +180,13 @@ collapsed onto <code>n_blocks</code> driver families, mimicking the redundancy o
 real enviromes and lowering the effective rank.</p>
 <p><strong><code>C_env</code> is an environment correlation, not a kinship.</strong> It must be
 \(q\times q\) with unit diagonal. Passing a genomic kinship is rejected.</p>
+<p><strong>Realism knobs.</strong> <code>marginal</code> maps each covariable to a non-Gaussian
+shape (rank-preserving), <code>kernel = "rbf"</code> builds a Gaussian instead of a
+linear kernel, <code>family.sizes</code> groups columns into named covariable
+families (as in real enviromes), and <code>na.frac</code> injects missing values
+into the returned \(W\) <em>after</em> the truth is computed, so downstream
+cleaning (e.g. <code><a href="W_matrix.html">W_matrix</a></code> imputation) can be tested against a known
+answer.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -158,12 +204,42 @@ multi-environment prediction. <em>G3</em> 13(2), jkac313.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">C</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_met_C.html">sim_met_C</a></span><span class="op">(</span>q <span class="op">=</span> <span class="fl">10</span>, min.cor <span class="op">=</span> <span class="fl">0.2</span>, max.cor <span class="op">=</span> <span class="fl">0.8</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## An envirome that recovers ~70% of C</span></span></span>
+<span class="r-in"><span><span class="co">## 1. An envirome that recovers ~70% of C (noise is on the outcome scale)</span></span></span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">W</span>, <span class="st">"explained"</span><span class="op">)</span><span class="op">$</span><span class="va">r</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Redundant envirome: many collinear columns, low effective rank</span></span></span>
-<span class="r-in"><span><span class="va">W2</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">200</span>, collinearity <span class="op">=</span> <span class="fl">0.8</span>, n_blocks <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## 2. Perfect vs pure-noise enviromes</span></span></span>
+<span class="r-in"><span><span class="va">W_good</span>  <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.0</span>, n_var <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">W_noise</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">1.0</span>, n_var <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 3. Redundant envirome: many collinear columns, low effective rank</span></span></span>
+<span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">200</span>, collinearity <span class="op">=</span> <span class="fl">0.8</span>, n_blocks <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 4. Non-Gaussian covariables (rank-preserving marginal transform)</span></span></span>
+<span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">60</span>, marginal <span class="op">=</span> <span class="st">"right-skewed"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">60</span>, marginal <span class="op">=</span> <span class="st">"heavy-tailed"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">60</span>, marginal <span class="op">=</span> <span class="st">"bounded"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 5. Gaussian RBF kernel instead of the linear WW'</span></span></span>
+<span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">60</span>, kernel <span class="op">=</span> <span class="st">"rbf"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">60</span>, kernel <span class="op">=</span> <span class="st">"rbf"</span>, bandwidth <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 6. Inject missing values AFTER the truth is computed</span></span></span>
+<span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">60</span>, na.frac <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">W</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 7. Named covariable families (sizes must sum to n_var)</span></span></span>
+<span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, n_var <span class="op">=</span> <span class="fl">12</span>, family.sizes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>temp <span class="op">=</span> <span class="fl">4</span>, rain <span class="op">=</span> <span class="fl">5</span>, rad <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">W</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 8. Custom names and a faster/looser calibration</span></span></span>
+<span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.4</span>, n_var <span class="op">=</span> <span class="fl">30</span>, cal.nrep <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>           env_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Loc"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>           var_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"bio"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">30</span><span class="op">)</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 9. Raw (uncalibrated) internal variance share</span></span></span>
+<span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.5</span>, n_var <span class="op">=</span> <span class="fl">50</span>, calibrate <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">W</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

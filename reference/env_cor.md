@@ -17,7 +17,13 @@ env_cor(x, type = c("target", "realised"), ...)
 # S3 method for class 'matrix'
 env_cor(x, type = c("target", "realised"), ...)
 
+# S3 method for class 'sim_W'
+env_cor(x, type = c("target", "realised"), ...)
+
 # Default S3 method
+env_cor(x, type = c("target", "realised"), ...)
+
+# S3 method for class 'sim_envirome'
 env_cor(x, type = c("target", "realised"), ...)
 ```
 

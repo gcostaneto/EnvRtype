@@ -67,7 +67,11 @@ the basic input of the reaction-norm and enviromic-assisted models in
 <span>  statistic <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tol <span class="op">=</span> <span class="fl">0.001</span>,</span>
 <span>  QC <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  impute <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"mean"</span>, <span class="st">"drop"</span><span class="op">)</span>,</span>
+<span>  impute <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"mean"</span>, <span class="st">"median"</span>, <span class="st">"knn"</span>, <span class="st">"drop"</span><span class="op">)</span>,</span>
+<span>  knn <span class="op">=</span> <span class="fl">5L</span>,</span>
+<span>  max.cor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  group <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  cor.report <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  copula <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  copula.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -147,7 +151,44 @@ with <code>sd(x) &gt; sd.tol</code> and near-constant variables.</p></dd>
 
 <dt id="arg-impute">impute<a class="anchor" aria-label="anchor" href="#arg-impute"></a></dt>
 <dd><p>character. How to handle missing values before scaling: <code>"none"</code>
-(default, keep NAs), <code>"mean"</code> (column mean) or <code>"drop"</code> (remove columns with any NA).</p></dd>
+(default, keep NAs), <code>"mean"</code> (column mean), <code>"median"</code> (column median),
+<code>"knn"</code> (k-nearest-environment imputation, see <code>knn</code>) or <code>"drop"</code>
+(remove columns with any NA).</p></dd>
+
+
+<dt id="arg-knn">knn<a class="anchor" aria-label="anchor" href="#arg-knn"></a></dt>
+<dd><p>integer. Number of nearest environments used when <code>impute = "knn"</code>.
+Each missing cell is filled with the mean of that covariable over the <code>knn</code>
+most similar environments (Euclidean distance on the standardised, commonly observed
+covariables). Default 5.</p></dd>
+
+
+<dt id="arg-max-cor">max.cor<a class="anchor" aria-label="anchor" href="#arg-max-cor"></a></dt>
+<dd><p>numeric in \((0,1]\) or <code>NULL</code>. If not <code>NULL</code>, a greedy
+collinearity filter (same rule as <code>caret::findCorrelation</code>) drops covariables so
+that no pair of retained covariables has absolute Pearson correlation above
+<code>max.cor</code>. When two covariables are too correlated the one with the larger mean
+absolute correlation to the rest is removed. Unlike the <code>sd</code>-based rules this is an
+explicit opt-in and the collinear covariables are always dropped (independently of
+<code>QC</code>). Default <code>NULL</code> (no collinearity filtering).</p></dd>
+
+
+<dt id="arg-group">group<a class="anchor" aria-label="anchor" href="#arg-group"></a></dt>
+<dd><p>boolean. Only used when <code>max.cor</code> is not <code>NULL</code>. If <code>TRUE</code>,
+collinear covariables are <em>grouped</em> instead of dropped: covariables are clustered by
+average-linkage hierarchical clustering on \(1 - |r|\), the tree is cut at height
+\(1 - \)<code>max.cor</code>, and each correlated block is replaced by its mean (a single
+composite covariable). The block-to-member mapping is returned in the <code>"groups"</code>
+attribute. Default <code>FALSE</code> (collinear covariables are dropped).</p></dd>
+
+
+<dt id="arg-cor-report">cor.report<a class="anchor" aria-label="anchor" href="#arg-cor-report"></a></dt>
+<dd><p><code>NULL</code>, <code>TRUE</code>, or a character path. If not <code>NULL</code>, a
+per-covariable collinearity diagnosis (its largest absolute correlation, the partner
+responsible, the final status, and the block it belongs to) is written as a CSV. Pass
+<code>TRUE</code> to write <code>"W_matrix_collinearity.csv"</code> in the current working directory,
+a directory to write that file there, or a full file path. Default <code>NULL</code>
+(no file written). The same table is always attached as the <code>"collinearity"</code> attribute.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -171,13 +212,25 @@ or <code>"all"</code>. See <code>env_copula</code> for the meaning of each index
     <p>An environmental covariable realized matrix with dimensions \(q \times k\).
 The centring and scaling values, plus the list of removed markers, are attached as
 attributes (<code>"scaled:center"</code>, <code>"scaled:scale"</code>, <code>"removed"</code>) so that new
-environments can be projected onto the same space.</p>
+environments can be projected onto the same space. When quality control or collinearity
+filtering drop covariables, the reason for each removal is reported in the
+<code>"removed.reason"</code> attribute (a named character vector with values
+<code>"too.variable"</code>, <code>"near.constant"</code> or <code>"collinear"</code>). The full
+collinearity diagnosis is attached as the <code>"collinearity"</code> data.frame attribute, and
+when <code>group = TRUE</code> the block-to-member mapping is attached as <code>"groups"</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Quality control follows Morais Junior et al. (2018): covariables whose standard deviation
 across environments exceeds <code>sd.tol</code> are discarded, as are near-constant covariables
 (\(sd \le tol\)) which carry no information about environmental differences.</p>
+<p>Three further, independent cleaning steps are available. Missing values can be imputed
+column-wise (<code>impute = "mean"</code>/<code>"median"</code>) or from the most similar environments
+(<code>impute = "knn"</code>) before any statistic is computed, which avoids silently shrinking
+the covariable set the way <code>impute = "drop"</code> does. Redundant covariables can be pruned
+with <code>max.cor</code>: enviromic matrices frequently contain near-duplicated columns (e.g.
+several temperature summaries), which inflate Euclidean geometry and relatedness kernels;
+the greedy filter keeps one representative per correlated block.</p>
 <p>Unlike earlier versions, the numerical tolerance is <em>not</em> added to the data before
 scaling (which silently shifted unscaled outputs); it is used only to detect
 near-constant columns.</p>
@@ -250,6 +303,65 @@ EnvRtype: a software to interplay enviromics and quantitative genomics in agricu
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ------------------------------------------------</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">W</span>, <span class="st">"removed"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ALLSKY_TOA_SW_DWN_mean" "RH2M_mean"             </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Dropping redundant (collinear) covariables and imputing missing cells</span></span></span>
+<span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">W_matrix</span><span class="op">(</span>env.data <span class="op">=</span> <span class="va">env.data</span>, impute <span class="op">=</span> <span class="st">"knn"</span>, max.cor <span class="op">=</span> <span class="fl">0.95</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> W_matrix -- builds the environmental covariable (W) matrix</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - summarising weather data into environmental covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - centring, scaling and quality-controlling W</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Quality Control (sd.tol = 10, max.cor = 0.95)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Removed variables: 9 from 21</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   collinear (|r| &gt; max.cor): GDD_mean, T2M_mean, FRUE_mean, RTA_mean, ETP_mean, T2M_MIN_mean, SPV_mean, T2MDEW_mean, ALLSKY_SFC_SW_DWN_mean</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ------------------------------------------------</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">W</span>, <span class="st">"removed.reason"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               GDD_mean               T2M_mean              FRUE_mean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            "collinear"            "collinear"            "collinear" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               RTA_mean               ETP_mean           T2M_MIN_mean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            "collinear"            "collinear"            "collinear" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               SPV_mean            T2MDEW_mean ALLSKY_SFC_SW_DWN_mean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            "collinear"            "collinear"            "collinear" </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Grouping collinear covariables into composite blocks + CSV diagnosis</span></span></span>
+<span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">W_matrix</span><span class="op">(</span>env.data <span class="op">=</span> <span class="va">env.data</span>, max.cor <span class="op">=</span> <span class="fl">0.9</span>, group <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>              cor.report <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> W_matrix -- builds the environmental covariable (W) matrix</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - summarising weather data into environmental covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - centring, scaling and quality-controlling W</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Collinearity grouping (max.cor = 0.9)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 21 covariables -&gt; 8 blocks</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Collinearity diagnosis written to: /tmp/RtmpEMSTbs/W_matrix_collinearity.csv</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">W</span>, <span class="st">"groups"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       ALLSKY_SFC_LW_DWN_mean       ALLSKY_SFC_SW_DWN_mean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "ALLSKY_SFC_LW_DWN_mean(+1)" "ALLSKY_TOA_SW_DWN_mean(+2)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       ALLSKY_TOA_SW_DWN_mean                     ETP_mean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "ALLSKY_TOA_SW_DWN_mean(+2)"               "ETP_mean(+1)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    FRUE_mean                     GDD_mean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               "T2M_mean(+6)"               "T2M_mean(+6)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       N_mean                    PETP_mean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 "N_mean(+1)"              "PETP_mean(+1)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 PRECTOT_mean                    RH2M_mean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              "PETP_mean(+1)"              "RH2M_mean(+1)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     RTA_mean                     SPV_mean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 "N_mean(+1)"               "T2M_mean(+6)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    SRAD_mean                  T2MDEW_mean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               "ETP_mean(+1)" "ALLSKY_SFC_LW_DWN_mean(+1)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 T2M_MAX_mean                 T2M_MIN_mean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               "T2M_mean(+6)"               "T2M_mean(+6)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               T2M_RANGE_mean                     T2M_mean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "ALLSKY_TOA_SW_DWN_mean(+2)"               "T2M_mean(+6)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     VPD_mean                    WS2M_mean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              "RH2M_mean(+1)"               "T2M_mean(+6)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       n_mean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     "n_mean" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Creating W for specific variables</span></span></span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">W_matrix</span><span class="op">(</span>env.data <span class="op">=</span> <span class="va">env.data</span>, var.id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'T2M_MAX'</span>, <span class="st">'T2M_MIN'</span>, <span class="st">'T2M'</span><span class="op">)</span><span class="op">)</span></span></span>

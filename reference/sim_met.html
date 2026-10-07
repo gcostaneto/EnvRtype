@@ -55,7 +55,7 @@ and <code><a href="scan_untested_envs.html">scan_untested_envs</a></code> can be
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sim_met</span><span class="op">(</span></span>
-<span>  <span class="va">K</span>,</span>
+<span>  K <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n_env <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  min.h2 <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>  max.h2 <span class="op">=</span> <span class="fl">0.8</span>,</span>
@@ -69,6 +69,18 @@ and <code><a href="scan_untested_envs.html">scan_untested_envs</a></code> can be
 <span>  env_effects <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subset <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subset.by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cell"</span>, <span class="st">"gid_env"</span><span class="op">)</span>,</span>
+<span>  K.weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  W <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  reaction.norm <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">W</span><span class="op">)</span>,</span>
+<span>  rn.main <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  gxe.specific <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  markers <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  n.qtl <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rep.var <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  spatial <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  field.dim <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  spatial.rho <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  spatial.var <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -79,8 +91,10 @@ and <code><a href="scan_untested_envs.html">scan_untested_envs</a></code> can be
 
 
 <dl><dt id="arg-k">K<a class="anchor" aria-label="anchor" href="#arg-k"></a></dt>
-<dd><p>n x n genomic kinship AMONG LINES (e.g. <code>maizeG</code>). Made positive
-definite internally, so a singular marker-based kinship is fine.</p></dd>
+<dd><p>n x n genomic kinship AMONG LINES (e.g. <code>maizeG</code>), or a named
+<em>list</em> of such matrices for multiple variance components (combined with
+<code>K.weights</code>). Made positive definite internally, so a singular
+marker-based kinship is fine. May be <code>NULL</code> when <code>markers</code> is given.</p></dd>
 
 
 <dt id="arg-n-env">n_env<a class="anchor" aria-label="anchor" href="#arg-n-env"></a></dt>
@@ -134,8 +148,68 @@ unbalancedness.</p></dd>
 observation or per genotype-by-environment cell.</p></dd>
 
 
+<dt id="arg-k-weights">K.weights<a class="anchor" aria-label="anchor" href="#arg-k-weights"></a></dt>
+<dd><p>numeric. Non-negative weights (rescaled to sum 1) for a list
+of kinships in <code>K</code>; ignored for a single matrix. Default equal weights.</p></dd>
+
+
+<dt id="arg-w">W<a class="anchor" aria-label="anchor" href="#arg-w"></a></dt>
+<dd><p>q x k envirome matrix. When supplied, genetic values are generated as
+reaction norms and the environment correlation is induced from <code>W</code>.</p></dd>
+
+
+<dt id="arg-reaction-norm">reaction.norm<a class="anchor" aria-label="anchor" href="#arg-reaction-norm"></a></dt>
+<dd><p>logical. Use the reaction-norm mechanism. Defaults to
+<code>TRUE</code> when <code>W</code> is supplied.</p></dd>
+
+
+<dt id="arg-rn-main">rn.main<a class="anchor" aria-label="anchor" href="#arg-rn-main"></a></dt>
+<dd><p>numeric in [0, 1]. Share of genetic variance assigned to the
+main (across-environment) effect under the reaction-norm mechanism; the rest
+is reaction-norm interaction. Default 0.5.</p></dd>
+
+
+<dt id="arg-gxe-specific">gxe.specific<a class="anchor" aria-label="anchor" href="#arg-gxe-specific"></a></dt>
+<dd><p>numeric in [0, 1). Share of genetic variance made
+line-independent and environment-specific, breaking separability. Default 0.</p></dd>
+
+
+<dt id="arg-markers">markers<a class="anchor" aria-label="anchor" href="#arg-markers"></a></dt>
+<dd><p>n x m marker matrix. When supplied, a marker/QTL mechanism
+replaces the infinitesimal draw and <code>K</code> is derived from the markers if
+not given.</p></dd>
+
+
+<dt id="arg-n-qtl">n.qtl<a class="anchor" aria-label="anchor" href="#arg-n-qtl"></a></dt>
+<dd><p>integer. Number of markers acting as QTL (sampled) when
+<code>markers</code> is used; <code>NULL</code> uses all markers.</p></dd>
+
+
+<dt id="arg-rep-var">rep.var<a class="anchor" aria-label="anchor" href="#arg-rep-var"></a></dt>
+<dd><p>numeric. Variance of a random replicate/block effect added to
+phenotypes. Default 0.</p></dd>
+
+
+<dt id="arg-spatial">spatial<a class="anchor" aria-label="anchor" href="#arg-spatial"></a></dt>
+<dd><p>logical. Add an AR1\(\times\)AR1 spatial field to each
+environment. Default <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg-field-dim">field.dim<a class="anchor" aria-label="anchor" href="#arg-field-dim"></a></dt>
+<dd><p>integer length-2 <code>c(nrow, ncol)</code>. Field layout per
+environment; defaults to a near-square grid sized to the plots.</p></dd>
+
+
+<dt id="arg-spatial-rho">spatial.rho<a class="anchor" aria-label="anchor" href="#arg-spatial-rho"></a></dt>
+<dd><p>numeric. Lag-1 spatial autocorrelation. Default 0.6.</p></dd>
+
+
+<dt id="arg-spatial-var">spatial.var<a class="anchor" aria-label="anchor" href="#arg-spatial-var"></a></dt>
+<dd><p>numeric. Variance of the spatial field. Default 1.</p></dd>
+
+
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
-<dd><p>integer. RNG seed.</p></dd>
+<dd><p>integer. RNG seed. The caller's RNG stream is restored on exit.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -187,6 +261,22 @@ Because lines are related through \(K\), <code>cor(G)</code> across lines is not
 among lines; the environment correlation is \(q\times q\). A genomic kinship
 passed where an environment correlation is expected is the most common error
 and is rejected by an elementwise unit-diagonal check.</p>
+<p><strong>Alternative genetic mechanisms.</strong> Besides the default separable draw,
+three opt-in mechanisms generate the genetic values:</p><ul><li><p><em>Reaction norm</em> (supply <code>W</code>): genetic values are built
+    causally from an envirome, \(g_{ij} = m_i + \sum_k w_{jk} b_{ik}\) with a
+    main effect \(m\) and line sensitivities \(b_{\cdot k}\) both
+    \(K\)-structured. The environment correlation is then <em>induced</em> by
+    <code>W</code> (and reported), not imposed. <code>rn.main</code> splits variance between
+    the main effect and the reaction-norm interaction.</p></li>
+<li><p><em>Marker-based</em> (supply <code>markers</code>): QTL effects are sampled per
+    environment with the target correlation <code>C</code>, giving large-effect
+    architectures instead of the infinitesimal draw.</p></li>
+<li><p><em>Multiple kinships</em> (supply a <em>list</em> for <code>K</code> with
+    <code>K.weights</code>): independent additive, dominance or epistatic components
+    are summed.</p></li>
+</ul><p><code>gxe.specific</code> adds a line-independent, environment-specific deviation that
+makes the covariance <em>non-separable</em>. <code>rep.var</code> and <code>spatial</code>
+(an AR1\(\times\)AR1 field) add trial realism to the phenotypes.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -196,6 +286,7 @@ multi-environment prediction. <em>G3</em> 13(2), jkac313.</p>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="sim_W.html">sim_W</a></code>, <code><a href="sim_met_C.html">sim_met_C</a></code>, <code><a href="env_cor.html">env_cor</a></code>,
+  <code><a href="sim_markers.html">sim_markers</a></code>, <code><a href="sim_envirome.html">sim_envirome</a></code>,
   <code><a href="kernel_model.html">kernel_model</a></code>, <code><a href="scan_untested_envs.html">scan_untested_envs</a></code></p></div>
     </div>
 
@@ -203,13 +294,137 @@ multi-environment prediction. <em>G3</em> 13(2), jkac313.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">maizeG</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 1. Baseline: random C and random h2 within a range</span></span></span>
 <span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">maizeG</span>, n_env <span class="op">=</span> <span class="fl">10</span>, min.cor <span class="op">=</span> <span class="fl">0.2</span>, max.cor <span class="op">=</span> <span class="fl">0.8</span>,</span></span>
 <span class="r-in"><span>               min.h2 <span class="op">=</span> <span class="fl">0.3</span>, max.h2 <span class="op">=</span> <span class="fl">0.7</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">met</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="env_cor.html">env_cor</a></span><span class="op">(</span><span class="va">met</span>, <span class="st">"realised"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Pair with a simulated envirome that recovers 70% of the same C</span></span></span>
-<span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_W.html">sim_W</a></span><span class="op">(</span><span class="va">met</span><span class="op">$</span><span class="va">C_env</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## 2. Supply an explicit environment correlation (e.g. a year-like series)</span></span></span>
+<span class="r-in"><span><span class="va">C</span>   <span class="op">&lt;-</span> <span class="fu"><a href="sim_met_C.html">sim_met_C</a></span><span class="op">(</span>q <span class="op">=</span> <span class="fl">8</span>, structure <span class="op">=</span> <span class="st">"ar1"</span>, rho <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">maizeG</span>, C <span class="op">=</span> <span class="va">C</span>, h2 <span class="op">=</span> <span class="fl">0.5</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 3. Fixed per-environment heritabilities and environment means</span></span></span>
+<span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">maizeG</span>, n_env <span class="op">=</span> <span class="fl">4</span>, h2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.8</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>               env_effects <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">6</span>, <span class="fl">8</span><span class="op">)</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 4. Replicates and an unbalanced design (retain 70% of g x e cells)</span></span></span>
+<span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">maizeG</span>, n_env <span class="op">=</span> <span class="fl">6</span>, n_rep <span class="op">=</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>               subset <span class="op">=</span> <span class="fl">0.7</span>, subset.by <span class="op">=</span> <span class="st">"gid_env"</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 5. Several genetic variance components (additive + dominance + epistasis)</span></span></span>
+<span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>K <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>add <span class="op">=</span> <span class="va">maizeG</span>, dom <span class="op">=</span> <span class="va">maizeG</span>, epi <span class="op">=</span> <span class="va">maizeG</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>               K.weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.3</span>, <span class="fl">0.1</span><span class="op">)</span>, n_env <span class="op">=</span> <span class="fl">8</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 6. Causal reaction-norm: C is INDUCED by the envirome, not imposed</span></span></span>
+<span class="r-in"><span><span class="va">Wenv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span> <span class="op">*</span> <span class="fl">6</span><span class="op">)</span>, <span class="fl">10</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rn</span>   <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">maizeG</span>, W <span class="op">=</span> <span class="va">Wenv</span>, rn.main <span class="op">=</span> <span class="fl">0.4</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="env_cor.html">env_cor</a></span><span class="op">(</span><span class="va">rn</span>, <span class="st">"target"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 7. Marker / QTL architecture instead of the infinitesimal draw</span></span></span>
+<span class="r-in"><span><span class="va">X</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fl">200</span> <span class="op">*</span> <span class="fl">500</span>, <span class="fl">2</span>, <span class="fl">0.3</span><span class="op">)</span>, <span class="fl">200</span>, <span class="fl">500</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">qtl</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X</span>, n_env <span class="op">=</span> <span class="fl">6</span>, n.qtl <span class="op">=</span> <span class="fl">30</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 8. Non-separable GxE: 25% of genetic variance is environment-specific</span></span></span>
+<span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">maizeG</span>, n_env <span class="op">=</span> <span class="fl">6</span>, gxe.specific <span class="op">=</span> <span class="fl">0.25</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 9. Field realism: replicate/block noise plus an AR1 x AR1 spatial trend</span></span></span>
+<span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">maizeG</span>, n_env <span class="op">=</span> <span class="fl">4</span>, n_rep <span class="op">=</span> <span class="fl">2</span>, rep.var <span class="op">=</span> <span class="fl">0.5</span>,</span></span>
+<span class="r-in"><span>               spatial <span class="op">=</span> <span class="cn">TRUE</span>, field.dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">15</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>               spatial.rho <span class="op">=</span> <span class="fl">0.7</span>, spatial.var <span class="op">=</span> <span class="fl">1.5</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 10. Pair with a simulated envirome and diagnose the recovery</span></span></span>
+<span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_W.html">sim_W</a></span><span class="op">(</span><span class="va">met</span><span class="op">$</span><span class="va">C_env</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">met</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 11. End-to-end: simulate kinship + MET + envirome, then fit a model</span></span></span>
+<span class="r-in"><span><span class="co">##     Simulate a genomic kinship KG from markers (VanRaden)</span></span></span>
+<span class="r-in"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fl">150</span> <span class="op">*</span> <span class="fl">1000</span>, <span class="fl">2</span>, <span class="fl">0.3</span><span class="op">)</span>, <span class="fl">150</span>, <span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"G"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">150</span><span class="op">)</span><span class="op">)</span>        <span class="co"># gid names carry through</span></span></span>
+<span class="r-in"><span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>; <span class="va">Z</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Z</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
+<span class="r-in"><span><span class="va">Kg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">tcrossprod</a></span><span class="op">(</span><span class="va">Z</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">Z</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1e-6</span>, <span class="fl">150</span><span class="op">)</span> <span class="co"># positive-definite kinship</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="va">Kg</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">KG</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>G <span class="op">=</span> <span class="va">Kg</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">##     Simulate the MET truth on that kinship (one replicate)</span></span></span>
+<span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">Kg</span>, n_env <span class="op">=</span> <span class="fl">10</span>, n_rep <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>               min.cor <span class="op">=</span> <span class="fl">0.3</span>, max.cor <span class="op">=</span> <span class="fl">0.8</span>,</span></span>
+<span class="r-in"><span>               min.h2 <span class="op">=</span> <span class="fl">0.3</span>, max.h2 <span class="op">=</span> <span class="fl">0.7</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">df</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">met</span><span class="op">$</span><span class="va">data</span><span class="op">)</span>                  <span class="co"># base data.frame for get_kernel()</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">##     Simulate a redundant, noisier envirome on the same environments</span></span></span>
+<span class="r-in"><span><span class="va">W2</span>  <span class="op">&lt;-</span> <span class="fu"><a href="sim_W.html">sim_W</a></span><span class="op">(</span><span class="va">met</span><span class="op">$</span><span class="va">C_env</span>, noise <span class="op">=</span> <span class="fl">0.6</span>, n_var <span class="op">=</span> <span class="fl">200</span>,</span></span>
+<span class="r-in"><span>             collinearity <span class="op">=</span> <span class="fl">0.8</span>, n_blocks <span class="op">=</span> <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">KE2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>W <span class="op">=</span> <span class="fu"><a href="env_kernel.html">env_kernel</a></span><span class="op">(</span>env.data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">W2</span><span class="op">)</span><span class="op">)</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">##     Build reaction-norm kernels and fit the Bayesian model</span></span></span>
+<span class="r-in"><span><span class="va">K2</span>  <span class="op">&lt;-</span> <span class="fu"><a href="get_kernel.html">get_kernel</a></span><span class="op">(</span>K_G <span class="op">=</span> <span class="va">KG</span>, K_E <span class="op">=</span> <span class="va">KE2</span>, data <span class="op">=</span> <span class="va">df</span>, model <span class="op">=</span> <span class="st">"RNMM"</span>,</span></span>
+<span class="r-in"><span>                  env <span class="op">=</span> <span class="st">"env"</span>, gid <span class="op">=</span> <span class="st">"gid"</span>, y <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="kernel_model.html">kernel_model</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"value"</span>, data <span class="op">=</span> <span class="va">df</span>, random <span class="op">=</span> <span class="va">K2</span>,</span></span>
+<span class="r-in"><span>                    env <span class="op">=</span> <span class="st">"env"</span>, gid <span class="op">=</span> <span class="st">"gid"</span>,</span></span>
+<span class="r-in"><span>                    iterations <span class="op">=</span> <span class="fl">5000</span>, burnin <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 12. Phenotypes for contrasting GENETIC diversity (envirome fixed)</span></span></span>
+<span class="r-in"><span><span class="co">##     Low diversity: few rare markers, strong structure; high: many common.</span></span></span>
+<span class="r-in"><span><span class="va">E</span>    <span class="op">&lt;-</span> <span class="fu"><a href="sim_envirome.html">sim_envirome</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">40</span>, structure <span class="op">=</span> <span class="st">"clusters"</span>, n_cluster <span class="op">=</span> <span class="fl">3</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">X_lo</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_markers.html">sim_markers</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">500</span>,  maf <span class="op">=</span> <span class="st">"rare"</span>,   n_subpop <span class="op">=</span> <span class="fl">5</span>, Fst <span class="op">=</span> <span class="fl">0.2</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">X_hi</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_markers.html">sim_markers</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">4000</span>, maf <span class="op">=</span> <span class="st">"common"</span>, n_subpop <span class="op">=</span> <span class="fl">1</span>, Fst <span class="op">=</span> <span class="fl">0.0</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">met_lo</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X_lo</span>, C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">E</span>, <span class="st">"C_env"</span><span class="op">)</span>, n.qtl <span class="op">=</span> <span class="fl">80</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">met_hi</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X_hi</span>, C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">E</span>, <span class="st">"C_env"</span><span class="op">)</span>, n.qtl <span class="op">=</span> <span class="fl">80</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>low <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">met_lo</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">value</span><span class="op">)</span>, high <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">met_hi</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">value</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 13. Phenotypes for contrasting ENVIROME diversity (genetics fixed)</span></span></span>
+<span class="r-in"><span><span class="co">##     Diverse environments induce lower cross-environment correlation (more GxE).</span></span></span>
+<span class="r-in"><span><span class="va">X</span>    <span class="op">&lt;-</span> <span class="fu"><a href="sim_markers.html">sim_markers</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">3000</span>, n_subpop <span class="op">=</span> <span class="fl">3</span>, Fst <span class="op">=</span> <span class="fl">0.08</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">E_lo</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_envirome.html">sim_envirome</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">40</span>, structure <span class="op">=</span> <span class="st">"gradient"</span>, redundancy <span class="op">=</span> <span class="fl">0.7</span>,</span></span>
+<span class="r-in"><span>                     n_blocks <span class="op">=</span> <span class="fl">2</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">E_hi</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_envirome.html">sim_envirome</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">40</span>, structure <span class="op">=</span> <span class="st">"random"</span>, redundancy <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">met_eLo</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X</span>, C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">E_lo</span>, <span class="st">"C_env"</span><span class="op">)</span>, n.qtl <span class="op">=</span> <span class="fl">80</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">met_eHi</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X</span>, C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">E_hi</span>, <span class="st">"C_env"</span><span class="op">)</span>, n.qtl <span class="op">=</span> <span class="fl">80</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">met_eLo</span><span class="op">$</span><span class="va">truth</span><span class="op">$</span><span class="va">g</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span>   <span class="co"># high  cross-environment genetic correlation</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">met_eHi</span><span class="op">$</span><span class="va">truth</span><span class="op">$</span><span class="va">g</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span>   <span class="co"># low   correlation -&gt; stronger GxE</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 14. Full 2 x 2 factorial of genetic x envirome diversity</span></span></span>
+<span class="r-in"><span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">gen</span>, <span class="va">env</span>, <span class="va">seed</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">X</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">gen</span> <span class="op">==</span> <span class="st">"low"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>         <span class="fu"><a href="sim_markers.html">sim_markers</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">500</span>, maf <span class="op">=</span> <span class="st">"rare"</span>, n_subpop <span class="op">=</span> <span class="fl">5</span>, Fst <span class="op">=</span> <span class="fl">0.2</span>,</span></span>
+<span class="r-in"><span>                     seed <span class="op">=</span> <span class="va">seed</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>       <span class="kw">else</span></span></span>
+<span class="r-in"><span>         <span class="fu"><a href="sim_markers.html">sim_markers</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">4000</span>, maf <span class="op">=</span> <span class="st">"common"</span>, n_subpop <span class="op">=</span> <span class="fl">1</span>, Fst <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>                     seed <span class="op">=</span> <span class="va">seed</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">E</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">env</span> <span class="op">==</span> <span class="st">"low"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>         <span class="fu"><a href="sim_envirome.html">sim_envirome</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">40</span>, structure <span class="op">=</span> <span class="st">"gradient"</span>, redundancy <span class="op">=</span> <span class="fl">0.7</span>,</span></span>
+<span class="r-in"><span>                      n_blocks <span class="op">=</span> <span class="fl">2</span>, seed <span class="op">=</span> <span class="va">seed</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>       <span class="kw">else</span></span></span>
+<span class="r-in"><span>         <span class="fu"><a href="sim_envirome.html">sim_envirome</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">40</span>, structure <span class="op">=</span> <span class="st">"random"</span>, redundancy <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>                      seed <span class="op">=</span> <span class="va">seed</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X</span>, C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">E</span>, <span class="st">"C_env"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                 n.qtl <span class="op">=</span> <span class="fl">80</span>, min.h2 <span class="op">=</span> <span class="fl">0.3</span>, max.h2 <span class="op">=</span> <span class="fl">0.6</span>, seed <span class="op">=</span> <span class="va">seed</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">Cg</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">met</span><span class="op">$</span><span class="va">truth</span><span class="op">$</span><span class="va">g</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>gen <span class="op">=</span> <span class="va">gen</span>, env <span class="op">=</span> <span class="va">env</span>,</span></span>
+<span class="r-in"><span>             gxe_cor   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Cg</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lower.tri.html" class="external-link">lower.tri</a></span><span class="op">(</span><span class="va">Cg</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>             pheno_var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">met</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">value</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu">scenario</span><span class="op">(</span><span class="st">"low"</span>,  <span class="st">"low"</span><span class="op">)</span>,  <span class="fu">scenario</span><span class="op">(</span><span class="st">"low"</span>,  <span class="st">"high"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                    <span class="fu">scenario</span><span class="op">(</span><span class="st">"high"</span>, <span class="st">"low"</span><span class="op">)</span>,  <span class="fu">scenario</span><span class="op">(</span><span class="st">"high"</span>, <span class="st">"high"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 15. Sweep population structure (Fst) and record phenotype variance</span></span></span>
+<span class="r-in"><span><span class="va">E</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_envirome.html">sim_envirome</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">40</span>, structure <span class="op">=</span> <span class="st">"clusters"</span>, n_cluster <span class="op">=</span> <span class="fl">3</span>, seed <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.05</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">f</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">X</span>   <span class="op">&lt;-</span> <span class="fu"><a href="sim_markers.html">sim_markers</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">3000</span>, n_subpop <span class="op">=</span> <span class="fl">4</span>, Fst <span class="op">=</span> <span class="va">f</span>, seed <span class="op">=</span> <span class="fl">3</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X</span>, C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">E</span>, <span class="st">"C_env"</span><span class="op">)</span>, n.qtl <span class="op">=</span> <span class="fl">80</span>, seed <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Fst <span class="op">=</span> <span class="va">f</span>, eff_dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">X</span>, <span class="st">"diversity"</span><span class="op">)</span><span class="op">[</span><span class="st">"eff_dim"</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>             pheno_var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">met</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">value</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 16. Reaction-norm phenotypes driven directly by a diverse envirome</span></span></span>
+<span class="r-in"><span><span class="va">X</span>    <span class="op">&lt;-</span> <span class="fu"><a href="sim_markers.html">sim_markers</a></span><span class="op">(</span><span class="fl">150</span>, <span class="fl">2500</span>, n_subpop <span class="op">=</span> <span class="fl">2</span>, Fst <span class="op">=</span> <span class="fl">0.06</span>, seed <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">E2</span>   <span class="op">&lt;-</span> <span class="fu"><a href="sim_envirome.html">sim_envirome</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">25</span>, structure <span class="op">=</span> <span class="st">"gradient"</span>,</span></span>
+<span class="r-in"><span>                     marginal <span class="op">=</span> <span class="st">"right-skewed"</span>, seed <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">met2</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X</span>, W <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">E2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                reaction.norm <span class="op">=</span> <span class="cn">TRUE</span>, rn.main <span class="op">=</span> <span class="fl">0.6</span>, seed <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">met2</span><span class="op">$</span><span class="va">truth</span><span class="op">$</span><span class="va">mechanism</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

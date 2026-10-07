@@ -16,6 +16,7 @@ sim_W_grid(
   collinearity = c(0, 0.5, 0.9),
   n_rep = 10,
   calibrate = TRUE,
+  cal.nrep = 15L,
   seed = NULL,
   verbose = TRUE
 )
@@ -41,13 +42,19 @@ sim_W_grid(
   logical. Passed to
   [`sim_W`](https://gcostaneto.github.io/EnvRtype/reference/sim_W.md).
 
+- cal.nrep:
+
+  integer. Calibration replicates per
+  [`sim_W`](https://gcostaneto.github.io/EnvRtype/reference/sim_W.md)
+  call.
+
 - seed:
 
-  integer. RNG seed.
+  integer. RNG seed; each design point gets a reproducible sub-seed.
 
 - verbose:
 
-  logical. Unused placeholder for symmetry with other functions.
+  logical. Print per-design-point progress. Default `TRUE`.
 
 ## Value
 

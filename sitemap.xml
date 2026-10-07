@@ -11,6 +11,7 @@
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/aez_legend.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/as.data.frame.sim_met.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/as.matrix.sim_W.html</loc></url>
+<url><loc>https://gcostaneto.github.io/EnvRtype/reference/as.matrix.sim_envirome.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/best_planting_date.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/clay_5_15.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/cluster_environments.html</loc></url>
@@ -69,11 +70,15 @@
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/param_temperature.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/phenology_templates.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/planting_window_table.html</loc></url>
+<url><loc>https://gcostaneto.github.io/EnvRtype/reference/plot.sim_W.html</loc></url>
+<url><loc>https://gcostaneto.github.io/EnvRtype/reference/plot.sim_met.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/plot_planting_window.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/print.T_matrix.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/print.kernel_set.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/print.scan_untested_envs.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/print.sim_W.html</loc></url>
+<url><loc>https://gcostaneto.github.io/EnvRtype/reference/print.sim_envirome.html</loc></url>
+<url><loc>https://gcostaneto.github.io/EnvRtype/reference/print.sim_markers.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/print.sim_met.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/print.soil_gmm.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/processWTH.html</loc></url>
@@ -84,6 +89,8 @@
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/scan_untested_envs.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/sim_W.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/sim_W_grid.html</loc></url>
+<url><loc>https://gcostaneto.github.io/EnvRtype/reference/sim_envirome.html</loc></url>
+<url><loc>https://gcostaneto.github.io/EnvRtype/reference/sim_markers.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/sim_met.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/sim_met_C.html</loc></url>
 <url><loc>https://gcostaneto.github.io/EnvRtype/reference/soil_classification.html</loc></url>

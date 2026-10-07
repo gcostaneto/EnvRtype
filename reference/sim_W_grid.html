@@ -52,6 +52,7 @@ recovery and effective rank at each design point.</p>
 <span>  collinearity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span>, <span class="fl">0.9</span><span class="op">)</span>,</span>
 <span>  n_rep <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  calibrate <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cal.nrep <span class="op">=</span> <span class="fl">15L</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -77,12 +78,16 @@ recovery and effective rank at each design point.</p>
 <dd><p>logical. Passed to <code><a href="sim_W.html">sim_W</a></code>.</p></dd>
 
 
+<dt id="arg-cal-nrep">cal.nrep<a class="anchor" aria-label="anchor" href="#arg-cal-nrep"></a></dt>
+<dd><p>integer. Calibration replicates per <code><a href="sim_W.html">sim_W</a></code> call.</p></dd>
+
+
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
-<dd><p>integer. RNG seed.</p></dd>
+<dd><p>integer. RNG seed; each design point gets a reproducible sub-seed.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p>logical. Unused placeholder for symmetry with other functions.</p></dd>
+<dd><p>logical. Print per-design-point progress. Default <code>TRUE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

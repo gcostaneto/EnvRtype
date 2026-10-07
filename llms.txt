@@ -621,6 +621,8 @@ remain under the same terms.
   : Coerce a Simulated MET to a data.frame
 - [`as.matrix(`*`<sim_W>`*`)`](https://gcostaneto.github.io/EnvRtype/reference/as.matrix.sim_W.md)
   : Coerce a Simulated Envirome to a Plain Matrix
+- [`as.matrix(`*`<sim_envirome>`*`)`](https://gcostaneto.github.io/EnvRtype/reference/as.matrix.sim_envirome.md)
+  : Coerce a Simulated Envirome Diversity Matrix to a Plain Matrix
 - [`best_planting_date()`](https://gcostaneto.github.io/EnvRtype/reference/best_planting_date.md)
   : Best planting date per genotype
 - [`clay_5_15`](https://gcostaneto.github.io/EnvRtype/reference/clay_5_15.md)
@@ -718,6 +720,10 @@ remain under the same terms.
   : List Built-in Phenology Templates
 - [`planting_window_table()`](https://gcostaneto.github.io/EnvRtype/reference/planting_window_table.md)
   : Tabulate scan predictions against planting date
+- [`plot(`*`<sim_W>`*`)`](https://gcostaneto.github.io/EnvRtype/reference/plot.sim_W.md)
+  : Diagnostic Plot for a Simulated Envirome
+- [`plot(`*`<sim_met>`*`)`](https://gcostaneto.github.io/EnvRtype/reference/plot.sim_met.md)
+  : Diagnostic Plot for a Simulated MET
 - [`plot_planting_window()`](https://gcostaneto.github.io/EnvRtype/reference/plot_planting_window.md)
   : Plot genotype performance across candidate planting dates
 - [`print(`*`<T_matrix>`*`)`](https://gcostaneto.github.io/EnvRtype/reference/print.T_matrix.md)
@@ -728,6 +734,10 @@ remain under the same terms.
   : Print a Scan of Untested Environments
 - [`print(`*`<sim_W>`*`)`](https://gcostaneto.github.io/EnvRtype/reference/print.sim_W.md)
   : Print a Simulated Envirome
+- [`print(`*`<sim_envirome>`*`)`](https://gcostaneto.github.io/EnvRtype/reference/print.sim_envirome.md)
+  : Print a Simulated Envirome Diversity Matrix
+- [`print(`*`<sim_markers>`*`)`](https://gcostaneto.github.io/EnvRtype/reference/print.sim_markers.md)
+  : Print a Simulated Marker Matrix
 - [`print(`*`<sim_met>`*`)`](https://gcostaneto.github.io/EnvRtype/reference/print.sim_met.md)
   : Print a Simulated Multi-Environment Trial
 - [`print(`*`<soil_gmm>`*`)`](https://gcostaneto.github.io/EnvRtype/reference/print.soil_gmm.md)
@@ -749,6 +759,10 @@ remain under the same terms.
   Correlation
 - [`sim_W_grid()`](https://gcostaneto.github.io/EnvRtype/reference/sim_W_grid.md)
   : Sweep Envirome Size and Quality (Power Analysis)
+- [`sim_envirome()`](https://gcostaneto.github.io/EnvRtype/reference/sim_envirome.md)
+  : Simulate an Envirome with a Controllable Environmental Diversity
+- [`sim_markers()`](https://gcostaneto.github.io/EnvRtype/reference/sim_markers.md)
+  : Simulate a Marker Matrix with a Controllable Genetic Diversity
 - [`sim_met()`](https://gcostaneto.github.io/EnvRtype/reference/sim_met.md)
   : Simulate a Multi-Environment Trial with a Known Genetic Architecture
 - [`sim_met_C()`](https://gcostaneto.github.io/EnvRtype/reference/sim_met_C.md)
