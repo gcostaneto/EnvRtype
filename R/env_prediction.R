@@ -4436,6 +4436,100 @@ coverage_summary <- function(scan) {
   invisible(TRUE)
 }
 
+#' AR(1) correlation matrix of size q with parameter rho.
+#' @noRd
+.sim_ar1_cor <- function(q, rho) rho^abs(outer(seq_len(q), seq_len(q), "-"))
+
+#' C-vine partial-correlation sampler: always PSD, no rejection needed.
+#' Partial correlations are drawn in [min.cor, max.cor]; the realised marginal
+#' correlations then follow from the vine recursion (range only approximate).
+#' @noRd
+.sim_C_vine <- function(q, min.cor, max.cor) {
+  P <- matrix(0, q, q); C <- diag(q)
+  for (k in seq_len(q - 1L)) for (i in (k + 1L):q) {
+    P[k, i] <- stats::runif(1, min.cor, max.cor)
+    p <- P[k, i]
+    if (k > 1L) for (l in (k - 1L):1L)
+      p <- p * sqrt((1 - P[l, i]^2) * (1 - P[l, k]^2)) + P[l, i] * P[l, k]
+    C[k, i] <- C[i, k] <- p
+  }
+  C
+}
+
+#' Structured environment-correlation generators. All are PSD by construction
+#' except 'block' with a hostile between-correlation, which the caller repairs.
+#' @noRd
+.sim_C_structured <- function(q, structure, min.cor, max.cor, rho,
+                              n_blocks, between.cor, n_factor) {
+  if (structure == "equi") {
+    r <- if (!is.null(rho)) rho else (min.cor + max.cor) / 2
+    C <- matrix(r, q, q); diag(C) <- 1
+  } else if (structure == "ar1") {
+    r <- if (!is.null(rho)) rho else max.cor
+    C <- .sim_ar1_cor(q, r)
+  } else if (structure == "block") {
+    wr  <- if (!is.null(rho)) rho else max.cor
+    grp <- rep_len(seq_len(max(1L, n_blocks)), q)
+    C <- matrix(between.cor, q, q)
+    for (b in unique(grp)) C[grp == b, grp == b] <- wr
+    diag(C) <- 1
+    attr(C, "blocks") <- grp
+  } else if (structure == "factor") {
+    m  <- max(1L, n_factor)
+    sd <- sqrt(max(1e-6, (min.cor + max.cor) / 2))
+    L  <- matrix(stats::rnorm(q * m, sd = sd), q, m)
+    C  <- stats::cov2cor(tcrossprod(L) + diag(stats::runif(q, 0.1, 0.5), q))
+  } else {  # "vine"
+    C <- .sim_C_vine(q, min.cor, max.cor)
+  }
+  C
+}
+
+#' Sample an AR(1) x AR(1) spatial field, returned as the first 'nplots' cells.
+#' Field covariance is Ac (x) Ar; the diagonal is 1, so variance equals 'varc'.
+#' @noRd
+.sim_field_sample <- function(nplots, dim = NULL, rho = 0.6, varc = 1) {
+  if (is.null(dim)) { nr <- ceiling(sqrt(nplots)); nc <- ceiling(nplots / nr) }
+  else { nr <- dim[1L]; nc <- dim[2L] }
+  if (nr * nc < nplots)
+    stop("'field.dim' has fewer cells (", nr * nc, ") than plots in an ",
+         "environment (", nplots, ").", call. = FALSE)
+  Lr <- t(chol(.sim_ar1_cor(nr, rho)))
+  Uc <- chol(.sim_ar1_cor(nc, rho))
+  f  <- Lr %*% matrix(stats::rnorm(nr * nc), nr, nc) %*% Uc
+  as.numeric(f)[seq_len(nplots)] * sqrt(varc)
+}
+
+#' Map Gaussian columns to a target marginal while preserving rank order
+#' (a simple nonparanormal / copula transform) so sim_W covariables are not
+#' forced to be Gaussian.
+#' @noRd
+.sim_marginal <- function(W, marginal = c("gaussian", "right-skewed",
+                                          "heavy-tailed", "bounded")) {
+  marginal <- match.arg(marginal)
+  if (marginal == "gaussian") return(W)
+  q <- nrow(W)
+  trans <- function(z) {
+    u <- rank(z, ties.method = "average") / (q + 1)
+    switch(marginal,
+      "right-skewed" = stats::qgamma(u, shape = 1.5, rate = 1),
+      "heavy-tailed" = stats::qt(u, df = 3),
+      "bounded"      = stats::qbeta(u, 2, 2))
+  }
+  matrix(apply(W, 2, trans), nrow = q, dimnames = dimnames(W))
+}
+
+#' Gaussian RBF kernel on covariables with a median-heuristic bandwidth,
+#' normalised to the env_kernel() trace convention.
+#' @noRd
+.sim_rbf <- function(W, bandwidth = NULL) {
+  D <- as.matrix(stats::dist(W))
+  h <- if (is.null(bandwidth)) stats::median(D[lower.tri(D)]) else bandwidth
+  if (!is.finite(h) || h <= 0) h <- 1
+  K <- exp(-(D^2) / (2 * h^2))
+  K / (sum(diag(K)) / nrow(K))
+}
+
 
 #' @title Simulate a Multi-Environment Trial with a Known Genetic Architecture
 #'
@@ -4476,8 +4570,30 @@ coverage_summary <- function(scan) {
 #' passed where an environment correlation is expected is the most common error
 #' and is rejected by an elementwise unit-diagonal check.
 #'
-#' @param K n x n genomic kinship AMONG LINES (e.g. \code{maizeG}). Made positive
-#'   definite internally, so a singular marker-based kinship is fine.
+#' \strong{Alternative genetic mechanisms.} Besides the default separable draw,
+#' three opt-in mechanisms generate the genetic values:
+#' \itemize{
+#'   \item \emph{Reaction norm} (supply \code{W}): genetic values are built
+#'     causally from an envirome, \eqn{g_{ij} = m_i + \sum_k w_{jk} b_{ik}} with a
+#'     main effect \eqn{m} and line sensitivities \eqn{b_{\cdot k}} both
+#'     \eqn{K}-structured. The environment correlation is then \emph{induced} by
+#'     \code{W} (and reported), not imposed. \code{rn.main} splits variance between
+#'     the main effect and the reaction-norm interaction.
+#'   \item \emph{Marker-based} (supply \code{markers}): QTL effects are sampled per
+#'     environment with the target correlation \code{C}, giving large-effect
+#'     architectures instead of the infinitesimal draw.
+#'   \item \emph{Multiple kinships} (supply a \emph{list} for \code{K} with
+#'     \code{K.weights}): independent additive, dominance or epistatic components
+#'     are summed.
+#' }
+#' \code{gxe.specific} adds a line-independent, environment-specific deviation that
+#' makes the covariance \emph{non-separable}. \code{rep.var} and \code{spatial}
+#' (an AR1\eqn{\times}AR1 field) add trial realism to the phenotypes.
+#'
+#' @param K n x n genomic kinship AMONG LINES (e.g. \code{maizeG}), or a named
+#'   \emph{list} of such matrices for multiple variance components (combined with
+#'   \code{K.weights}). Made positive definite internally, so a singular
+#'   marker-based kinship is fine. May be \code{NULL} when \code{markers} is given.
 #' @param n_env integer. Number of environments; inferred from \code{C} if given.
 #' @param min.h2,max.h2 numeric. Plot-basis heritability range, used when
 #'   \code{h2} is not supplied. Must satisfy \eqn{0 < min.h2 \le max.h2 < 1}.
@@ -4496,7 +4612,31 @@ coverage_summary <- function(scan) {
 #'   unbalancedness.
 #' @param subset.by "cell" or "gid_env". Whether missingness is drawn per
 #'   observation or per genotype-by-environment cell.
-#' @param seed integer. RNG seed.
+#' @param K.weights numeric. Non-negative weights (rescaled to sum 1) for a list
+#'   of kinships in \code{K}; ignored for a single matrix. Default equal weights.
+#' @param W q x k envirome matrix. When supplied, genetic values are generated as
+#'   reaction norms and the environment correlation is induced from \code{W}.
+#' @param reaction.norm logical. Use the reaction-norm mechanism. Defaults to
+#'   \code{TRUE} when \code{W} is supplied.
+#' @param rn.main numeric in [0, 1]. Share of genetic variance assigned to the
+#'   main (across-environment) effect under the reaction-norm mechanism; the rest
+#'   is reaction-norm interaction. Default 0.5.
+#' @param gxe.specific numeric in [0, 1). Share of genetic variance made
+#'   line-independent and environment-specific, breaking separability. Default 0.
+#' @param markers n x m marker matrix. When supplied, a marker/QTL mechanism
+#'   replaces the infinitesimal draw and \code{K} is derived from the markers if
+#'   not given.
+#' @param n.qtl integer. Number of markers acting as QTL (sampled) when
+#'   \code{markers} is used; \code{NULL} uses all markers.
+#' @param rep.var numeric. Variance of a random replicate/block effect added to
+#'   phenotypes. Default 0.
+#' @param spatial logical. Add an AR1\eqn{\times}AR1 spatial field to each
+#'   environment. Default \code{FALSE}.
+#' @param field.dim integer length-2 \code{c(nrow, ncol)}. Field layout per
+#'   environment; defaults to a near-square grid sized to the plots.
+#' @param spatial.rho numeric. Lag-1 spatial autocorrelation. Default 0.6.
+#' @param spatial.var numeric. Variance of the spatial field. Default 1.
+#' @param seed integer. RNG seed. The caller's RNG stream is restored on exit.
 #' @param verbose logical. Print a summary. Default \code{TRUE}.
 #'
 #' @return
@@ -4515,13 +4655,49 @@ coverage_summary <- function(scan) {
 #' @examples
 #' \dontrun{
 #' data(maizeG)
+#'
+#' ## 1. Baseline: random C and random h2 within a range
 #' met <- sim_met(maizeG, n_env = 10, min.cor = 0.2, max.cor = 0.8,
 #'                min.h2 = 0.3, max.h2 = 0.7, seed = 1)
 #' head(met$data)
 #' env_cor(met, "realised")
 #'
-#' ## Pair with a simulated envirome that recovers 70% of the same C
-#' W <- sim_W(met$C_env, noise = 0.3, n_var = 50)
+#' ## 2. Supply an explicit environment correlation (e.g. a year-like series)
+#' C   <- sim_met_C(q = 8, structure = "ar1", rho = 0.6)
+#' met <- sim_met(maizeG, C = C, h2 = 0.5, seed = 1)
+#'
+#' ## 3. Fixed per-environment heritabilities and environment means
+#' met <- sim_met(maizeG, n_env = 4, h2 = c(0.3, 0.5, 0.6, 0.8),
+#'                env_effects = c(2, 4, 6, 8), seed = 1)
+#'
+#' ## 4. Replicates and an unbalanced design (retain 70% of g x e cells)
+#' met <- sim_met(maizeG, n_env = 6, n_rep = 3,
+#'                subset = 0.7, subset.by = "gid_env", seed = 1)
+#'
+#' ## 5. Several genetic variance components (additive + dominance + epistasis)
+#' met <- sim_met(K = list(add = maizeG, dom = maizeG, epi = maizeG),
+#'                K.weights = c(0.6, 0.3, 0.1), n_env = 8, seed = 1)
+#'
+#' ## 6. Causal reaction-norm: C is INDUCED by the envirome, not imposed
+#' Wenv <- scale(matrix(rnorm(10 * 6), 10, 6))
+#' rn   <- sim_met(maizeG, W = Wenv, rn.main = 0.4, seed = 1)
+#' env_cor(rn, "target")
+#'
+#' ## 7. Marker / QTL architecture instead of the infinitesimal draw
+#' X   <- matrix(rbinom(200 * 500, 2, 0.3), 200, 500)
+#' qtl <- sim_met(markers = X, n_env = 6, n.qtl = 30, seed = 1)
+#'
+#' ## 8. Non-separable GxE: 25% of genetic variance is environment-specific
+#' met <- sim_met(maizeG, n_env = 6, gxe.specific = 0.25, seed = 1)
+#'
+#' ## 9. Field realism: replicate/block noise plus an AR1 x AR1 spatial trend
+#' met <- sim_met(maizeG, n_env = 4, n_rep = 2, rep.var = 0.5,
+#'                spatial = TRUE, field.dim = c(20, 15),
+#'                spatial.rho = 0.7, spatial.var = 1.5, seed = 1)
+#'
+#' ## 10. Pair with a simulated envirome and diagnose the recovery
+#' W <- sim_W(met$C_env, noise = 0.3, n_var = 50, seed = 1)
+#' plot(met)
 #' }
 #'
 #' @seealso \code{\link{sim_W}}, \code{\link{sim_met_C}}, \code{\link{env_cor}},
@@ -4531,16 +4707,30 @@ coverage_summary <- function(scan) {
 #' Costa-Neto, G., et al. (2023). Envirome-wide associations enhance
 #' multi-environment prediction. \emph{G3} 13(2), jkac313.
 #' @export
-sim_met <- function(K, n_env = NULL, min.h2 = 0.2, max.h2 = 0.8,
+sim_met <- function(K = NULL, n_env = NULL, min.h2 = 0.2, max.h2 = 0.8,
                     min.cor = 0.0, max.cor = 0.8,
                     C = NULL, h2 = NULL,
                     n_rep = 1, sg2 = 1, exact = TRUE,
                     env_effects = NULL, subset = NULL,
                     subset.by = c("cell", "gid_env"),
+                    K.weights = NULL,
+                    W = NULL, reaction.norm = !is.null(W), rn.main = 0.5,
+                    gxe.specific = 0,
+                    markers = NULL, n.qtl = NULL,
+                    rep.var = 0, spatial = FALSE, field.dim = NULL,
+                    spatial.rho = 0.6, spatial.var = 1,
                     seed = NULL, verbose = TRUE) {
 
   subset.by <- match.arg(subset.by)
-  if (!is.null(seed)) set.seed(seed)
+
+  # RNG hygiene: seed locally and restore the caller's stream on exit.
+  if (!is.null(seed)) {
+    if (exists(".Random.seed", envir = .GlobalEnv)) {
+      .oldseed <- get(".Random.seed", envir = .GlobalEnv)
+      on.exit(assign(".Random.seed", .oldseed, envir = .GlobalEnv), add = TRUE)
+    }
+    set.seed(seed)
+  }
 
   # ---- mutually exclusive specifications: error, do not silently prefer ----
   cor_given <- !missing(min.cor) || !missing(max.cor)
@@ -4549,27 +4739,58 @@ sim_met <- function(K, n_env = NULL, min.h2 = 0.2, max.h2 = 0.8,
   h2_given <- !missing(min.h2) || !missing(max.h2)
   if (!is.null(h2) && h2_given)
     stop("Supply either 'h2' or ('min.h2', 'max.h2'), not both.", call. = FALSE)
+  if (gxe.specific < 0 || gxe.specific >= 1)
+    stop("'gxe.specific' must lie in [0, 1).", call. = FALSE)
+  if (rn.main < 0 || rn.main > 1) stop("'rn.main' must lie in [0, 1].", call. = FALSE)
 
-  K <- as.matrix(K)
-  if (nrow(K) != ncol(K)) stop("'K' must be square.", call. = FALSE)
-  n <- nrow(K)
-  gid_names <- rownames(K)
-  if (is.null(gid_names)) gid_names <- paste0("G", seq_len(n))
+  use_markers <- !is.null(markers)
+  use_rn      <- isTRUE(reaction.norm) && !use_markers && !is.null(W)
 
-  # ---- environment correlation --------------------------------------------
+  # ---- lines, kinship and its Cholesky factor(s) ---------------------------
+  if (use_markers) {
+    markers <- as.matrix(markers)
+    n <- nrow(markers)
+    gid_names <- rownames(markers); if (is.null(gid_names)) gid_names <- paste0("G", seq_len(n))
+    Zall <- scale(markers); Zall[is.na(Zall)] <- 0
+    Kpd  <- if (!is.null(K)) .sim_pd(as.matrix(K)) else .sim_pd(tcrossprod(Zall) / ncol(Zall))
+    L_K_list <- list(t(chol(Kpd))); K.weights <- 1
+  } else if (is.list(K)) {
+    Ks <- lapply(K, function(k) .sim_pd(as.matrix(k)))
+    if (length(unique(vapply(Ks, nrow, 1L))) != 1L)
+      stop("All kinships in 'K' must share the same dimension.", call. = FALSE)
+    if (is.null(K.weights)) K.weights <- rep(1, length(Ks))
+    if (length(K.weights) != length(Ks))
+      stop("'K.weights' must have one weight per matrix in 'K'.", call. = FALSE)
+    K.weights <- K.weights / sum(K.weights)
+    Kpd <- Reduce(`+`, Map(function(k, w) w * k, Ks, K.weights))
+    L_K_list <- lapply(Ks, function(k) t(chol(k)))
+    gid_names <- rownames(Ks[[1]])
+    n <- nrow(Kpd); if (is.null(gid_names)) gid_names <- paste0("G", seq_len(n))
+  } else {
+    if (is.null(K)) stop("Supply 'K' (or 'markers').", call. = FALSE)
+    K <- as.matrix(K)
+    if (nrow(K) != ncol(K)) stop("'K' must be square.", call. = FALSE)
+    Kpd <- .sim_pd(K)
+    L_K_list <- list(t(chol(Kpd))); K.weights <- 1
+    n <- nrow(Kpd); gid_names <- rownames(K)
+    if (is.null(gid_names)) gid_names <- paste0("G", seq_len(n))
+  }
+  L_K <- t(chol(Kpd))
+
+  # ---- environment correlation (may be induced by the envirome) ------------
   if (!is.null(C)) {
     .sim_check_Cenv(C, n_env = n_env, arg = "C")
-    q <- nrow(C)
-    C_target <- unclass(C)
+    q <- nrow(C); C_target <- unclass(C)
+  } else if (use_rn) {
+    q <- nrow(as.matrix(W)); C_target <- NULL
   } else {
-    if (is.null(n_env))
-      stop("Supply 'n_env' when 'C' is not given.", call. = FALSE)
+    if (is.null(n_env)) stop("Supply 'n_env' when 'C' is not given.", call. = FALSE)
     q <- n_env
     C_target <- unclass(sim_met_C(q, min.cor, max.cor))
   }
-  env_names <- rownames(C_target)
+  env_names <- if (!is.null(C_target)) rownames(C_target) else rownames(as.matrix(W))
   if (is.null(env_names)) env_names <- paste0("E", seq_len(q))
-  dimnames(C_target) <- list(env_names, env_names)
+  if (!is.null(C_target)) dimnames(C_target) <- list(env_names, env_names)
 
   # ---- heritabilities ------------------------------------------------------
   if (!is.null(h2)) {
@@ -4583,26 +4804,62 @@ sim_met <- function(K, n_env = NULL, min.h2 = 0.2, max.h2 = 0.8,
   }
   names(h2) <- env_names
   if (length(sg2) == 1L) sg2 <- rep(sg2, q)
+  if (length(sg2) != q) stop("'sg2' must be length 1 or n_env.", call. = FALSE)
 
-  # ---- genetic values: g ~ MVN(0, K (x) Sigma_g) ---------------------------
-  Kpd  <- .sim_pd(K)
-  L_K  <- t(chol(Kpd))
-  Sg   <- diag(sqrt(sg2), q) %*% C_target %*% diag(sqrt(sg2), q)
-  L_C  <- t(chol(.sim_pd(Sg, 1e-10)))
-
-  U  <- if (isTRUE(exact)) .sim_orth(n, q) else matrix(stats::rnorm(n * q), n, q)
-  Gv <- L_K %*% U %*% t(L_C)
+  # ---- genetic values by mechanism -----------------------------------------
+  if (use_markers) {
+    if (is.null(C_target)) C_target <- unclass(sim_met_C(q, min.cor, max.cor))
+    dimnames(C_target) <- list(env_names, env_names)
+    L_C <- t(chol(.sim_pd(diag(sqrt(sg2), q) %*% C_target %*% diag(sqrt(sg2), q), 1e-10)))
+    Z <- Zall
+    if (!is.null(n.qtl) && n.qtl < ncol(Z))
+      Z <- Z[, sort(sample.int(ncol(Z), n.qtl)), drop = FALSE]
+    A  <- matrix(stats::rnorm(ncol(Z) * q), ncol(Z), q) %*% t(L_C)
+    Gv <- Z %*% A
+    Gv <- sweep(Gv, 2, sqrt(sg2 / pmax(apply(Gv, 2, stats::var), 1e-12)), "*")
+    mech <- "marker"
+  } else if (use_rn) {
+    Wc <- scale(as.matrix(W)); Wc[is.na(Wc)] <- 0
+    p  <- ncol(Wc); sgbar <- mean(sg2)
+    m0 <- as.numeric(L_K %*% stats::rnorm(n))
+    m0 <- m0 / stats::sd(m0) * sqrt(sgbar * rn.main)
+    RN <- (L_K %*% matrix(stats::rnorm(n * p), n, p)) %*% t(Wc)
+    RN <- RN / sqrt(mean(apply(RN, 2, stats::var))) * sqrt(sgbar * (1 - rn.main))
+    Gv <- matrix(m0, n, q) + RN
+    Sig <- rn.main * matrix(1, q, q) + (1 - rn.main) * (tcrossprod(Wc) / p)
+    C_target <- stats::cov2cor(Sig + diag(1e-8, q))
+    dimnames(C_target) <- list(env_names, env_names)
+    mech <- "reaction-norm"
+  } else {
+    Sg  <- diag(sqrt(sg2), q) %*% C_target %*% diag(sqrt(sg2), q)
+    L_C <- t(chol(.sim_pd(Sg, 1e-10)))
+    Gv  <- matrix(0, n, q)
+    for (cc in seq_along(L_K_list)) {
+      U <- if (isTRUE(exact)) .sim_orth(n, q) else matrix(stats::rnorm(n * q), n, q)
+      Gv <- Gv + sqrt(K.weights[cc]) * (L_K_list[[cc]] %*% U %*% t(L_C))
+    }
+    mech <- "kronecker"
+  }
   dimnames(Gv) <- list(gid_names, env_names)
 
+  # ---- optional non-separable, line-independent GxE ------------------------
+  if (gxe.specific > 0) {
+    vg0 <- apply(Gv, 2, stats::var)
+    Gv  <- sqrt(1 - gxe.specific) * Gv +
+           sweep(matrix(stats::rnorm(n * q), n, q), 2, sqrt(gxe.specific * vg0), "*")
+    dimnames(Gv) <- list(gid_names, env_names)
+  }
+
   # ---- realised genetic correlation, on the K-WHITENED scale ---------------
-  # cor(Gv) across lines is NOT C, because the lines are related through K.
-  # Forcing cor(Gv) == C directly is WRONG -- a first attempt produced errors
-  # of 0.42-0.90, worse than doing nothing. The parameter is defined here:
+  # cor(Gv) across lines is NOT C, because the lines are related through K;
+  # the parameter is defined as cor(L_K^{-1} G).
   C_realised <- stats::cor(solve(L_K) %*% Gv)
-  dimnames(C_realised) <- dimnames(C_target)
+  dimnames(C_realised) <- list(env_names, env_names)
 
   # ---- phenotypes ----------------------------------------------------------
-  se2 <- sg2 * (1 - h2) / h2
+  vg  <- apply(Gv, 2, stats::var)
+  se2 <- if (mech == "kronecker") sg2 * (1 - h2) / h2 else vg * (1 - h2) / h2
+  names(se2) <- env_names
   mu  <- if (is.null(env_effects)) rep(0, q) else {
     if (length(env_effects) != q)
       stop("'env_effects' must be length n_env.", call. = FALSE)
@@ -4612,8 +4869,17 @@ sim_met <- function(K, n_env = NULL, min.h2 = 0.2, max.h2 = 0.8,
   d <- expand.grid(gid = gid_names, env = env_names, rep = seq_len(n_rep),
                    KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE)
   gi <- match(d$gid, gid_names); ei <- match(d$env, env_names)
-  d$value <- mu[ei] + Gv[cbind(gi, ei)] +
-             stats::rnorm(nrow(d), 0, sqrt(se2[ei]))
+  d$value <- mu[ei] + Gv[cbind(gi, ei)] + stats::rnorm(nrow(d), 0, sqrt(se2[ei]))
+
+  if (rep.var > 0)
+    d$value <- d$value + stats::rnorm(q * n_rep, 0, sqrt(rep.var))[(ei - 1L) * n_rep + d$rep]
+  if (isTRUE(spatial))
+    for (e in seq_len(q)) {
+      rows <- which(ei == e)
+      d$value[rows] <- d$value[rows] +
+        .sim_field_sample(length(rows), field.dim, spatial.rho, spatial.var)
+    }
+
   d$env <- factor(d$env, levels = env_names)
   d$gid <- factor(d$gid, levels = gid_names)
   d <- d[, c("env", "gid", "rep", "value")]
@@ -4633,8 +4899,8 @@ sim_met <- function(K, n_env = NULL, min.h2 = 0.2, max.h2 = 0.8,
   rownames(d) <- NULL
 
   # ---- realised heritabilities, BOTH bases ---------------------------------
-  vg  <- apply(Gv, 2, stats::var)
-  h2_plot <- vg / (vg + se2)
+  extra   <- rep.var + if (isTRUE(spatial)) spatial.var else 0
+  h2_plot <- vg / (vg + se2 + extra)
   h2_line <- h2_plot / (h2_plot + (1 - h2_plot) / n_rep)
 
   C_out <- C_target
@@ -4644,13 +4910,16 @@ sim_met <- function(K, n_env = NULL, min.h2 = 0.2, max.h2 = 0.8,
   out <- list(
     data  = d,
     C_env = C_out,
-    truth = list(g = Gv,
+    truth = list(g = Gv, mechanism = mech,
                  C_target = C_target, C_realised = C_realised,
                  h2_target = h2,
                  h2_realised_plot = h2_plot,
                  h2_realised_linemean = h2_line,
-                 sg2 = sg2, se2 = se2, mu = mu,
-                 n_rep = n_rep, exact = exact),
+                 sg2 = sg2, se2 = se2, vg = vg, mu = mu,
+                 n_rep = n_rep, exact = exact, K.weights = K.weights,
+                 rn.main = if (use_rn) rn.main else NA_real_,
+                 gxe.specific = gxe.specific, rep.var = rep.var,
+                 spatial.var = if (isTRUE(spatial)) spatial.var else 0),
     K = Kpd)
   class(out) <- "sim_met"
 
@@ -4669,6 +4938,7 @@ print.sim_met <- function(x, ...) {
   ct <- x$truth$C_target[lower.tri(x$truth$C_target)]
   cr <- x$truth$C_realised[lower.tri(x$truth$C_realised)]
   cat("<sim_met>\n")
+  cat(sprintf("  mechanism .............. %s\n", x$truth$mechanism))
   cat(sprintf("  lines x environments ... %d x %d   (K is %d x %d, C_env is %d x %d)\n",
               n, q, n, n, q, q))
   cat(sprintf("  observations ........... %d  (n_rep = %d%s)\n", nrow(x$data),
@@ -4702,6 +4972,25 @@ as.data.frame.sim_met <- function(x, row.names = NULL, optional = FALSE, ...) {
   d <- x$data
   if (!is.null(row.names)) rownames(d) <- row.names
   d
+}
+
+#' @title Diagnostic Plot for a Simulated MET
+#' @description Scatter of the target against the realised (K-whitened)
+#'   off-diagonal environment correlations, with the 1:1 line.
+#' @param x a \code{sim_met} object.
+#' @param ... passed to \code{\link[graphics]{plot}}.
+#' @return \code{x}, invisibly.
+#' @seealso \code{\link{sim_met}}
+#' @export
+plot.sim_met <- function(x, ...) {
+  ct <- x$truth$C_target[lower.tri(x$truth$C_target)]
+  cr <- x$truth$C_realised[lower.tri(x$truth$C_realised)]
+  graphics::plot(ct, cr, xlab = "target genetic correlation",
+                 ylab = "realised (K-whitened) correlation",
+                 main = sprintf("sim_met (%s)", x$truth$mechanism),
+                 pch = 19, col = grDevices::adjustcolor("steelblue", 0.6), ...)
+  graphics::abline(0, 1, lty = 2, col = "grey40")
+  invisible(x)
 }
 
 
@@ -4738,6 +5027,14 @@ as.data.frame.sim_met <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' \strong{\code{C_env} is an environment correlation, not a kinship.} It must be
 #' \eqn{q\times q} with unit diagonal. Passing a genomic kinship is rejected.
 #'
+#' \strong{Realism knobs.} \code{marginal} maps each covariable to a non-Gaussian
+#' shape (rank-preserving), \code{kernel = "rbf"} builds a Gaussian instead of a
+#' linear kernel, \code{family.sizes} groups columns into named covariable
+#' families (as in real enviromes), and \code{na.frac} injects missing values
+#' into the returned \eqn{W} \emph{after} the truth is computed, so downstream
+#' cleaning (e.g. \code{\link{W_matrix}} imputation) can be tested against a known
+#' answer.
+#'
 #' @param C_env q x q correlation AMONG ENVIRONMENTS, from any source
 #'   (e.g. \code{\link{sim_met}}\code{$C_env}, \code{\link{env_cor}},
 #'   \code{cov2cor(env_kernel(W)$envCov)}, or hand-specified). NOT a kinship.
@@ -4745,31 +5042,76 @@ as.data.frame.sim_met <- function(x, row.names = NULL, optional = FALSE, ...) {
 #'   off-diagonal correlation between the simulated kernel and \code{C_env} is
 #'   \code{1 - noise}.
 #' @param n_var integer. Number of covariables (columns of \eqn{W}).
-#' @param collinearity numeric in [0, 1). Share of columns collapsed onto drivers.
+#' @param collinearity numeric in [0, 1). Share of columns collapsed onto drivers
+#'   (also the within-family strength when \code{family.sizes} is used).
 #' @param n_blocks integer. Collinear columns grouped into this many families.
 #' @param calibrate logical. Solve for the internal variance share \eqn{a}
 #'   numerically so \code{noise} is on the outcome scale. Default \code{TRUE}.
+#' @param cal.nrep integer. Monte-Carlo replicates used during calibration.
+#' @param marginal character. Marginal distribution of the covariables:
+#'   \code{"gaussian"} (default), \code{"right-skewed"}, \code{"heavy-tailed"}
+#'   or \code{"bounded"}. Applied rank-preserving, so recovery is barely changed.
+#' @param kernel character. Environmental kernel: \code{"linear"} (default,
+#'   \eqn{WW^\top}) or \code{"rbf"} (Gaussian).
+#' @param bandwidth numeric or \code{NULL}. RBF bandwidth; \code{NULL} uses the
+#'   median heuristic.
+#' @param na.frac numeric in [0, 1). Fraction of entries set to \code{NA} in the
+#'   returned \eqn{W} (truth is computed on the complete matrix first).
+#' @param family.sizes integer vector (optionally named). Column counts per
+#'   covariable family; must sum to \code{n_var}. Overrides \code{n_blocks}
+#'   redundancy and names the columns by family.
 #' @param var_names,env_names character. Optional names for columns / rows.
-#' @param seed integer. RNG seed.
+#' @param seed integer. RNG seed. The caller's RNG stream is restored on exit.
 #' @param verbose logical. Print a summary. Default \code{TRUE}.
 #'
 #' @return
 #' A \eqn{q \times n_{var}} matrix of class \code{"sim_W"}. Attributes:
 #' \code{"C_env"} (the target), \code{"K_W"} (the realised kernel) and
 #' \code{"explained"} (a list with \code{r}, \code{r2}, per-PC variance shares,
-#' effective rank \code{eff_rank}, the internal share \code{a_internal}, and the
-#' requested/target values).
+#' effective rank \code{eff_rank}, the internal share \code{a_internal}, the
+#' \code{marginal}/\code{kernel}/\code{na.frac} used, and the requested/target
+#' values).
 #'
 #' @examples
 #' \dontrun{
 #' C <- sim_met_C(q = 10, min.cor = 0.2, max.cor = 0.8, seed = 1)
 #'
-#' ## An envirome that recovers ~70% of C
+#' ## 1. An envirome that recovers ~70% of C (noise is on the outcome scale)
 #' W <- sim_W(C, noise = 0.3, n_var = 50, seed = 1)
 #' attr(W, "explained")$r
 #'
-#' ## Redundant envirome: many collinear columns, low effective rank
-#' W2 <- sim_W(C, noise = 0.3, n_var = 200, collinearity = 0.8, n_blocks = 5)
+#' ## 2. Perfect vs pure-noise enviromes
+#' W_good  <- sim_W(C, noise = 0.0, n_var = 50)
+#' W_noise <- sim_W(C, noise = 1.0, n_var = 50)
+#'
+#' ## 3. Redundant envirome: many collinear columns, low effective rank
+#' W <- sim_W(C, noise = 0.3, n_var = 200, collinearity = 0.8, n_blocks = 5)
+#'
+#' ## 4. Non-Gaussian covariables (rank-preserving marginal transform)
+#' W <- sim_W(C, noise = 0.3, n_var = 60, marginal = "right-skewed")
+#' W <- sim_W(C, noise = 0.3, n_var = 60, marginal = "heavy-tailed")
+#' W <- sim_W(C, noise = 0.3, n_var = 60, marginal = "bounded")
+#'
+#' ## 5. Gaussian RBF kernel instead of the linear WW'
+#' W <- sim_W(C, noise = 0.3, n_var = 60, kernel = "rbf")
+#' W <- sim_W(C, noise = 0.3, n_var = 60, kernel = "rbf", bandwidth = 2)
+#'
+#' ## 6. Inject missing values AFTER the truth is computed
+#' W <- sim_W(C, noise = 0.3, n_var = 60, na.frac = 0.1)
+#' sum(is.na(W))
+#'
+#' ## 7. Named covariable families (sizes must sum to n_var)
+#' W <- sim_W(C, n_var = 12, family.sizes = c(temp = 4, rain = 5, rad = 3))
+#' colnames(W)
+#'
+#' ## 8. Custom names and a faster/looser calibration
+#' W <- sim_W(C, noise = 0.4, n_var = 30, cal.nrep = 5,
+#'            env_names = paste0("Loc", 1:10),
+#'            var_names = paste0("bio", 1:30), seed = 1)
+#'
+#' ## 9. Raw (uncalibrated) internal variance share
+#' W <- sim_W(C, noise = 0.5, n_var = 50, calibrate = FALSE)
+#' plot(W)
 #' }
 #'
 #' @seealso \code{\link{sim_met}}, \code{\link{sim_met_C}}, \code{\link{sim_W_grid}},
@@ -4780,11 +5122,24 @@ as.data.frame.sim_met <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' multi-environment prediction. \emph{G3} 13(2), jkac313.
 #' @export
 sim_W <- function(C_env, noise = 0, n_var = 50, collinearity = 0,
-                  n_blocks = 1, calibrate = TRUE,
-                  var_names = NULL, env_names = NULL,
+                  n_blocks = 1, calibrate = TRUE, cal.nrep = 15L,
+                  marginal = c("gaussian", "right-skewed", "heavy-tailed",
+                               "bounded"),
+                  kernel = c("linear", "rbf"), bandwidth = NULL, na.frac = 0,
+                  family.sizes = NULL, var_names = NULL, env_names = NULL,
                   seed = NULL, verbose = TRUE) {
 
-  if (!is.null(seed)) set.seed(seed)
+  marginal <- match.arg(marginal)
+  kernel   <- match.arg(kernel)
+
+  # RNG hygiene: seed locally and restore the caller's stream on exit.
+  if (!is.null(seed)) {
+    if (exists(".Random.seed", envir = .GlobalEnv)) {
+      .oldseed <- get(".Random.seed", envir = .GlobalEnv)
+      on.exit(assign(".Random.seed", .oldseed, envir = .GlobalEnv), add = TRUE)
+    }
+    set.seed(seed)
+  }
   if (inherits(C_env, "sim_met"))
     stop("Pass the correlation matrix, not the sim_met object: use ",
          "sim_W(met$C_env, ...) or sim_W(env_cor(met), ...).", call. = FALSE)
@@ -4795,13 +5150,29 @@ sim_W <- function(C_env, noise = 0, n_var = 50, collinearity = 0,
   if (noise < 0 || noise > 1) stop("'noise' must lie in [0, 1].", call. = FALSE)
   if (collinearity < 0 || collinearity >= 1)
     stop("'collinearity' must lie in [0, 1).", call. = FALSE)
+  if (na.frac < 0 || na.frac >= 1)
+    stop("'na.frac' must lie in [0, 1).", call. = FALSE)
+  if (!is.null(family.sizes)) {
+    if (sum(family.sizes) != k)
+      stop("'family.sizes' must sum to n_var (", k, ").", call. = FALSE)
+    fam.grp <- rep(seq_along(family.sizes), times = family.sizes)
+    fam.cor <- if (collinearity > 0) collinearity else 0.8
+  }
 
-  Csq <- .sim_psd_sqrt(C_env)
+  Csq  <- .sim_psd_sqrt(C_env)
+  Kfun <- if (kernel == "rbf") function(W) .sim_rbf(W, bandwidth) else .sim_GB
 
   # ---- one draw at internal variance share a ------------------------------
   draw <- function(a) {
     S <- Csq %*% .sim_orth(q, k)
-    if (collinearity > 0) {
+    if (!is.null(family.sizes)) {
+      for (f in unique(fam.grp)) {
+        cols <- which(fam.grp == f)
+        drv  <- S[, cols[1]]
+        S[, cols] <- sqrt(fam.cor) * drv +
+                     sqrt(1 - fam.cor) * S[, cols, drop = FALSE]
+      }
+    } else if (collinearity > 0) {
       nb <- round(k * collinearity)
       if (nb >= 2L) {
         idx <- sample.int(k, nb)
@@ -4813,14 +5184,15 @@ sim_W <- function(C_env, noise = 0, n_var = 50, collinearity = 0,
         }
       }
     }
-    E <- matrix(stats::rnorm(q * k), q, k)
-    sqrt(1 - a) * S + sqrt(a) * E
+    E  <- matrix(stats::rnorm(q * k), q, k)
+    Wd <- sqrt(1 - a) * S + sqrt(a) * E
+    .sim_marginal(Wd, marginal)
   }
 
   # ---- calibration: r is DECREASING in a, so bracketing is inverted -------
-  r_at <- function(a, nrep = 15L)
+  r_at <- function(a, nrep = cal.nrep)
     mean(vapply(seq_len(nrep),
-                function(i) .sim_offdiag_cor(.sim_GB(draw(a)), C_env),
+                function(i) .sim_offdiag_cor(Kfun(draw(a)), C_env),
                 numeric(1)))
 
   if (isTRUE(calibrate)) {
@@ -4840,20 +5212,32 @@ sim_W <- function(C_env, noise = 0, n_var = 50, collinearity = 0,
   W <- draw(a)
   rn <- if (!is.null(env_names)) env_names else rownames(C_env)
   if (is.null(rn)) rn <- paste0("E", seq_len(q))
-  cn <- if (!is.null(var_names)) var_names else paste0("V", seq_len(k))
+  if (!is.null(var_names)) cn <- var_names
+  else if (!is.null(family.sizes)) {
+    fnm <- names(family.sizes); if (is.null(fnm)) fnm <- paste0("F", seq_along(family.sizes))
+    cn  <- unlist(Map(function(nm, s) paste0(nm, "_", seq_len(s)), fnm, family.sizes),
+                  use.names = FALSE)
+  } else cn <- paste0("V", seq_len(k))
   dimnames(W) <- list(rn, cn)
 
-  K_W <- .sim_GB(W)
+  # ---- truth computed on the COMPLETE matrix, before injecting NA ----------
+  K_W <- Kfun(W)
   r   <- .sim_offdiag_cor(K_W, C_env)
   ev  <- svd(scale(W, TRUE, FALSE))$d^2
   eff <- sum(ev)^2 / sum(ev^2)
+
+  if (na.frac > 0) {
+    n_na <- round(na.frac * length(W))
+    if (n_na > 0) W[sample.int(length(W), n_na)] <- NA_real_
+  }
 
   attr(W, "C_env") <- C_env
   attr(W, "K_W")   <- K_W
   attr(W, "explained") <- list(
     r = r, r2 = r^2,
     per_pc = ev / sum(ev), eff_rank = eff,
-    a_internal = a, noise_requested = noise, r_target = 1 - noise)
+    a_internal = a, noise_requested = noise, r_target = 1 - noise,
+    marginal = marginal, kernel = kernel, na.frac = na.frac)
   class(W) <- c("sim_W", "matrix", "array")
 
   if (verbose) print(W)
@@ -4877,6 +5261,10 @@ print.sim_W <- function(x, ...) {
               e$eff_rank, ncol(x)))
   cat(sprintf("  PC1 share .................. %.1f%%\n", 100 * e$per_pc[1]))
   cat(sprintf("  internal variance share a .. %.4f\n", e$a_internal))
+  cat(sprintf("  marginal / kernel .......... %s / %s\n",
+              e$marginal, e$kernel))
+  if (!is.null(e$na.frac) && e$na.frac > 0)
+    cat(sprintf("  missing values injected .... %.1f%%\n", 100 * e$na.frac))
   invisible(x)
 }
 
@@ -4898,6 +5286,31 @@ as.matrix.sim_W <- function(x, ...) {
   m
 }
 
+#' @title Diagnostic Plot for a Simulated Envirome
+#' @description Two panels: the realised kernel off-diagonals against the target
+#'   environment correlation, and the scree of per-PC variance shares.
+#' @param x a \code{sim_W} object.
+#' @param ... passed to \code{\link[graphics]{plot}}.
+#' @return \code{x}, invisibly.
+#' @seealso \code{\link{sim_W}}
+#' @export
+plot.sim_W <- function(x, ...) {
+  e  <- attr(x, "explained")
+  kw <- attr(x, "K_W"); ce <- attr(x, "C_env")
+  op <- graphics::par(mfrow = c(1, 2)); on.exit(graphics::par(op), add = TRUE)
+  graphics::plot(ce[lower.tri(ce)], kw[lower.tri(kw)],
+                 xlab = "target C_env (off-diagonal)",
+                 ylab = "realised kernel (off-diagonal)",
+                 main = sprintf("recovery r = %.3f", e$r),
+                 pch = 19, col = grDevices::adjustcolor("darkgreen", 0.6), ...)
+  graphics::abline(stats::lm(kw[lower.tri(kw)] ~ ce[lower.tri(ce)]),
+                   lty = 2, col = "grey40")
+  graphics::plot(seq_along(e$per_pc), e$per_pc, type = "b", pch = 19,
+                 xlab = "principal component", ylab = "variance share",
+                 main = sprintf("effective rank = %.1f", e$eff_rank))
+  invisible(x)
+}
+
 
 #' @title Simulate a q x q Genetic Correlation Among Environments
 #'
@@ -4916,7 +5329,22 @@ as.matrix.sim_W <- function(x, ...) {
 #' sampling fails.
 #'
 #' @param q integer. Number of environments (>= 3).
-#' @param min.cor,max.cor numeric. Range for off-diagonal correlations.
+#' @param min.cor,max.cor numeric. Range for off-diagonal correlations. For the
+#'   structured generators these bound the random inputs (vine partial correlations,
+#'   factor loadings) rather than the realised off-diagonals exactly.
+#' @param structure character. How the matrix is built: \code{"random"} (default,
+#'   rejection-sampled uniform off-diagonals, as before), \code{"vine"} (C-vine
+#'   partial correlations, always PSD without rejection), \code{"equi"}
+#'   (equicorrelated), \code{"ar1"} (first-order autoregressive, for ordered
+#'   environments such as a year series), \code{"block"} (block-diagonal
+#'   mega-environments) or \code{"factor"} (a random factor model
+#'   \eqn{\Lambda\Lambda^\top + \Psi}).
+#' @param rho numeric or \code{NULL}. The correlation used by \code{"equi"}
+#'   (off-diagonal), \code{"ar1"} (lag-1) and \code{"block"} (within-block). If
+#'   \code{NULL}, a sensible value is derived from \code{min.cor}/\code{max.cor}.
+#' @param n_blocks integer. Number of mega-environments when \code{structure = "block"}.
+#' @param between.cor numeric. Between-block correlation when \code{structure = "block"}.
+#' @param n_factor integer. Number of latent factors when \code{structure = "factor"}.
 #' @param env_names character. Optional environment names.
 #' @param max.tries integer. Rejection-sampling attempts before repair.
 #' @param seed integer. RNG seed.
@@ -4929,17 +5357,50 @@ as.matrix.sim_W <- function(x, ...) {
 #' C <- sim_met_C(q = 8, min.cor = 0.2, max.cor = 0.8, seed = 1)
 #' range(C[lower.tri(C)])
 #'
+#' ## Structured mega-environments and an autoregressive year series
+#' Cb <- sim_met_C(q = 9, structure = "block", n_blocks = 3, rho = 0.7,
+#'                 between.cor = 0.1)
+#' Car <- sim_met_C(q = 8, structure = "ar1", rho = 0.6)
+#'
 #' @seealso \code{\link{sim_met}}, \code{\link{sim_W}}, \code{\link{env_cor}}
 #' @export
-sim_met_C <- function(q, min.cor = 0.0, max.cor = 0.8, env_names = NULL,
+sim_met_C <- function(q, min.cor = 0.0, max.cor = 0.8,
+                      structure = c("random", "vine", "equi", "ar1",
+                                    "block", "factor"),
+                      rho = NULL, n_blocks = 2L, between.cor = 0,
+                      n_factor = 2L, env_names = NULL,
                       max.tries = 200L, seed = NULL) {
   if (!is.null(seed)) set.seed(seed)
+  structure <- match.arg(structure)
   if (q < 3L) stop("'q' must be at least 3.", call. = FALSE)
   if (min.cor > max.cor)
     stop("'min.cor' (", min.cor, ") exceeds 'max.cor' (", max.cor, ").",
          call. = FALSE)
   if (max.cor > 1 || min.cor < -1)
     stop("Correlations must lie in [-1, 1].", call. = FALSE)
+
+  nm <- if (!is.null(env_names)) env_names else paste0("E", seq_len(q))
+
+  # ---- constructive (structured) generators: PSD by construction ----------
+  if (structure != "random") {
+    C <- .sim_C_structured(q, structure, min.cor, max.cor, rho,
+                           n_blocks, between.cor, n_factor)
+    blocks <- attr(C, "blocks")
+    ev <- eigen(C, symmetric = TRUE, only.values = TRUE)$values
+    repaired <- FALSE
+    if (min(ev) < 1e-8) {
+      e <- eigen(C, symmetric = TRUE); e$values[e$values < 1e-8] <- 1e-8
+      C <- stats::cov2cor(e$vectors %*% diag(e$values) %*% t(e$vectors))
+      repaired <- TRUE
+    }
+    dimnames(C) <- list(nm, nm)
+    attr(C, "requested") <- c(min.cor = min.cor, max.cor = max.cor)
+    attr(C, "structure") <- structure
+    attr(C, "repaired")  <- repaired
+    if (!is.null(blocks)) attr(C, "blocks") <- blocks
+    class(C) <- c("C_env", "matrix", "array")
+    return(C)
+  }
 
   bound <- -1 / (q - 1)
   if (max.cor < bound)
@@ -4985,6 +5446,7 @@ sim_met_C <- function(q, min.cor = 0.0, max.cor = 0.8, env_names = NULL,
   nm <- if (!is.null(env_names)) env_names else paste0("E", seq_len(q))
   dimnames(C) <- list(nm, nm)
   attr(C, "requested") <- c(min.cor = min.cor, max.cor = max.cor)
+  attr(C, "structure") <- "random"
   class(C) <- c("C_env", "matrix", "array")
   C
 }
@@ -5030,6 +5492,11 @@ env_cor.matrix <- function(x, type = c("target", "realised"), ...) {
 
 #' @rdname env_cor
 #' @export
+env_cor.sim_W <- function(x, type = c("target", "realised"), ...)
+  attr(x, "C_env")
+
+#' @rdname env_cor
+#' @export
 env_cor.default <- function(x, type = c("target", "realised"), ...)
   stop("No env_cor() method for class <", paste(class(x), collapse = "/"), ">.",
        call. = FALSE)
@@ -5046,8 +5513,9 @@ env_cor.default <- function(x, type = c("target", "realised"), ...)
 #' @param noise,n_var,collinearity numeric vectors defining the grid.
 #' @param n_rep integer. Replicate simulations per design point.
 #' @param calibrate logical. Passed to \code{\link{sim_W}}.
-#' @param seed integer. RNG seed.
-#' @param verbose logical. Unused placeholder for symmetry with other functions.
+#' @param cal.nrep integer. Calibration replicates per \code{\link{sim_W}} call.
+#' @param seed integer. RNG seed; each design point gets a reproducible sub-seed.
+#' @param verbose logical. Print per-design-point progress. Default \code{TRUE}.
 #'
 #' @return A \code{data.frame} with one row per design point: \code{noise},
 #'   \code{n_var}, \code{collinearity}, mean recovery \code{r} and its SD
@@ -5064,14 +5532,23 @@ env_cor.default <- function(x, type = c("target", "realised"), ...)
 #' @export
 sim_W_grid <- function(C_env, noise = seq(0, 1, 0.25), n_var = c(10, 50, 200),
                        collinearity = c(0, 0.5, 0.9), n_rep = 10,
-                       calibrate = TRUE, seed = NULL, verbose = TRUE) {
+                       calibrate = TRUE, cal.nrep = 15L,
+                       seed = NULL, verbose = TRUE) {
   if (!is.null(seed)) set.seed(seed)
   g <- expand.grid(noise = noise, n_var = n_var, collinearity = collinearity,
                    KEEP.OUT.ATTRS = FALSE)
-  res <- do.call(rbind, lapply(seq_len(nrow(g)), function(i) {
+  np <- nrow(g)
+  cell_seeds <- if (!is.null(seed)) seed + seq_len(np) else rep(list(NULL), np)
+  res <- do.call(rbind, lapply(seq_len(np), function(i) {
+    if (isTRUE(verbose))
+      message(sprintf("  [%d/%d] noise=%.2f  n_var=%d  collinearity=%.2f",
+                      i, np, g$noise[i], g$n_var[i], g$collinearity[i]))
+    cs <- if (is.list(cell_seeds)) cell_seeds[[i]] else cell_seeds[i]
     rr <- vapply(seq_len(n_rep), function(j) {
       W <- sim_W(C_env, noise = g$noise[i], n_var = g$n_var[i],
                  collinearity = g$collinearity[i], calibrate = calibrate,
+                 cal.nrep = cal.nrep,
+                 seed = if (is.null(cs)) NULL else cs * 1000L + j,
                  verbose = FALSE)
       e <- attr(W, "explained")
       c(e$r, e$r2, e$eff_rank)
