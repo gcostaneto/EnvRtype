@@ -209,10 +209,9 @@ W <- W_matrix(env.data = env.data, QC = TRUE, sd.tol = 3)
 #>   - summarising weather data into environmental covariables
 #>   - centring, scaling and quality-controlling W
 #> ------------------------------------------------
-#> Quality Control based on sd.tol = 3
+#> Quality Control (sd.tol = 3)
 #> Removed variables: 2 from 21
-#> ALLSKY_TOA_SW_DWN_mean
-#> RH2M_mean
+#>   too variable (sd > sd.tol): ALLSKY_TOA_SW_DWN_mean, RH2M_mean
 #> ------------------------------------------------
 attr(W, "removed")
 #> [1] "ALLSKY_TOA_SW_DWN_mean" "RH2M_mean"             
