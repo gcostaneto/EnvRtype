@@ -1199,6 +1199,8 @@ round(C_env, 2)
 #> attr(,"requested")
 #> min.cor max.cor 
 #>     0.1     0.8 
+#> attr(,"structure")
+#> [1] "random"
 #> attr(,"class")
 #> [1] "C_env"  "matrix" "array"
 ```
@@ -1209,6 +1211,7 @@ set.seed(42)
 sim <- sim_met(K = maizeG, C = C_env, min.h2 = 0.3, max.h2 = 0.7,
                n_rep = 2, seed = 42)
 #> <sim_met>
+#>   mechanism .............. kronecker
 #>   lines x environments ... 150 x 6   (K is 150 x 150, C_env is 6 x 6)
 #>   observations ........... 1800  (n_rep = 2)
 #>   h2 target .............. 0.414 - 0.675

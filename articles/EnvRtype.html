@@ -1202,6 +1202,8 @@ specified genomic kinship and environmental correlation structure.</p>
 <span><span class="co">#&gt; attr(,"requested")</span></span>
 <span><span class="co">#&gt; min.cor max.cor </span></span>
 <span><span class="co">#&gt;     0.1     0.8 </span></span>
+<span><span class="co">#&gt; attr(,"structure")</span></span>
+<span><span class="co">#&gt; [1] "random"</span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "C_env"  "matrix" "array"</span></span></code></pre></div>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
@@ -1209,6 +1211,7 @@ specified genomic kinship and environmental correlation structure.</p>
 <span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_met.html">sim_met</a></span><span class="op">(</span>K <span class="op">=</span> <span class="va">maizeG</span>, C <span class="op">=</span> <span class="va">C_env</span>, min.h2 <span class="op">=</span> <span class="fl">0.3</span>, max.h2 <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>               n_rep <span class="op">=</span> <span class="fl">2</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;sim_met&gt;</span></span>
+<span><span class="co">#&gt;   mechanism .............. kronecker</span></span>
 <span><span class="co">#&gt;   lines x environments ... 150 x 6   (K is 150 x 150, C_env is 6 x 6)</span></span>
 <span><span class="co">#&gt;   observations ........... 1800  (n_rep = 2)</span></span>
 <span><span class="co">#&gt;   h2 target .............. 0.414 - 0.675</span></span>
