@@ -133,7 +133,7 @@
 #' @section Original Version:
 #' Costa-Neto et al (2021)
 #'
-#' EnvRtype v.1.2.3, Sep 2026
+#' EnvRtype v.0.1.3, Sep 2026
 #'
 #' @param K_G list of genomic relationship matrices (\code{p x p}), named. If
 #'   \code{NULL}, an identity genotype kernel is used.
@@ -264,7 +264,7 @@ get_kernel <- function(K_G = NULL,
     cat("   returns them spectrally decomposed, ready for\n")
     cat("   kernel_model().\n")
     cat(" Original Version: Costa-Neto et al (2021)\n")
-    cat(" EnvRtype v.1.2.3, Sep 2026\n")
+    cat(" EnvRtype v.0.1.3, Sep 2026\n")
     cat("=========================================================\n")
     cat(sprintf(" model = %-7s engine = %s\n", model, engine))
     cat("---------------------------------------------------------\n")
@@ -915,7 +915,7 @@ undecompose_kernels <- function(K) {
 #' @section Original Version:
 #' Costa-Neto et al (2021)
 #'
-#' EnvRtype v.1.2.3, Sep 2026
+#' EnvRtype v.0.1.3, Sep 2026
 #'
 #' @author Germano Costa Neto. Gibbs sampler adapted from Granato et al. (2018),
 #'   BGGE package. Refactored version.
@@ -1358,7 +1358,7 @@ kernel_model <- function(y, data = NULL, random = NULL, fixed = NULL, env, gid,
     cat("   spectral basis of each kernel, returning predictions,\n")
     cat("   variance components and heritabilities.\n")
     cat(" Original Version: Costa-Neto et al (2021)\n")
-    cat(" EnvRtype v.1.2.3, Sep 2026\n")
+    cat(" EnvRtype v.0.1.3, Sep 2026\n")
     cat("=========================================================\n")
     cat(" Gibbs sampler after Granato et al (2018) G3\n")
     cat("---------------------------------------------------------\n")
@@ -4698,9 +4698,98 @@ coverage_summary <- function(scan) {
 #' ## 10. Pair with a simulated envirome and diagnose the recovery
 #' W <- sim_W(met$C_env, noise = 0.3, n_var = 50, seed = 1)
 #' plot(met)
+#'
+#' ## 11. End-to-end: simulate kinship + MET + envirome, then fit a model
+#' ##     Simulate a genomic kinship KG from markers (VanRaden)
+#' X <- matrix(rbinom(150 * 1000, 2, 0.3), 150, 1000)
+#' rownames(X) <- paste0("G", seq_len(150))        # gid names carry through
+#' Z <- scale(X); Z[is.na(Z)] <- 0
+#' Kg <- tcrossprod(Z) / ncol(Z) + diag(1e-6, 150) # positive-definite kinship
+#' dimnames(Kg) <- list(rownames(X), rownames(X))
+#' KG <- list(G = Kg)
+#'
+#' ##     Simulate the MET truth on that kinship (one replicate)
+#' met <- sim_met(Kg, n_env = 10, n_rep = 1,
+#'                min.cor = 0.3, max.cor = 0.8,
+#'                min.h2 = 0.3, max.h2 = 0.7, seed = 1)
+#' df  <- as.data.frame(met$data)                  # base data.frame for get_kernel()
+#'
+#' ##     Simulate a redundant, noisier envirome on the same environments
+#' W2  <- sim_W(met$C_env, noise = 0.6, n_var = 200,
+#'              collinearity = 0.8, n_blocks = 5, seed = 1)
+#' KE2 <- list(W = env_kernel(env.data = as.matrix(W2))[[2]])
+#'
+#' ##     Build reaction-norm kernels and fit the Bayesian model
+#' K2  <- get_kernel(K_G = KG, K_E = KE2, data = df, model = "RNMM",
+#'                   env = "env", gid = "gid", y = "value")
+#' fit <- kernel_model(y = "value", data = df, random = K2,
+#'                     env = "env", gid = "gid",
+#'                     iterations = 5000, burnin = 1000)
+#'
+#' ## 12. Phenotypes for contrasting GENETIC diversity (envirome fixed)
+#' ##     Low diversity: few rare markers, strong structure; high: many common.
+#' E    <- sim_envirome(12, 40, structure = "clusters", n_cluster = 3, seed = 1)
+#' X_lo <- sim_markers(200, 500,  maf = "rare",   n_subpop = 5, Fst = 0.2, seed = 1)
+#' X_hi <- sim_markers(200, 4000, maf = "common", n_subpop = 1, Fst = 0.0, seed = 1)
+#' met_lo <- sim_met(markers = X_lo, C = attr(E, "C_env"), n.qtl = 80, seed = 1)
+#' met_hi <- sim_met(markers = X_hi, C = attr(E, "C_env"), n.qtl = 80, seed = 1)
+#' c(low = var(met_lo$data$value), high = var(met_hi$data$value))
+#'
+#' ## 13. Phenotypes for contrasting ENVIROME diversity (genetics fixed)
+#' ##     Diverse environments induce lower cross-environment correlation (more GxE).
+#' X    <- sim_markers(200, 3000, n_subpop = 3, Fst = 0.08, seed = 2)
+#' E_lo <- sim_envirome(12, 40, structure = "gradient", redundancy = 0.7,
+#'                      n_blocks = 2, seed = 2)
+#' E_hi <- sim_envirome(12, 40, structure = "random", redundancy = 0, seed = 2)
+#' met_eLo <- sim_met(markers = X, C = attr(E_lo, "C_env"), n.qtl = 80, seed = 2)
+#' met_eHi <- sim_met(markers = X, C = attr(E_hi, "C_env"), n.qtl = 80, seed = 2)
+#' cor(met_eLo$truth$g)[1, 2]   # high  cross-environment genetic correlation
+#' cor(met_eHi$truth$g)[1, 2]   # low   correlation -> stronger GxE
+#'
+#' ## 14. Full 2 x 2 factorial of genetic x envirome diversity
+#' scenario <- function(gen, env, seed = 1) {
+#'   X <- if (gen == "low")
+#'          sim_markers(200, 500, maf = "rare", n_subpop = 5, Fst = 0.2,
+#'                      seed = seed, verbose = FALSE)
+#'        else
+#'          sim_markers(200, 4000, maf = "common", n_subpop = 1, Fst = 0,
+#'                      seed = seed, verbose = FALSE)
+#'   E <- if (env == "low")
+#'          sim_envirome(12, 40, structure = "gradient", redundancy = 0.7,
+#'                       n_blocks = 2, seed = seed, verbose = FALSE)
+#'        else
+#'          sim_envirome(12, 40, structure = "random", redundancy = 0,
+#'                       seed = seed, verbose = FALSE)
+#'   met <- sim_met(markers = X, C = attr(E, "C_env"),
+#'                  n.qtl = 80, min.h2 = 0.3, max.h2 = 0.6, seed = seed)
+#'   Cg  <- cor(met$truth$g)
+#'   data.frame(gen = gen, env = env,
+#'              gxe_cor   = mean(Cg[lower.tri(Cg)]),
+#'              pheno_var = var(met$data$value))
+#' }
+#' do.call(rbind, list(scenario("low",  "low"),  scenario("low",  "high"),
+#'                     scenario("high", "low"),  scenario("high", "high")))
+#'
+#' ## 15. Sweep population structure (Fst) and record phenotype variance
+#' E <- sim_envirome(10, 40, structure = "clusters", n_cluster = 3, seed = 3)
+#' do.call(rbind, lapply(c(0, 0.05, 0.1, 0.2), function(f) {
+#'   X   <- sim_markers(200, 3000, n_subpop = 4, Fst = f, seed = 3, verbose = FALSE)
+#'   met <- sim_met(markers = X, C = attr(E, "C_env"), n.qtl = 80, seed = 3)
+#'   data.frame(Fst = f, eff_dim = attr(X, "diversity")["eff_dim"],
+#'              pheno_var = var(met$data$value))
+#' }))
+#'
+#' ## 16. Reaction-norm phenotypes driven directly by a diverse envirome
+#' X    <- sim_markers(150, 2500, n_subpop = 2, Fst = 0.06, seed = 6)
+#' E2   <- sim_envirome(10, 25, structure = "gradient",
+#'                      marginal = "right-skewed", seed = 6)
+#' met2 <- sim_met(markers = X, W = as.matrix(E2),
+#'                 reaction.norm = TRUE, rn.main = 0.6, seed = 6)
+#' met2$truth$mechanism
 #' }
 #'
 #' @seealso \code{\link{sim_W}}, \code{\link{sim_met_C}}, \code{\link{env_cor}},
+#'   \code{\link{sim_markers}}, \code{\link{sim_envirome}},
 #'   \code{\link{kernel_model}}, \code{\link{scan_untested_envs}}
 #'
 #' @references
@@ -4784,6 +4873,7 @@ sim_met <- function(K = NULL, n_env = NULL, min.h2 = 0.2, max.h2 = 0.8,
   } else if (use_rn) {
     q <- nrow(as.matrix(W)); C_target <- NULL
   } else {
+    if (is.null(n_env) && !is.null(W)) n_env <- nrow(as.matrix(W))
     if (is.null(n_env)) stop("Supply 'n_env' when 'C' is not given.", call. = FALSE)
     q <- n_env
     C_target <- unclass(sim_met_C(q, min.cor, max.cor))
@@ -5559,4 +5649,361 @@ sim_W_grid <- function(C_env, noise = seq(0, 1, 0.25), n_var = c(10, 50, 200),
   }))
   rownames(res) <- NULL
   res
+}
+
+
+#' @title Simulate a Marker Matrix with a Controllable Genetic Diversity
+#'
+#' @description
+#' Generates a bi-allelic SNP dosage matrix (lines in rows, markers in columns)
+#' whose genetic diversity is set by explicit knobs: the minor-allele-frequency
+#' spectrum, population structure (\eqn{F_{ST}} across subpopulations) and
+#' linkage disequilibrium (redundant marker blocks). The VanRaden genomic
+#' relationship matrix is attached, so the result feeds \code{\link{sim_met}}
+#' (as \code{markers} or via the kinship) and \code{\link{get_kernel}} directly.
+#'
+#' @details
+#' Allele frequencies are drawn per marker and genotypes as
+#' \eqn{x_{ij}\sim\mathrm{Binomial}(2, p_{j})}. Population structure follows the
+#' Balding--Nichols model: within subpopulation \eqn{s} the frequency drifts
+#' from the ancestral \eqn{p_j} as
+#' \eqn{p_{sj}\sim\mathrm{Beta}\!\big(p_j\tfrac{1-F_{ST}}{F_{ST}},
+#' (1-p_j)\tfrac{1-F_{ST}}{F_{ST}}\big)}, so larger \eqn{F_{ST}} means more
+#' between-group differentiation and lower within-group diversity. Linkage
+#' disequilibrium is emulated by copying each block's lead marker into a fraction
+#' \code{ld} of the other markers in the block, lowering the effective rank of
+#' the kinship.
+#'
+#' @param n_lines integer. Number of lines (rows, >= 2).
+#' @param n_marker integer. Number of markers (columns).
+#' @param maf character. Minor-allele-frequency spectrum: \code{"uniform"}
+#'   (default), \code{"rare"} (U-shaped, many low-frequency variants) or
+#'   \code{"common"} (bell-shaped, mostly intermediate).
+#' @param n_subpop integer. Number of subpopulations. Lines are assigned in
+#'   round-robin order.
+#' @param Fst numeric in [0, 1). Between-subpopulation differentiation. \code{0}
+#'   gives a single panmictic population.
+#' @param ld numeric in [0, 1). Fraction of each block's markers forced to equal
+#'   the block lead marker, creating linkage disequilibrium / redundancy.
+#' @param ld_blocks integer. Number of linkage blocks when \code{ld > 0}.
+#' @param line_names character. Optional line names (default \code{G1..Gn}).
+#' @param seed integer. RNG seed. The caller's RNG stream is restored on exit.
+#' @param verbose logical. Print a diversity summary. Default \code{TRUE}.
+#'
+#' @return
+#' An integer matrix of class \code{"sim_markers"} (lines x markers). Attributes:
+#' \code{"freq"} (per-marker allele frequency), \code{"subpop"} (subpopulation of
+#' each line), \code{"G"} (the VanRaden kinship, positive definite) and
+#' \code{"diversity"} (\code{He} expected heterozygosity, \code{mean_relatedness}
+#' and \code{eff_dim}, the effective dimension of the kinship).
+#'
+#' @examples
+#' \dontrun{
+#' ## High diversity: many common markers, one panmictic population
+#' X_hi <- sim_markers(150, 2000, maf = "common", seed = 1)
+#'
+#' ## Low diversity: fewer, rarer markers
+#' X_lo <- sim_markers(150, 300, maf = "rare", seed = 1)
+#'
+#' ## Structured: four subpopulations with strong drift
+#' X_st <- sim_markers(150, 2000, n_subpop = 4, Fst = 0.15, seed = 1)
+#' attr(X_st, "diversity")
+#'
+#' ## Feed straight into sim_met (markers mechanism) or via the kinship
+#' met <- sim_met(markers = X_st, n_env = 10, n.qtl = 50, seed = 1)
+#' KG  <- list(G = attr(X_st, "G"))
+#'
+#' ## Compare phenotype variance under low vs high genetic diversity
+#' E <- sim_envirome(10, 30, structure = "clusters", seed = 1)
+#' v_lo <- var(sim_met(markers = X_lo, C = attr(E, "C_env"), seed = 1)$data$value)
+#' v_hi <- var(sim_met(markers = X_hi, C = attr(E, "C_env"), seed = 1)$data$value)
+#' c(low = v_lo, high = v_hi)
+#' }
+#'
+#' @seealso \code{\link{sim_met}}, \code{\link{sim_envirome}}, \code{\link{get_kernel}}
+#' @export
+sim_markers <- function(n_lines, n_marker = 1000L,
+                        maf = c("uniform", "rare", "common"),
+                        n_subpop = 1L, Fst = 0, ld = 0, ld_blocks = 1L,
+                        line_names = NULL, seed = NULL, verbose = TRUE) {
+  maf <- match.arg(maf)
+  if (!is.null(seed)) {
+    if (exists(".Random.seed", envir = .GlobalEnv)) {
+      .oldseed <- get(".Random.seed", envir = .GlobalEnv)
+      on.exit(assign(".Random.seed", .oldseed, envir = .GlobalEnv), add = TRUE)
+    }
+    set.seed(seed)
+  }
+  if (n_lines < 2L) stop("'n_lines' must be at least 2.", call. = FALSE)
+  if (n_marker < 1L) stop("'n_marker' must be at least 1.", call. = FALSE)
+  if (Fst < 0 || Fst >= 1) stop("'Fst' must lie in [0, 1).", call. = FALSE)
+  if (ld < 0 || ld >= 1) stop("'ld' must lie in [0, 1).", call. = FALSE)
+
+  p_anc <- switch(maf,
+    uniform = stats::runif(n_marker, 0.05, 0.95),
+    rare    = stats::rbeta(n_marker, 0.5, 0.5) * 0.9 + 0.05,
+    common  = stats::rbeta(n_marker, 3, 3) * 0.9 + 0.05)
+
+  sub <- rep(seq_len(max(1L, n_subpop)), length.out = n_lines)
+  X <- matrix(0L, n_lines, n_marker)
+  for (s in unique(sub)) {
+    p_s <- if (Fst > 0)
+      stats::rbeta(n_marker, p_anc * (1 - Fst) / Fst, (1 - p_anc) * (1 - Fst) / Fst)
+    else p_anc
+    rows <- which(sub == s)
+    X[rows, ] <- matrix(stats::rbinom(length(rows) * n_marker, 2,
+                                      rep(p_s, each = length(rows))),
+                        length(rows), n_marker)
+  }
+
+  if (ld > 0 && ld_blocks >= 1L && n_marker > ld_blocks) {
+    blk <- rep(seq_len(ld_blocks), length.out = n_marker)
+    for (b in seq_len(ld_blocks)) {
+      cols <- which(blk == b); lead <- cols[1]
+      swap <- cols[-1][stats::runif(length(cols) - 1L) < ld]
+      if (length(swap)) X[, swap] <- X[, lead]
+    }
+  }
+
+  rn <- if (!is.null(line_names)) line_names else paste0("G", seq_len(n_lines))
+  rownames(X) <- rn
+  colnames(X) <- paste0("M", seq_len(n_marker))
+
+  Z <- scale(X); Z[is.na(Z)] <- 0
+  G <- tcrossprod(Z) / ncol(Z) + diag(1e-6, n_lines)
+  dimnames(G) <- list(rn, rn)
+
+  p  <- colMeans(X) / 2
+  ev <- eigen(G, symmetric = TRUE, only.values = TRUE)$values
+  div <- c(He = mean(2 * p * (1 - p)),
+           mean_relatedness = mean(G[lower.tri(G)]),
+           eff_dim = sum(ev)^2 / sum(ev^2))
+
+  attr(X, "freq")      <- p
+  attr(X, "subpop")    <- sub
+  attr(X, "G")         <- G
+  attr(X, "diversity") <- div
+  class(X) <- c("sim_markers", "matrix", "array")
+  if (verbose) print(X)
+  X
+}
+
+#' @title Print a Simulated Marker Matrix
+#' @param x a \code{sim_markers} object.
+#' @param ... ignored.
+#' @return \code{x}, invisibly.
+#' @seealso \code{\link{sim_markers}}
+#' @export
+print.sim_markers <- function(x, ...) {
+  d <- attr(x, "diversity"); sub <- attr(x, "subpop")
+  cat("<sim_markers>\n")
+  cat(sprintf("  lines x markers ........ %d x %d\n", nrow(x), ncol(x)))
+  cat(sprintf("  subpopulations ......... %d\n", length(unique(sub))))
+  cat(sprintf("  expected heterozygosity  %.3f\n", d["He"]))
+  cat(sprintf("  mean relatedness ....... %.3f\n", d["mean_relatedness"]))
+  cat(sprintf("  effective dimension .... %.1f of %d lines\n",
+              d["eff_dim"], nrow(x)))
+  invisible(x)
+}
+
+
+#' @title Simulate an Envirome with a Controllable Environmental Diversity
+#'
+#' @description
+#' Generates an environmental covariable matrix (environments in rows,
+#' covariables in columns) whose diversity among environments is set by explicit
+#' knobs: the structure (unstructured, mega-environment clusters, or a continuous
+#' gradient), the redundancy among covariables and their marginal shape. The
+#' induced environment correlation and environmental kernel are attached, so the
+#' result feeds \code{\link{sim_met}} (as \code{W} or \code{C}) and
+#' \code{\link{get_kernel}} directly. It is the environmental analogue of
+#' \code{\link{sim_markers}}.
+#'
+#' @details
+#' Each environment gets a latent profile that drives its covariables; the
+#' \code{structure} controls how those profiles are arranged.
+#' \code{"random"} places environments independently (maximal diversity),
+#' \code{"clusters"} groups them into \code{n_cluster} mega-environments (high
+#' within-cluster similarity, between-cluster similarity set by
+#' \code{between.cor}), and \code{"gradient"} orders environments along a latent
+#' continuum (neighbours similar, extremes different), as for a latitude or
+#' season gradient. \code{redundancy} collapses a share of covariables onto
+#' \code{n_blocks} drivers, lowering the effective rank, and \code{marginal}
+#' reshapes the covariables away from Gaussian.
+#'
+#' @param n_env integer. Number of environments (rows, >= 2).
+#' @param n_var integer. Number of covariables (columns, >= 2).
+#' @param structure character. \code{"random"} (default), \code{"clusters"} or
+#'   \code{"gradient"}.
+#' @param n_cluster integer. Number of mega-environments when
+#'   \code{structure = "clusters"}.
+#' @param between.cor numeric in [0, 1). Similarity between clusters
+#'   (0 = well separated).
+#' @param spread numeric. Within-cluster / along-gradient dispersion; larger
+#'   values make environments within a group more diverse.
+#' @param redundancy numeric in [0, 1). Share of covariables collapsed onto
+#'   drivers (collinearity), lowering effective rank.
+#' @param n_blocks integer. Number of covariable drivers when
+#'   \code{redundancy > 0}.
+#' @param marginal character. Marginal of the covariables: \code{"gaussian"}
+#'   (default), \code{"right-skewed"}, \code{"heavy-tailed"} or \code{"bounded"}.
+#' @param env_names,var_names character. Optional names for rows / columns.
+#' @param seed integer. RNG seed. The caller's RNG stream is restored on exit.
+#' @param verbose logical. Print a diversity summary. Default \code{TRUE}.
+#'
+#' @return
+#' A matrix of class \code{"sim_envirome"} (environments x covariables).
+#' Attributes: \code{"cluster"} (mega-environment of each environment, when
+#' applicable), \code{"C_env"} (the induced environment correlation), \code{"K_E"}
+#' (the environmental kernel) and \code{"diversity"} (\code{mean_similarity} off
+#' the environment correlation and \code{eff_dim}, the effective dimension of the
+#' environmental kernel).
+#'
+#' @examples
+#' \dontrun{
+#' ## High diversity: unstructured environments
+#' E_hi <- sim_envirome(20, n_var = 30, structure = "random", seed = 1)
+#'
+#' ## Mega-environments: three tight clusters
+#' E_cl <- sim_envirome(20, n_var = 30, structure = "clusters",
+#'                      n_cluster = 3, between.cor = 0.1, seed = 1)
+#' attr(E_cl, "diversity")
+#'
+#' ## A latitudinal / seasonal gradient
+#' E_gr <- sim_envirome(20, n_var = 30, structure = "gradient", seed = 1)
+#'
+#' ## Feed into sim_met as the envirome (reaction norm) or as a target C
+#' met <- sim_met(markers = sim_markers(100, 500, seed = 1),
+#'                W = as.matrix(E_cl), seed = 1)
+#' KE  <- list(W = attr(E_cl, "K_E"))
+#'
+#' ## Contrast G x E under low vs high environmental diversity (genetics fixed)
+#' X <- sim_markers(150, 2000, seed = 1)
+#' g_hi <- cor(sim_met(markers = X, C = attr(E_hi, "C_env"), seed = 1)$truth$g)
+#' g_cl <- cor(sim_met(markers = X, C = attr(E_cl, "C_env"), seed = 1)$truth$g)
+#' c(diverse = mean(g_hi[lower.tri(g_hi)]),   # low genetic cor -> more G x E
+#'   clustered = mean(g_cl[lower.tri(g_cl)]))
+#' }
+#'
+#' @seealso \code{\link{sim_W}}, \code{\link{sim_markers}}, \code{\link{sim_met}},
+#'   \code{\link{env_kernel}}
+#' @export
+sim_envirome <- function(n_env, n_var = 20L,
+                         structure = c("random", "clusters", "gradient"),
+                         n_cluster = 3L, between.cor = 0.2, spread = 1,
+                         redundancy = 0, n_blocks = 1L,
+                         marginal = c("gaussian", "right-skewed",
+                                      "heavy-tailed", "bounded"),
+                         env_names = NULL, var_names = NULL,
+                         seed = NULL, verbose = TRUE) {
+  structure <- match.arg(structure)
+  marginal  <- match.arg(marginal)
+  if (!is.null(seed)) {
+    if (exists(".Random.seed", envir = .GlobalEnv)) {
+      .oldseed <- get(".Random.seed", envir = .GlobalEnv)
+      on.exit(assign(".Random.seed", .oldseed, envir = .GlobalEnv), add = TRUE)
+    }
+    set.seed(seed)
+  }
+  if (n_env < 2L) stop("'n_env' must be at least 2.", call. = FALSE)
+  if (n_var < 2L) stop("'n_var' must be at least 2.", call. = FALSE)
+  if (between.cor < 0 || between.cor >= 1)
+    stop("'between.cor' must lie in [0, 1).", call. = FALSE)
+  if (redundancy < 0 || redundancy >= 1)
+    stop("'redundancy' must lie in [0, 1).", call. = FALSE)
+
+  q <- n_env; p <- n_var
+  m <- max(2L, min(q - 1L, 5L))          # latent dimensions
+  cluster <- NULL
+
+  if (structure == "random") {
+    L <- matrix(stats::rnorm(q * m), q, m)
+  } else if (structure == "clusters") {
+    cluster  <- rep(seq_len(max(1L, n_cluster)), length.out = q)
+    centroid <- matrix(stats::rnorm(max(1L, n_cluster) * m), ncol = m)
+    shared   <- matrix(stats::rnorm(m), 1, m)      # common component -> between.cor
+    L <- sqrt(1 - between.cor) * centroid[cluster, , drop = FALSE] +
+         sqrt(between.cor) * matrix(shared, q, m, byrow = TRUE) +
+         spread * matrix(stats::rnorm(q * m), q, m)
+  } else {                                # "gradient"
+    t  <- seq(-1, 1, length.out = q)
+    L  <- matrix(0, q, m)
+    L[, 1] <- t / stats::sd(t)
+    if (m > 1L)
+      L[, -1] <- spread * 0.3 * matrix(stats::rnorm(q * (m - 1L)), q, m - 1L)
+  }
+
+  B <- matrix(stats::rnorm(m * p), m, p)
+  W <- L %*% B + matrix(stats::rnorm(q * p), q, p)   # covariables + noise
+
+  if (redundancy > 0 && n_blocks >= 1L) {
+    nb <- round(p * redundancy)
+    if (nb >= 2L) {
+      idx <- sample.int(p, nb)
+      grp <- split(idx, rep_len(seq_len(n_blocks), length(idx)))
+      for (g in grp) {
+        drv <- W[, g[1]]
+        W[, g] <- sqrt(redundancy) * drv +
+                  sqrt(1 - redundancy) * W[, g, drop = FALSE]
+      }
+    }
+  }
+
+  W  <- scale(W)
+  rn <- if (!is.null(env_names)) env_names else paste0("E", seq_len(q))
+  cn <- if (!is.null(var_names)) var_names else paste0("V", seq_len(p))
+  dimnames(W) <- list(rn, cn)
+  W <- .sim_marginal(W, marginal)
+
+  K_E  <- .sim_GB(W)
+  Cenv <- stats::cor(t(W))
+  dimnames(Cenv) <- list(rn, rn)
+  ev   <- eigen(K_E, symmetric = TRUE, only.values = TRUE)$values
+  div  <- c(mean_similarity = mean(Cenv[lower.tri(Cenv)]),
+            eff_dim = sum(ev)^2 / sum(ev^2))
+
+  attr(W, "cluster")   <- cluster
+  attr(W, "C_env")     <- Cenv
+  attr(W, "K_E")       <- K_E
+  attr(W, "structure") <- structure
+  attr(W, "diversity") <- div
+  class(W) <- c("sim_envirome", "matrix", "array")
+  if (verbose) print(W)
+  W
+}
+
+#' @title Print a Simulated Envirome Diversity Matrix
+#' @param x a \code{sim_envirome} object.
+#' @param ... ignored.
+#' @return \code{x}, invisibly.
+#' @seealso \code{\link{sim_envirome}}
+#' @export
+print.sim_envirome <- function(x, ...) {
+  d <- attr(x, "diversity"); cl <- attr(x, "cluster")
+  cat("<sim_envirome>\n")
+  cat(sprintf("  environments x covariables . %d x %d\n", nrow(x), ncol(x)))
+  cat(sprintf("  structure .................. %s%s\n", attr(x, "structure"),
+              if (!is.null(cl)) sprintf(" (%d clusters)", length(unique(cl))) else ""))
+  cat(sprintf("  mean environment similarity  %.3f\n", d["mean_similarity"]))
+  cat(sprintf("  effective dimension ........ %.1f of %d environments\n",
+              d["eff_dim"], nrow(x)))
+  invisible(x)
+}
+
+#' @rdname env_cor
+#' @export
+env_cor.sim_envirome <- function(x, type = c("target", "realised"), ...)
+  attr(x, "C_env")
+
+#' @title Coerce a Simulated Envirome Diversity Matrix to a Plain Matrix
+#' @param x a \code{sim_envirome} object.
+#' @param ... ignored.
+#' @return A numeric matrix with no \code{sim_envirome} class or attributes.
+#' @seealso \code{\link{sim_envirome}}
+#' @export
+as.matrix.sim_envirome <- function(x, ...) {
+  m <- unclass(x)
+  attr(m, "cluster") <- attr(m, "C_env") <- attr(m, "K_E") <-
+    attr(m, "structure") <- attr(m, "diversity") <- NULL
+  m
 }

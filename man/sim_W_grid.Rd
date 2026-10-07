@@ -11,6 +11,7 @@ sim_W_grid(
   collinearity = c(0, 0.5, 0.9),
   n_rep = 10,
   calibrate = TRUE,
+  cal.nrep = 15L,
   seed = NULL,
   verbose = TRUE
 )
@@ -24,9 +25,11 @@ sim_W_grid(
 
 \item{calibrate}{logical. Passed to \code{\link{sim_W}}.}
 
-\item{seed}{integer. RNG seed.}
+\item{cal.nrep}{integer. Calibration replicates per \code{\link{sim_W}} call.}
 
-\item{verbose}{logical. Unused placeholder for symmetry with other functions.}
+\item{seed}{integer. RNG seed; each design point gets a reproducible sub-seed.}
+
+\item{verbose}{logical. Print per-design-point progress. Default \code{TRUE}.}
 }
 \value{
 A \code{data.frame} with one row per design point: \code{noise},

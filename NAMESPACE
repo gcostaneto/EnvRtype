@@ -2,9 +2,14 @@
 
 S3method(as.data.frame,sim_met)
 S3method(as.matrix,sim_W)
+S3method(as.matrix,sim_envirome)
 S3method(env_cor,default)
 S3method(env_cor,matrix)
+S3method(env_cor,sim_W)
+S3method(env_cor,sim_envirome)
 S3method(env_cor,sim_met)
+S3method(plot,sim_W)
+S3method(plot,sim_met)
 S3method(print,T_matrix)
 S3method(print,env_pca)
 S3method(print,env_risk)
@@ -14,6 +19,8 @@ S3method(print,kernel_set)
 S3method(print,km_varcomp)
 S3method(print,scan_untested_envs)
 S3method(print,sim_W)
+S3method(print,sim_envirome)
+S3method(print,sim_markers)
 S3method(print,sim_met)
 S3method(print,soil_gmm)
 S3method(summary,kernel_model)
@@ -73,6 +80,8 @@ export(scan_untested_envs)
 export(show_phenology)
 export(sim_W)
 export(sim_W_grid)
+export(sim_envirome)
+export(sim_markers)
 export(sim_met)
 export(sim_met_C)
 export(soil_classification)
@@ -106,6 +115,7 @@ importFrom(reshape2,
 importFrom(stats,
   aggregate,
   approx,
+  as.dist,
   as.formula,
   ave,
   complete.cases,
@@ -113,7 +123,9 @@ importFrom(stats,
   cor.test,
   cov,
   cov2cor,
+  cutree,
   dist,
+  hclust,
   kmeans,
   loess,
   median,
