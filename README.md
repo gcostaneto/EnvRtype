@@ -1,4 +1,4 @@
-# {EnvRtype} - The Envirotyper Library in Quantitative Genetics <img src="man/figures/logo.png" align="right" height="139" alt="EnvRtype logo" />
+# {EnvRtype} - The Envirotyper Library in Genetics <img src="man/figures/logo.png" align="right" height="139" alt="EnvRtype logo" />
 
 <!-- badges: start -->
 [![version](https://img.shields.io/github/r-package/v/gcostaneto/EnvRtype?label=version&color=blue)](https://github.com/gcostaneto/EnvRtype)
