@@ -67,8 +67,8 @@ knobs: the structure (unstructured, mega-environment clusters, or a continuous
 gradient), the redundancy among covariables and their marginal shape. The
 induced environment correlation and environmental kernel are attached, so the
 result feeds \code{\link{sim_met}} (as \code{W} or \code{C}) and
-\code{\link{get_kernel}} directly. It complements \code{\link{sim_W}} by
-generating a structured envirome from scratch.
+\code{\link{get_kernel}} directly. It is the environmental analogue of
+\code{\link{sim_markers}}.
 }
 \details{
 Each environment gets a latent profile that drives its covariables; the
@@ -83,7 +83,7 @@ season gradient. \code{redundancy} collapses a share of covariables onto
 reshapes the covariables away from Gaussian.
 }
 \examples{
-\donttest{
+\dontrun{
 ## High diversity: unstructured environments
 E_hi <- sim_envirome(20, n_var = 30, structure = "random", seed = 1)
 
@@ -95,19 +95,21 @@ attr(E_cl, "diversity")
 ## A latitudinal / seasonal gradient
 E_gr <- sim_envirome(20, n_var = 30, structure = "gradient", seed = 1)
 
-## Feed the induced environment correlation into sim_met() as a target C
-data(maizeG)
-met <- sim_met(maizeG, C = attr(E_cl, "C_env"), seed = 1)
+## Feed into sim_met as the envirome (reaction norm) or as a target C
+met <- sim_met(markers = sim_markers(100, 500, seed = 1),
+               W = as.matrix(E_cl), seed = 1)
+KE  <- list(W = attr(E_cl, "K_E"))
 
 ## Contrast G x E under low vs high environmental diversity (genetics fixed)
-g_hi <- cor(sim_met(maizeG, C = attr(E_hi, "C_env"), seed = 1)$truth$g)
-g_cl <- cor(sim_met(maizeG, C = attr(E_cl, "C_env"), seed = 1)$truth$g)
+X <- sim_markers(150, 2000, seed = 1)
+g_hi <- cor(sim_met(markers = X, C = attr(E_hi, "C_env"), seed = 1)$truth$g)
+g_cl <- cor(sim_met(markers = X, C = attr(E_cl, "C_env"), seed = 1)$truth$g)
 c(diverse = mean(g_hi[lower.tri(g_hi)]),   # low genetic cor -> more G x E
   clustered = mean(g_cl[lower.tri(g_cl)]))
 }
 
 }
 \seealso{
-\code{\link{sim_W}}, \code{\link{sim_met}}, \code{\link{sim_met_C}},
+\code{\link{sim_W}}, \code{\link{sim_markers}}, \code{\link{sim_met}},
   \code{\link{env_kernel}}
 }

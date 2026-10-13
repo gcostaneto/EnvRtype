@@ -8,6 +8,11 @@ sim_met_C(
   q,
   min.cor = 0,
   max.cor = 0.8,
+  structure = c("random", "vine", "equi", "ar1", "block", "factor"),
+  rho = NULL,
+  n_blocks = 2L,
+  between.cor = 0,
+  n_factor = 2L,
   env_names = NULL,
   max.tries = 200L,
   seed = NULL
@@ -16,7 +21,27 @@ sim_met_C(
 \arguments{
 \item{q}{integer. Number of environments (>= 3).}
 
-\item{min.cor, max.cor}{numeric. Range for off-diagonal correlations.}
+\item{min.cor, max.cor}{numeric. Range for off-diagonal correlations. For the
+structured generators these bound the random inputs (vine partial correlations,
+factor loadings) rather than the realised off-diagonals exactly.}
+
+\item{structure}{character. How the matrix is built: \code{"random"} (default,
+rejection-sampled uniform off-diagonals, as before), \code{"vine"} (C-vine
+partial correlations, always PSD without rejection), \code{"equi"}
+(equicorrelated), \code{"ar1"} (first-order autoregressive, for ordered
+environments such as a year series), \code{"block"} (block-diagonal
+mega-environments) or \code{"factor"} (a random factor model
+\eqn{\Lambda\Lambda^\top + \Psi}).}
+
+\item{rho}{numeric or \code{NULL}. The correlation used by \code{"equi"}
+(off-diagonal), \code{"ar1"} (lag-1) and \code{"block"} (within-block). If
+\code{NULL}, a sensible value is derived from \code{min.cor}/\code{max.cor}.}
+
+\item{n_blocks}{integer. Number of mega-environments when \code{structure = "block"}.}
+
+\item{between.cor}{numeric. Between-block correlation when \code{structure = "block"}.}
+
+\item{n_factor}{integer. Number of latent factors when \code{structure = "factor"}.}
 
 \item{env_names}{character. Optional environment names.}
 
@@ -46,6 +71,11 @@ sampling fails.
 \examples{
 C <- sim_met_C(q = 8, min.cor = 0.2, max.cor = 0.8, seed = 1)
 range(C[lower.tri(C)])
+
+## Structured mega-environments and an autoregressive year series
+Cb <- sim_met_C(q = 9, structure = "block", n_blocks = 3, rho = 0.7,
+                between.cor = 0.1)
+Car <- sim_met_C(q = 8, structure = "ar1", rho = 0.6)
 
 }
 \seealso{

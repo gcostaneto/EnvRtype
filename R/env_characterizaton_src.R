@@ -224,19 +224,57 @@
 #' @param QC boolean. Indicates whether Quality Control is applied. QC removes variables
 #'   with \code{sd(x) > sd.tol} and near-constant variables.
 #' @param impute character. How to handle missing values before scaling: \code{"none"}
-#'   (default, keep NAs), \code{"mean"} (column mean) or \code{"drop"} (remove columns with any NA).
+#'   (default, keep NAs), \code{"mean"} (column mean), \code{"median"} (column median),
+#'   \code{"knn"} (k-nearest-environment imputation, see \code{knn}) or \code{"drop"}
+#'   (remove columns with any NA).
+#' @param knn integer. Number of nearest environments used when \code{impute = "knn"}.
+#'   Each missing cell is filled with the mean of that covariable over the \code{knn}
+#'   most similar environments (Euclidean distance on the standardised, commonly observed
+#'   covariables). Default 5.
+#' @param max.cor numeric in \eqn{(0,1]} or \code{NULL}. If not \code{NULL}, a greedy
+#'   collinearity filter (same rule as \code{caret::findCorrelation}) drops covariables so
+#'   that no pair of retained covariables has absolute Pearson correlation above
+#'   \code{max.cor}. When two covariables are too correlated the one with the larger mean
+#'   absolute correlation to the rest is removed. Unlike the \code{sd}-based rules this is an
+#'   explicit opt-in and the collinear covariables are always dropped (independently of
+#'   \code{QC}). Default \code{NULL} (no collinearity filtering).
+#' @param group boolean. Only used when \code{max.cor} is not \code{NULL}. If \code{TRUE},
+#'   collinear covariables are \emph{grouped} instead of dropped: covariables are clustered by
+#'   average-linkage hierarchical clustering on \eqn{1 - |r|}, the tree is cut at height
+#'   \eqn{1 - }\code{max.cor}, and each correlated block is replaced by its mean (a single
+#'   composite covariable). The block-to-member mapping is returned in the \code{"groups"}
+#'   attribute. Default \code{FALSE} (collinear covariables are dropped).
+#' @param cor.report \code{NULL}, \code{TRUE}, or a character path. If not \code{NULL}, a
+#'   per-covariable collinearity diagnosis (its largest absolute correlation, the partner
+#'   responsible, the final status, and the block it belongs to) is written as a CSV. Pass
+#'   \code{TRUE} to write \code{"W_matrix_collinearity.csv"} in the current working directory,
+#'   a directory to write that file there, or a full file path. Default \code{NULL}
+#'   (no file written). The same table is always attached as the \code{"collinearity"} attribute.
 #' @param verbose boolean. If \code{TRUE} (default) prints quality-control messages.
 #'
 #' @return
 #' An environmental covariable realized matrix with dimensions \eqn{q \times k}.
 #' The centring and scaling values, plus the list of removed markers, are attached as
 #' attributes (\code{"scaled:center"}, \code{"scaled:scale"}, \code{"removed"}) so that new
-#' environments can be projected onto the same space.
+#' environments can be projected onto the same space. When quality control or collinearity
+#' filtering drop covariables, the reason for each removal is reported in the
+#' \code{"removed.reason"} attribute (a named character vector with values
+#' \code{"too.variable"}, \code{"near.constant"} or \code{"collinear"}). The full
+#' collinearity diagnosis is attached as the \code{"collinearity"} data.frame attribute, and
+#' when \code{group = TRUE} the block-to-member mapping is attached as \code{"groups"}.
 #'
 #' @details
 #' Quality control follows Morais Junior et al. (2018): covariables whose standard deviation
 #' across environments exceeds \code{sd.tol} are discarded, as are near-constant covariables
 #' (\eqn{sd \le tol}) which carry no information about environmental differences.
+#'
+#' Three further, independent cleaning steps are available. Missing values can be imputed
+#' column-wise (\code{impute = "mean"}/\code{"median"}) or from the most similar environments
+#' (\code{impute = "knn"}) before any statistic is computed, which avoids silently shrinking
+#' the covariable set the way \code{impute = "drop"} does. Redundant covariables can be pruned
+#' with \code{max.cor}: enviromic matrices frequently contain near-duplicated columns (e.g.
+#' several temperature summaries), which inflate Euclidean geometry and relatedness kernels;
+#' the greedy filter keeps one representative per correlated block.
 #'
 #' Unlike earlier versions, the numerical tolerance is \emph{not} added to the data before
 #' scaling (which silently shifted unscaled outputs); it is used only to detect
@@ -263,6 +301,15 @@
 #' W <- W_matrix(env.data = env.data, QC = TRUE, sd.tol = 3)
 #' attr(W, "removed")
 #'
+#' ## Dropping redundant (collinear) covariables and imputing missing cells
+#' W <- W_matrix(env.data = env.data, impute = "knn", max.cor = 0.95)
+#' attr(W, "removed.reason")
+#'
+#' ## Grouping collinear covariables into composite blocks + CSV diagnosis
+#' W <- W_matrix(env.data = env.data, max.cor = 0.9, group = TRUE,
+#'               cor.report = tempdir())
+#' attr(W, "groups")
+#'
 #' ## Creating W for specific variables
 #' W <- W_matrix(env.data = env.data, var.id = c('T2M_MAX', 'T2M_MIN', 'T2M'))
 #'
@@ -286,7 +333,8 @@
 #' @param copula.args list. Extra arguments passed to \code{env_copula}, e.g.
 #'   \code{list(groups = list(heat = c("T2M_mean","T2M_MAX_mean")), ties.method = "average")}.
 #'
-#' @importFrom stats sd
+#' @importFrom stats sd median cor hclust cutree as.dist setNames
+#' @importFrom utils write.csv head
 #' @importFrom reshape2 acast melt
 #' @export
 W_matrix <- function(env.data, is.processed = FALSE, id.names = NULL, env.id = NULL,
@@ -294,11 +342,15 @@ W_matrix <- function(env.data, is.processed = FALSE, id.names = NULL, env.id = N
                      time.window = NULL, names.window = NULL,
                      center = TRUE, scale = TRUE, sd.tol = 10, statistic = NULL,
                      tol = 1E-3, QC = FALSE,
-                     impute = c("none", "mean", "drop"), verbose = TRUE,
-                     copula = NULL, copula.args = list()) {
+                     impute = c("none", "mean", "median", "knn", "drop"),
+                     knn = 5L, max.cor = NULL, group = FALSE, cor.report = NULL,
+                     verbose = TRUE, copula = NULL, copula.args = list()) {
 
   .et_banner("W_matrix", "builds the environmental covariable (W) matrix", verbose)
   impute <- match.arg(impute)
+  if (isTRUE(group) && is.null(max.cor))
+    stop("group = TRUE requires 'max.cor' (the correlation threshold defining blocks).",
+         call. = FALSE)
   if (is.null(statistic))   statistic   <- "mean"
   if (is.null(by.interval)) by.interval <- FALSE
 
@@ -333,17 +385,21 @@ W_matrix <- function(env.data, is.processed = FALSE, id.names = NULL, env.id = N
 
   .et_step("centring, scaling and quality-controlling W", verbose)
   .env_w_scale(env.data = W, center = center, scale = scale, sd.tol = sd.tol,
-               tol = tol, QC = QC, impute = impute, verbose = verbose)
+               tol = tol, QC = QC, impute = impute, knn = knn, max.cor = max.cor,
+               group = group, cor.report = cor.report, verbose = verbose)
 }
 
 #' Centre, scale and quality-control an environmental covariable matrix
 #'
 #' @inheritParams W_matrix
-#' @return A scaled matrix carrying the \code{"removed"} attribute.
+#' @return A scaled matrix carrying the \code{"removed"}, \code{"removed.reason"},
+#'   \code{"collinearity"} and (when grouping) \code{"groups"} attributes.
 #' @keywords internal
 #' @noRd
 .env_w_scale <- function(env.data, center = TRUE, scale = TRUE, sd.tol = 10,
-                         tol = 1E-3, QC = FALSE, impute = "none", verbose = TRUE) {
+                         tol = 1E-3, QC = FALSE, impute = "none", knn = 5L,
+                         max.cor = NULL, group = FALSE, cor.report = NULL,
+                         verbose = TRUE) {
 
   env.data <- .env_as_matrix(env.data, "env.data")
 
@@ -353,6 +409,12 @@ W_matrix <- function(env.data, is.processed = FALSE, id.names = NULL, env.id = N
       cm  <- colMeans(env.data, na.rm = TRUE)
       idx <- which(is.na(env.data), arr.ind = TRUE)
       env.data[idx] <- cm[idx[, 2]]
+    } else if (impute == "median") {
+      med <- apply(env.data, 2, stats::median, na.rm = TRUE)
+      idx <- which(is.na(env.data), arr.ind = TRUE)
+      env.data[idx] <- med[idx[, 2]]
+    } else if (impute == "knn") {
+      env.data <- .env_impute_knn(env.data, k = knn)
     } else if (impute == "drop") {
       env.data <- env.data[, colSums(is.na(env.data)) == 0, drop = FALSE]
     }
@@ -363,35 +425,268 @@ W_matrix <- function(env.data, is.processed = FALSE, id.names = NULL, env.id = N
   # ---- quality control: too-variable and near-constant covariables ----
   sdA <- apply(env.data, 2, stats::sd, na.rm = TRUE)
   t   <- ncol(env.data)
-  removed <- unique(c(names(sdA[sdA > sd.tol]),
-                      names(sdA[sdA <= tol | is.na(sdA)])))
+  too.variable  <- names(sdA[sdA > sd.tol])
+  near.constant <- names(sdA[sdA <= tol | is.na(sdA)])
+
+  # per-covariable collinearity diagnosis (computed before any removal/grouping)
+  diag.df <- .env_cor_diagnose(env.data)
 
   # NOTE: the tolerance is NOT added to the data (that shifted unscaled output);
   # it is used only to flag near-constant columns above.
   env.data <- scale(env.data, center = center, scale = scale)
 
-  if (isTRUE(QC)) {
-    keep <- !colnames(env.data) %in% removed
-    if (!any(keep))
-      stop("Quality control removed every covariable; relax 'sd.tol' or set QC = FALSE.",
-           call. = FALSE)
-    ctr <- attr(env.data, "scaled:center")
-    scl <- attr(env.data, "scaled:scale")
-    env.data <- env.data[, keep, drop = FALSE]
-    if (!is.null(ctr)) attr(env.data, "scaled:center") <- ctr[keep]
-    if (!is.null(scl)) attr(env.data, "scaled:scale")  <- scl[keep]
+  collinear  <- character(0)
+  membership <- NULL
+
+  # ---- collinearity handling: group into blocks or drop ----
+  if (!is.null(max.cor) && isTRUE(group)) {
+    # Grouping needs meaningful correlations: always exclude near-constant
+    # columns, and the too-variable ones as well when QC is on.
+    excl  <- near.constant
+    if (isTRUE(QC)) excl <- unique(c(excl, too.variable))
+    keep0 <- setdiff(colnames(env.data), excl)
+    if (!length(keep0))
+      stop("No covariables left to group after quality control.", call. = FALSE)
+
+    gp <- .env_group_by_cor(env.data[, keep0, drop = FALSE], max.cor = max.cor)
+    env.data   <- gp$matrix
+    membership <- gp$membership
+    removed    <- excl
 
     if (isTRUE(verbose)) {
       message(strrep("-", 48))
-      message("Quality Control based on sd.tol = ", sd.tol)
-      message("Removed variables: ", length(removed), " from ", t)
-      if (length(removed)) message(paste(removed, collapse = "\n"))
+      message("Collinearity grouping (max.cor = ", max.cor, ")")
+      message(length(keep0), " covariables -> ", ncol(env.data), " blocks")
+      if (length(excl))
+        message("Excluded before grouping: ", paste(excl, collapse = ", "))
       message(strrep("-", 48))
+    }
+
+  } else {
+    if (!is.null(max.cor)) {
+      keep0     <- setdiff(colnames(env.data), c(too.variable, near.constant))
+      collinear <- .env_decollinearize(env.data[, keep0, drop = FALSE], max.cor = max.cor)
+    }
+    removed <- unique(c(too.variable, near.constant, collinear))
+
+    # Collinear columns are always dropped; sd-based ones only when QC = TRUE.
+    drop.now <- collinear
+    if (isTRUE(QC)) drop.now <- unique(c(drop.now, too.variable, near.constant))
+
+    if (length(drop.now)) {
+      keep <- !colnames(env.data) %in% drop.now
+      if (!any(keep))
+        stop("Quality control removed every covariable; relax 'sd.tol'/'max.cor' or set QC = FALSE.",
+             call. = FALSE)
+      ctr <- attr(env.data, "scaled:center")
+      scl <- attr(env.data, "scaled:scale")
+      env.data <- env.data[, keep, drop = FALSE]
+      if (!is.null(ctr)) attr(env.data, "scaled:center") <- ctr[keep]
+      if (!is.null(scl)) attr(env.data, "scaled:scale")  <- scl[keep]
+
+      if (isTRUE(verbose)) {
+        message(strrep("-", 48))
+        message("Quality Control (sd.tol = ", sd.tol,
+                if (!is.null(max.cor)) paste0(", max.cor = ", max.cor) else "", ")")
+        message("Removed variables: ", length(drop.now), " from ", t)
+        if (isTRUE(QC) && length(too.variable))
+          message("  too variable (sd > sd.tol): ", paste(too.variable, collapse = ", "))
+        if (isTRUE(QC) && length(near.constant))
+          message("  near-constant (sd <= tol): ", paste(near.constant, collapse = ", "))
+        if (length(collinear))
+          message("  collinear (|r| > max.cor): ", paste(collinear, collapse = ", "))
+        message(strrep("-", 48))
+      }
     }
   }
 
-  attr(env.data, "removed") <- removed
+  # ---- per-variable removal reason, for reproducible projection ----
+  .tag <- function(v, lab)
+    if (length(v)) stats::setNames(rep(lab, length(v)), v) else NULL
+  reason <- c(.tag(intersect(too.variable, removed),  "too.variable"),
+              .tag(intersect(near.constant, removed), "near.constant"),
+              .tag(collinear, "collinear"))
+
+  # ---- enrich and (optionally) export the collinearity diagnosis ----
+  st <- stats::setNames(rep("kept", nrow(diag.df)), diag.df$variable)
+  if (length(reason)) st[names(reason)] <- paste0("removed(", reason, ")")
+  grp <- stats::setNames(rep(NA_character_, nrow(diag.df)), diag.df$variable)
+  if (!is.null(membership)) {
+    grp[names(membership)] <- membership
+    st[names(membership)]  <- "grouped"
+  }
+  diag.df$status <- unname(st[diag.df$variable])
+  diag.df$group  <- unname(grp[diag.df$variable])
+
+  rp <- .env_report_path(cor.report)
+  if (!is.null(rp)) {
+    utils::write.csv(diag.df, rp, row.names = FALSE)
+    if (isTRUE(verbose)) message("Collinearity diagnosis written to: ", rp)
+  }
+
+  attr(env.data, "removed")        <- removed
+  attr(env.data, "removed.reason") <- reason
+  attr(env.data, "collinearity")   <- diag.df
+  if (!is.null(membership)) attr(env.data, "groups") <- membership
   env.data
+}
+
+#' Impute missing cells from the nearest environments
+#'
+#' Each missing cell is filled with the mean of that covariable over the \code{k}
+#' environments closest to the target (Euclidean distance on the standardised,
+#' jointly observed covariables). Falls back to the column mean when no neighbour
+#' observes the covariable. No external package is required.
+#'
+#' @param X numeric matrix, environments in rows.
+#' @param k integer. Number of nearest environments used.
+#' @return The matrix with missing values filled in.
+#' @keywords internal
+#' @noRd
+.env_impute_knn <- function(X, k = 5L) {
+  na.rows <- which(rowSums(is.na(X)) > 0L)
+  if (!length(na.rows)) return(X)
+
+  cm <- colMeans(X, na.rm = TRUE)
+  cs <- apply(X, 2, stats::sd, na.rm = TRUE)
+  cs[!is.finite(cs) | cs == 0] <- 1
+  Z  <- sweep(sweep(X, 2, cm, "-"), 2, cs, "/")
+
+  for (i in na.rows) {
+    d <- vapply(seq_len(nrow(X)), function(j) {
+      if (j == i) return(Inf)
+      shared <- which(!is.na(Z[i, ]) & !is.na(Z[j, ]))
+      if (!length(shared)) return(Inf)
+      sqrt(mean((Z[i, shared] - Z[j, shared])^2))
+    }, numeric(1))
+    ord <- order(d)
+    for (m in which(is.na(X[i, ]))) {
+      donors <- ord[is.finite(d[ord]) & !is.na(X[ord, m])]
+      donors <- utils::head(donors, k)
+      X[i, m] <- if (length(donors)) mean(X[donors, m]) else cm[m]
+    }
+  }
+  X
+}
+
+#' Greedily drop collinear covariables
+#'
+#' Reproduces the \code{caret::findCorrelation} rule: while any pair of columns
+#' exceeds \code{max.cor} in absolute correlation, remove the column with the
+#' larger mean absolute correlation to the remaining columns.
+#'
+#' @param X numeric matrix, environments in rows.
+#' @param max.cor numeric. Absolute-correlation threshold in \eqn{(0,1]}.
+#' @return Character vector of removed column names.
+#' @keywords internal
+#' @noRd
+.env_decollinearize <- function(X, max.cor = 0.95) {
+  if (is.null(ncol(X)) || ncol(X) < 2L) return(character(0))
+
+  cm <- suppressWarnings(stats::cor(X, use = "pairwise.complete.obs"))
+  cm[!is.finite(cm)] <- 0
+  diag(cm) <- 0
+  acm <- abs(cm)
+
+  removed <- character(0)
+  while (nrow(acm) > 1L && max(acm) > max.cor) {
+    hit <- which(acm == max(acm), arr.ind = TRUE)[1, ]
+    i <- hit[1L]; j <- hit[2L]
+    drop <- if (mean(acm[i, ]) >= mean(acm[j, ])) i else j
+    removed <- c(removed, rownames(acm)[drop])
+    acm <- acm[-drop, -drop, drop = FALSE]
+  }
+  removed
+}
+
+#' Group collinear covariables into composite (block-mean) covariables
+#'
+#' Covariables are clustered by average-linkage hierarchical clustering on the
+#' dissimilarity \eqn{1 - |r|}; the tree is cut at height \eqn{1 - }\code{max.cor} so
+#' that every within-block pair has \eqn{|r| \ge }\code{max.cor}. Each block is replaced
+#' by the mean of its (already scaled) members and named after its medoid.
+#'
+#' @param X numeric matrix, environments in rows.
+#' @param max.cor numeric. Absolute-correlation threshold in \eqn{(0,1]}.
+#' @return A list with \code{matrix} (block means) and \code{membership} (named vector
+#'   mapping each original column to its block label).
+#' @keywords internal
+#' @noRd
+.env_group_by_cor <- function(X, max.cor = 0.95) {
+  p <- ncol(X)
+  if (is.null(p) || p < 2L) {
+    mem <- stats::setNames(colnames(X), colnames(X))
+    return(list(matrix = X, membership = mem))
+  }
+
+  cm <- suppressWarnings(stats::cor(X, use = "pairwise.complete.obs"))
+  cm[!is.finite(cm)] <- 0
+  acm <- abs(cm)
+  cl  <- stats::cutree(stats::hclust(stats::as.dist(1 - acm), method = "average"),
+                       h = 1 - max.cor)
+
+  blocks <- split(colnames(X), cl)
+  label  <- vapply(blocks, function(cols) {
+    if (length(cols) == 1L) return(cols)
+    sub <- acm[cols, cols, drop = FALSE]
+    diag(sub) <- 0
+    medoid <- cols[which.max(rowSums(sub))]
+    paste0(medoid, "(+", length(cols) - 1L, ")")
+  }, character(1))
+
+  G <- vapply(blocks, function(cols) rowMeans(X[, cols, drop = FALSE]),
+              numeric(nrow(X)))
+  G <- matrix(G, nrow = nrow(X), dimnames = list(rownames(X), label))
+
+  membership <- stats::setNames(rep(label, lengths(blocks)), unlist(blocks))
+  list(matrix = G, membership = membership[colnames(X)])
+}
+
+#' Per-covariable collinearity diagnosis
+#'
+#' For every covariable, reports its largest absolute correlation to any other
+#' covariable and the partner responsible for it.
+#'
+#' @param X numeric matrix, environments in rows.
+#' @return A data.frame with \code{variable}, \code{max_abs_cor} and \code{partner}.
+#' @keywords internal
+#' @noRd
+.env_cor_diagnose <- function(X) {
+  vars <- colnames(X)
+  if (is.null(ncol(X)) || ncol(X) < 2L)
+    return(data.frame(variable = vars, max_abs_cor = NA_real_,
+                      partner = NA_character_, stringsAsFactors = FALSE))
+
+  cm <- suppressWarnings(stats::cor(X, use = "pairwise.complete.obs"))
+  cm[!is.finite(cm)] <- NA
+  diag(cm) <- NA
+  acm <- abs(cm)
+
+  mx <- apply(acm, 2, function(z) if (all(is.na(z))) NA_real_ else max(z, na.rm = TRUE))
+  pr <- vapply(seq_along(vars), function(j) {
+    z <- acm[, j]
+    if (all(is.na(z))) NA_character_ else vars[which.max(z)]
+  }, character(1))
+
+  data.frame(variable = vars, max_abs_cor = round(mx, 4L),
+             partner = pr, stringsAsFactors = FALSE)
+}
+
+#' Resolve the destination path for the collinearity CSV report
+#'
+#' @param cor.report \code{NULL}, \code{TRUE}, or a character path/directory.
+#' @param default character. File name used when a directory or \code{TRUE} is given.
+#' @return A file path, or \code{NULL} when no report is requested.
+#' @keywords internal
+#' @noRd
+.env_report_path <- function(cor.report, default = "W_matrix_collinearity.csv") {
+  if (is.null(cor.report) || isFALSE(cor.report)) return(NULL)
+  if (isTRUE(cor.report)) return(file.path(getwd(), default))
+  if (is.character(cor.report) && length(cor.report) == 1L) {
+    if (dir.exists(cor.report)) return(file.path(cor.report, default))
+    return(cor.report)
+  }
+  stop("'cor.report' must be NULL, TRUE, or a single file/directory path.", call. = FALSE)
 }
 
 # =========================================================================

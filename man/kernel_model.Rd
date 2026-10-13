@@ -157,7 +157,7 @@ component. The raw scale is always returned as \code{$sigb}.
 
 Costa-Neto et al (2021)
 
-EnvRtype v.1.2.3, Sep 2026
+EnvRtype v.0.1.3, Sep 2026
 }
 
 \section{Performance changes vs. the original}{

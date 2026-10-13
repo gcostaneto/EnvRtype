@@ -132,7 +132,7 @@ Khatri-Rao product) so no large eigendecomposition is ever required.
 
 Costa-Neto et al (2021)
 
-EnvRtype v.1.2.3, Sep 2026
+EnvRtype v.0.1.3, Sep 2026
 }
 
 \section{Reusing kernels}{

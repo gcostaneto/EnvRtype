@@ -4,6 +4,7 @@
 \alias{env_cor}
 \alias{env_cor.sim_met}
 \alias{env_cor.matrix}
+\alias{env_cor.sim_W}
 \alias{env_cor.default}
 \alias{env_cor.sim_envirome}
 \title{Extract the Correlation Among Environments}
@@ -13,6 +14,8 @@ env_cor(x, type = c("target", "realised"), ...)
 \method{env_cor}{sim_met}(x, type = c("target", "realised"), ...)
 
 \method{env_cor}{matrix}(x, type = c("target", "realised"), ...)
+
+\method{env_cor}{sim_W}(x, type = c("target", "realised"), ...)
 
 \method{env_cor}{default}(x, type = c("target", "realised"), ...)
 

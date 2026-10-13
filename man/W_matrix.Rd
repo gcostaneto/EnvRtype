@@ -20,7 +20,11 @@ W_matrix(
   statistic = NULL,
   tol = 0.001,
   QC = FALSE,
-  impute = c("none", "mean", "drop"),
+  impute = c("none", "mean", "median", "knn", "drop"),
+  knn = 5L,
+  max.cor = NULL,
+  group = FALSE,
+  cor.report = NULL,
   verbose = TRUE,
   copula = NULL,
   copula.args = list()
@@ -65,7 +69,36 @@ below \code{tol} are treated as near-constant and flagged for removal. Default 1
 with \code{sd(x) > sd.tol} and near-constant variables.}
 
 \item{impute}{character. How to handle missing values before scaling: \code{"none"}
-(default, keep NAs), \code{"mean"} (column mean) or \code{"drop"} (remove columns with any NA).}
+(default, keep NAs), \code{"mean"} (column mean), \code{"median"} (column median),
+\code{"knn"} (k-nearest-environment imputation, see \code{knn}) or \code{"drop"}
+(remove columns with any NA).}
+
+\item{knn}{integer. Number of nearest environments used when \code{impute = "knn"}.
+Each missing cell is filled with the mean of that covariable over the \code{knn}
+most similar environments (Euclidean distance on the standardised, commonly observed
+covariables). Default 5.}
+
+\item{max.cor}{numeric in \eqn{(0,1]} or \code{NULL}. If not \code{NULL}, a greedy
+collinearity filter (same rule as \code{caret::findCorrelation}) drops covariables so
+that no pair of retained covariables has absolute Pearson correlation above
+\code{max.cor}. When two covariables are too correlated the one with the larger mean
+absolute correlation to the rest is removed. Unlike the \code{sd}-based rules this is an
+explicit opt-in and the collinear covariables are always dropped (independently of
+\code{QC}). Default \code{NULL} (no collinearity filtering).}
+
+\item{group}{boolean. Only used when \code{max.cor} is not \code{NULL}. If \code{TRUE},
+collinear covariables are \emph{grouped} instead of dropped: covariables are clustered by
+average-linkage hierarchical clustering on \eqn{1 - |r|}, the tree is cut at height
+\eqn{1 - }\code{max.cor}, and each correlated block is replaced by its mean (a single
+composite covariable). The block-to-member mapping is returned in the \code{"groups"}
+attribute. Default \code{FALSE} (collinear covariables are dropped).}
+
+\item{cor.report}{\code{NULL}, \code{TRUE}, or a character path. If not \code{NULL}, a
+per-covariable collinearity diagnosis (its largest absolute correlation, the partner
+responsible, the final status, and the block it belongs to) is written as a CSV. Pass
+\code{TRUE} to write \code{"W_matrix_collinearity.csv"} in the current working directory,
+a directory to write that file there, or a full file path. Default \code{NULL}
+(no file written). The same table is always attached as the \code{"collinearity"} attribute.}
 
 \item{verbose}{boolean. If \code{TRUE} (default) prints quality-control messages.}
 
@@ -81,7 +114,12 @@ or \code{"all"}. See \code{env_copula} for the meaning of each index.}
 An environmental covariable realized matrix with dimensions \eqn{q \times k}.
 The centring and scaling values, plus the list of removed markers, are attached as
 attributes (\code{"scaled:center"}, \code{"scaled:scale"}, \code{"removed"}) so that new
-environments can be projected onto the same space.
+environments can be projected onto the same space. When quality control or collinearity
+filtering drop covariables, the reason for each removal is reported in the
+\code{"removed.reason"} attribute (a named character vector with values
+\code{"too.variable"}, \code{"near.constant"} or \code{"collinear"}). The full
+collinearity diagnosis is attached as the \code{"collinearity"} data.frame attribute, and
+when \code{group = TRUE} the block-to-member mapping is attached as \code{"groups"}.
 }
 \description{
 Estimates a weather covariable realized matrix \strong{W} with dimensions
@@ -94,6 +132,14 @@ the basic input of the reaction-norm and enviromic-assisted models in
 Quality control follows Morais Junior et al. (2018): covariables whose standard deviation
 across environments exceeds \code{sd.tol} are discarded, as are near-constant covariables
 (\eqn{sd \le tol}) which carry no information about environmental differences.
+
+Three further, independent cleaning steps are available. Missing values can be imputed
+column-wise (\code{impute = "mean"}/\code{"median"}) or from the most similar environments
+(\code{impute = "knn"}) before any statistic is computed, which avoids silently shrinking
+the covariable set the way \code{impute = "drop"} does. Redundant covariables can be pruned
+with \code{max.cor}: enviromic matrices frequently contain near-duplicated columns (e.g.
+several temperature summaries), which inflate Euclidean geometry and relatedness kernels;
+the greedy filter keeps one representative per correlated block.
 
 Unlike earlier versions, the numerical tolerance is \emph{not} added to the data before
 scaling (which silently shifted unscaled outputs); it is used only to detect
@@ -119,6 +165,15 @@ W <- W_matrix(env.data = env.data, by.interval = TRUE, statistic = 'quantile',
 ## With Quality Control based on the maximum sd tolerated
 W <- W_matrix(env.data = env.data, QC = TRUE, sd.tol = 3)
 attr(W, "removed")
+
+## Dropping redundant (collinear) covariables and imputing missing cells
+W <- W_matrix(env.data = env.data, impute = "knn", max.cor = 0.95)
+attr(W, "removed.reason")
+
+## Grouping collinear covariables into composite blocks + CSV diagnosis
+W <- W_matrix(env.data = env.data, max.cor = 0.9, group = TRUE,
+              cor.report = tempdir())
+attr(W, "groups")
 
 ## Creating W for specific variables
 W <- W_matrix(env.data = env.data, var.id = c('T2M_MAX', 'T2M_MIN', 'T2M'))
