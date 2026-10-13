@@ -1,4 +1,4 @@
-# {EnvRtype} - The Envirotyper Library in Quantitative Genetics
+# {EnvRtype} - The Envirotyper Library in Genetics
 
 **EnvRtype** is an R package for **enviromics** — the study of the
 *envirome*, the set of environmental conditions linked to the biological
