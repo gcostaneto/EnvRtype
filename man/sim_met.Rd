@@ -111,7 +111,7 @@ passed where an environment correlation is expected is the most common error
 and is rejected by an elementwise unit-diagonal check.
 }
 \examples{
-\dontrun{
+\donttest{
 data(maizeG)
 met <- sim_met(maizeG, n_env = 10, min.cor = 0.2, max.cor = 0.8,
                min.h2 = 0.3, max.h2 = 0.7, seed = 1)

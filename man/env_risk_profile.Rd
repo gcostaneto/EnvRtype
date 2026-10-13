@@ -113,7 +113,7 @@ period. If the site is warming, they are already an underestimate of future
 heat risk. Use \code{project_risk()} with a scenario to see the shift.
 }
 \examples{
-\dontrun{
+\donttest{
 ## 30 seasons of weather for three sites
 sites <- data.frame(env = c("PIRA", "SETE", "NMAC"),
                     lat = c(-22.7, -19.4, -21.2),

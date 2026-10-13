@@ -91,7 +91,7 @@ Derived variables, added when their inputs are present:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 ## Single location
 get_weather(env.id = "NM", lat = -13.05, lon = -56.05,
             start.day = "2015-02-15", end.day = "2015-06-15",

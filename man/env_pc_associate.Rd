@@ -63,7 +63,7 @@ ybar <- tapply(maizeYield$value, maizeYield$env, mean)
 env_pc_associate(pc, ybar)
 }
 
-\dontrun{
+\donttest{
 ## ----------------------------------------------------------------------
 ## WORKED EXAMPLE: marker effect networks -> eigenmarkers -> environmental PCs
 ##

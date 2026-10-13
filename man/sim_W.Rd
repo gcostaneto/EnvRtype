@@ -80,7 +80,7 @@ real enviromes and lowering the effective rank.
 \eqn{q\times q} with unit diagonal. Passing a genomic kinship is rejected.
 }
 \examples{
-\dontrun{
+\donttest{
 C <- sim_met_C(q = 10, min.cor = 0.2, max.cor = 0.8, seed = 1)
 
 ## An envirome that recovers ~70\% of C

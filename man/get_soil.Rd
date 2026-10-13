@@ -60,7 +60,7 @@ SoilGrids returns values in mapped units (e.g. clay in g/kg x 10). No unit
 conversion is applied; the \code{unit} column records what was served.
 }
 \examples{
-\dontrun{
+\donttest{
 get_soil(env.id = "NM", lat = -13.05, lon = -56.05,
          variables.names = c("clay", "nitrogen"))
 }

@@ -30,7 +30,7 @@ maize R6 by 300-500 C d. Validate against observed flowering dates before
 treating stage labels as phenology.
 }
 \examples{
-\dontrun{
+\donttest{
 phenology_templates()
 show_phenology("safflower")
 }

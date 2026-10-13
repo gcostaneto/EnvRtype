@@ -203,7 +203,7 @@ kernel with the same mean diagonal carry very different total variance.
 }
 
 \examples{
-\dontrun{
+\donttest{
 data("maizeYield"); data("maizeG"); data("maizeWTH")
 
 ECs <- W_matrix(env.data = maizeWTH[maizeWTH$daysFromStart < 100, ],

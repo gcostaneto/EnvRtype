@@ -27,7 +27,7 @@ Returns the per-environment retrieval history written by
 what succeeded, what failed, when, and with which error message.
 }
 \examples{
-\dontrun{
+\donttest{
 lg <- read_progress_log(run.id = "zoning_grid")
 table(lg$status)
 

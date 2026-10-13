@@ -423,7 +423,7 @@
 #'   \code{soil_classification} for cross-site soil zoning.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ## ---------------------------------------------------------------
 #' ## 1. Minimal use
 #' ## ---------------------------------------------------------------
@@ -771,7 +771,7 @@ water_balance <- function(env.data, soil.data,
 #' @seealso \code{water_balance}, \code{summaryWTH}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' wb <- water_balance(wth, soil)
 #'
 #' ## Season-level, one row per environment

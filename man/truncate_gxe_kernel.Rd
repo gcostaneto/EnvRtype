@@ -15,6 +15,13 @@ Default 0.75.}
 \item{pattern}{character. Regular expression selecting the GxE kernels to truncate.
 Default \code{"GE"}.}
 }
+\value{
+The input \code{random} list of kernels, with the selected GxE
+  kernels replaced by their reduced-rank (truncated) version and any cached
+  spectral decomposition removed so the kernels are re-decomposed on the next
+  fit. When no kernel matches \code{pattern}, or \code{keep_prop >= 1}, the
+  list is returned unchanged.
+}
 \description{
 The GxE kernel has a flat eigenvalue tail that behaves like an identity matrix
 and competes with the residual. Dropping it reduces sigma2_GE inflation (mean

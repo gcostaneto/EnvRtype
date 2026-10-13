@@ -106,7 +106,7 @@ environments the download will fail; pre-populate \code{dir.path} with the
 GeoTIFFs and the function will use the cache.
 }
 \examples{
-\dontrun{
+\donttest{
 sites <- data.frame(env = c("PIRA", "SETE"),
                     lat = c(-22.7, -19.4), lon = c(-47.6, -44.2))
 

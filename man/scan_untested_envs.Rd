@@ -154,7 +154,7 @@ was the strongest single accuracy correlate (\eqn{r=-0.66}); to know your
 true accuracy, run leave-environments-out cross-validation on your own data.
 }
 \examples{
-\dontrun{
+\donttest{
 data("maizeWTH"); data("maizeYield"); data("maizeG")
 
 ## Training covariates (first 100 days after sowing)

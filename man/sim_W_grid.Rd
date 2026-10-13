@@ -39,7 +39,7 @@ of \code{noise}, \code{n_var} and \code{collinearity}, returning the mean
 recovery and effective rank at each design point.
 }
 \examples{
-\dontrun{
+\donttest{
 C <- sim_met_C(q = 10, min.cor = 0.2, max.cor = 0.8, seed = 1)
 grid <- sim_W_grid(C, noise = c(0, 0.3, 0.6), n_var = c(20, 100),
                    collinearity = c(0, 0.8), n_rep = 5)

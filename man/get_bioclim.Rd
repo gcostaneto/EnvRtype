@@ -51,7 +51,7 @@ kernel without saying which is which is a common and serious error.
 }
 
 \examples{
-\dontrun{
+\donttest{
 sites <- data.frame(env = c("PIRA", "SETE"),
                     lat = c(-22.7, -19.4), lon = c(-47.6, -44.2))
 bc  <- get_bioclim(env.id = sites$env, lat = sites$lat, lon = sites$lon)

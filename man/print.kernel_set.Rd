@@ -11,6 +11,12 @@
 
 \item{...}{ignored.}
 }
+\value{
+Returns \code{x} invisibly. Called for its side effect of printing a
+  one-line header and a per-kernel table (kernel name, retained rank,
+  mean diagonal and rank as a percentage of the number of observations) to
+  the console.
+}
 \description{
 Print a kernel set
 }

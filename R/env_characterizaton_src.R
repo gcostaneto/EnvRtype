@@ -2113,7 +2113,7 @@ env_target_importance <- function(Y, W, k = NULL, k.max = 10, scale.Y = TRUE,
 #'   the side effect of printing.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' phenology_templates()
 #' show_phenology("safflower")
 #' }
@@ -2263,7 +2263,7 @@ show_phenology <- function(crop = NULL) {
 #' calibrated \code{stages} against observed dates.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("maizeWTH")
 #'
 #' ## 1. Default maize staging on cumulative GDD
@@ -2618,7 +2618,7 @@ env_phenology <- function(env.data, env.id = "env", day.id = "daysFromStart",
 #' heat risk. Use \code{project_risk()} with a scenario to see the shift.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ## 30 seasons of weather for three sites
 #' sites <- data.frame(env = c("PIRA", "SETE", "NMAC"),
 #'                     lat = c(-22.7, -19.4, -21.2),
@@ -2927,7 +2927,7 @@ print.env_risk <- function(x, ...) {
 #' climatology still holds.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' rp <- env_risk_profile(wth, planting = "10-15", crop = "maize")
 #'
 #' ## How much of the TPE is each drought class at flowering?
@@ -3025,7 +3025,7 @@ tpe_weights <- function(risk, stage = NULL, var = NULL,
 #' that the mean-preserving perturbation left wet-day counts alone.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' fut <- get_climate_scenario(env.id = sites$env, lat = sites$lat,
 #'                             lon = sites$lon, baseline = wth,
 #'                             scenario = "ssp585", period = "2061-2080")

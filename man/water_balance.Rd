@@ -154,7 +154,7 @@ bounded, dimensionless, and scales transpiration directly.
 not be used as a modelling covariate -- it discards magnitude.
 }
 \examples{
-\dontrun{
+\donttest{
 ## ---------------------------------------------------------------
 ## 1. Minimal use
 ## ---------------------------------------------------------------

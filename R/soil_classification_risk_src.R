@@ -456,7 +456,7 @@
 #'   \code{Mclust} for the underlying model.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' library(mclust)
 #'
 #' ## ---------------------------------------------------------------
@@ -789,7 +789,7 @@ soil_classification <- function(soil.data, env.id = "env",
 #' @param ... ignored.
 #' @return \code{x}, invisibly.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' fit <- soil_classification(soil_grid, risk.vars = "soc")
 #' print(fit)
 #' }

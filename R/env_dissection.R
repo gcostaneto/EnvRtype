@@ -943,7 +943,7 @@ env_loading_curve <- function(x, pc = 1, factors = NULL, span = 0.4,
 #' env_pc_associate(pc, ybar)
 #' }
 #'
-#' \dontrun{
+#' \donttest{
 #' ## ----------------------------------------------------------------------
 #' ## WORKED EXAMPLE: marker effect networks -> eigenmarkers -> environmental PCs
 #' ##

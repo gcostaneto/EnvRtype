@@ -5,6 +5,7 @@
 \alias{env_cor.sim_met}
 \alias{env_cor.matrix}
 \alias{env_cor.default}
+\alias{env_cor.sim_envirome}
 \title{Extract the Correlation Among Environments}
 \usage{
 env_cor(x, type = c("target", "realised"), ...)
@@ -14,6 +15,8 @@ env_cor(x, type = c("target", "realised"), ...)
 \method{env_cor}{matrix}(x, type = c("target", "realised"), ...)
 
 \method{env_cor}{default}(x, type = c("target", "realised"), ...)
+
+\method{env_cor}{sim_envirome}(x, type = c("target", "realised"), ...)
 }
 \arguments{
 \item{x}{an object (\code{sim_met}, matrix, ...).}
@@ -32,7 +35,7 @@ Accessory generic that pulls the environment correlation out of a
 \code{\link{sim_W}} never depends on internal structure.
 }
 \examples{
-\dontrun{
+\donttest{
 met <- sim_met(maizeG, n_env = 6, seed = 1)
 env_cor(met, "target")
 env_cor(met, "realised")

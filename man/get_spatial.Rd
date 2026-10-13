@@ -52,7 +52,7 @@ longitude in [-180, 180]. This catches the common lat/lon transposition, which
 otherwise yields silent \code{NA}s or values from the wrong hemisphere.
 }
 \examples{
-\dontrun{
+\donttest{
 ref <- data.frame(env = "NM", lat = -13.05, lng = -56.05)
 get_spatial(env.dataframe = ref, digital.raster = my_elevation_raster,
             lat = "lat", lng = "lng", env.id = "env",

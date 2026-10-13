@@ -29,6 +29,17 @@ Taken from \code{fit$meta$y} when \code{NULL}.}
 
 \item{digits}{integer. Number of decimal places in the summary table. Default 4.}
 }
+\value{
+An object of class \code{"km_varcomp"}, a list with elements
+  \code{table} (a data.frame of variance components with their absolute
+  values and proportions of the phenotypic variance), the individual
+  variances \code{varG}, \code{varE}, \code{varGE}, \code{var_resid} and
+  \code{var_total}, the heritabilities \code{h2_entry_mean} and
+  \code{h2_plot}, the genetic correlation \code{rg}, the counts \code{p}
+  and \code{q}, the \code{method} used, and the logical flags
+  \code{negative_residual} and \code{few_environments}. A dedicated
+  \code{print} method displays the table and derived quantities.
+}
 \description{
 var_total = var(y) (PHENOTYPIC; var(yHat) carries no residual and yields a
 NEGATIVE residual by subtraction).

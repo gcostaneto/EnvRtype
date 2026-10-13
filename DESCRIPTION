@@ -1,7 +1,7 @@
 Package: EnvRtype
 Type: Package
 Title: Envirotyping for Quantitative Genetics and Plant Breeding
-Version: 0.1.2
+Version: 0.1.3
 Authors@R: c(
     person(
       "Germano", "Costa-Neto",
@@ -32,7 +32,11 @@ Description: An enviromics toolkit for genotype-by-environment analysis and
     untested locations and planting dates, with coverage diagnostics, spatial
     mapping and planting-window optimisation. Simulation functions generate
     multi-environment trials and enviromes with known architecture for power
-    analysis.
+    analysis. Methods are described in Costa-Neto, Galli, Carvalho, Crossa and
+    Fritsche-Neto (2021) <doi:10.1093/g3journal/jkab040>, and build on the
+    Bayesian genotype-by-environment kernel sampler of Granato, Cuevas,
+    Luna-Vazquez, Crossa, Montesinos-Lopez, Burgueno and Fritsche-Neto (2018)
+    <doi:10.1534/g3.118.200435>.
 License: GPL-3
 URL: https://github.com/gcostaneto/EnvRtype, https://gcostaneto.github.io/EnvRtype/
 BugReports: https://github.com/gcostaneto/EnvRtype/issues
@@ -50,6 +54,7 @@ Imports:
 Suggests:
     cluster,
     curl,
+    geobr,
     ggrepel,
     httr,
     jsonlite,

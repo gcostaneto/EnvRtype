@@ -92,7 +92,7 @@ materially, and on a \code{Q10 ~ 2} process a few degrees is a large
 difference in implied rate (Peng et al. 2004).
 }
 \examples{
-\dontrun{
+\donttest{
 ## Reuse the coordinates of a shipped daily dataset
 sites <- unique(maizeWTH[, c("env", "LON", "LAT")])
 h <- get_weather_hourly(env.id = sites$env, lat = sites$LAT, lon = sites$LON,

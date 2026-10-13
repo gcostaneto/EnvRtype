@@ -1,4 +1,4 @@
-# EnvRtype <img src="man/figures/logo.png" align="right" height="139" alt="EnvRtype logo" />
+# {EnvRtype} The Envirotyper Library in Genetics <img src="man/figures/logo.png" align="right" height="139" alt="EnvRtype logo" />
 
 <!-- badges: start -->
 [![version](https://img.shields.io/github/r-package/v/gcostaneto/EnvRtype?label=version&color=blue)](https://github.com/gcostaneto/EnvRtype)
@@ -10,7 +10,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/gcostaneto/EnvRtype?style=social)](https://github.com/gcostaneto/EnvRtype/stargazers)
 <!-- badges: end -->
 
-### Envirotyping for Quantitative Genetics and Plant Breeding
+### Bridging Quantitative Genetics and Envirotyping
 
 **EnvRtype** is an R package for **enviromics** — the study of the *envirome*, the set of
 environmental conditions linked to the biological performance of living beings (Costa-Neto and Fritsche-Neto, 2021; Crossa et al., 2021). It collects
@@ -63,7 +63,7 @@ adds several new layers:
 | **Kernels** | `env_kernel()`, `get_kernel()` | Adds `decompose_kernels()`, `undecompose_kernels()`, `truncate_gxe_kernel()` and a soil kernel path in `get_kernel()` |
 | **Modelling** | `kernel_model()` | Adds `kernel_cv()`, `kernel_model_clustered()`, `kernel_model_mc()`, `varcomp_summary()`, environment clustering (`env_cluster()`, `cluster_environments()`) |
 | **Untested environments** | — | `scan_untested_envs()`, `grid_scan()`, `map_scan()`, `scan_spatial_table()` |
-| **Simulation** | — | Ground-truth simulator: `sim_met()`, `sim_met_C()`, `sim_W()`, `sim_W_grid()` to validate every layer against a known truth |
+| **Simulation** | — | Ground-truth simulator: `sim_met()`, `sim_met_C()`, `sim_W()`, `sim_W_grid()`, `sim_envirome()` to validate every layer against a known truth |
 | **License** | MIT | GPL-3 (CRAN-ready) |
 
 ---
@@ -85,7 +85,7 @@ flowchart TB
   L2["<b>2 · PROCESS</b><br/>processWTH · summaryWTH · param_*<br/>water_balance · env_phenology"]
   L3["<b>3 · CHARACTERISE</b><br/>W_matrix · T_matrix · env_indices · env_pca<br/>soil_classification · env_typing · env_risk_profile"]
   L4["<b>4 · MODEL &amp; SCAN</b><br/>env_kernel · get_kernel · kernel_model<br/>kernel_cv · scan_untested_envs · map_scan"]
-  SIM["<b>SIMULATE</b><br/>sim_met() → C_env → sim_W()<br/><i>ground truth for every layer</i>"]
+  SIM["<b>SIMULATE</b><br/>sim_met() → C_env → sim_W() · sim_envirome()<br/><i>ground truth for every layer</i>"]
 
   L1 --> L2 --> L3 --> L4
   SIM -.->|"validates"| L3
@@ -301,6 +301,7 @@ flowchart LR
   PH["$data<br/>env · gid · rep · value"]
   SW["sim_W()"]
   SWG["sim_W_grid()"]
+  SEN["sim_envirome()<br/><i>structured envirome<br/>random · clusters · gradient</i>"]
   W["simulated W<br/><i>known % explained</i>"]
   GK["get_kernel()"]
   KM["kernel_model()"]
@@ -314,6 +315,8 @@ flowchart LR
   CE --> SW
   SW --> W
   SWG --> W
+  SEN -->|"$C_env"| SM
+  SEN -->|"$K_E"| GK
   W --> GK
   PH --> KM
   GK --> KM
@@ -325,7 +328,7 @@ flowchart LR
   classDef pred fill:#c62828,stroke:#b71c1c,color:#fff
   classDef data fill:#455a64,stroke:#263238,color:#fff
   classDef chk fill:#f9a825,stroke:#f57f17,color:#000
-  class SM,SW,SWG,SMC sim
+  class SM,SW,SWG,SMC,SEN sim
   class GK,KM,VCS pred
   class K,CE,PH,W data
   class CHK chk

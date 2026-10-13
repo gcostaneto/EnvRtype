@@ -1,17 +1,44 @@
-citHeader(
-  "To cite the EnvRtype package in publications, please use the reference below.",
-  "The authors also kindly ask that you let them know when you are using EnvRtype",
-  "by contacting Germano Costa-Neto <germano.cneto@gmail.com>."
+citHeader("To cite EnvRtype in publications, please use the G3 paper:")
+
+bibentry(
+  bibtype  = "Article",
+  title    = "EnvRtype: a software to interplay enviromics and quantitative genomics in agriculture",
+  author   = c(
+    person("Germano", "Costa-Neto"),
+    person("Giovanni", "Galli"),
+    person(c("Humberto", "Fanelli"), "Carvalho"),
+    person("Jose", "Crossa"),
+    person("Roberto", "Fritsche-Neto")
+  ),
+  journal  = "G3 Genes|Genomes|Genetics",
+  year     = "2021",
+  volume   = "11",
+  number   = "4",
+  pages    = "jkab040",
+  doi      = "10.1093/g3journal/jkab040",
+  url      = "https://academic.oup.com/g3journal/article/11/4/jkab040/6129777",
+  textVersion = paste(
+    "Costa-Neto, G., Galli, G., Carvalho, H. F., Crossa, J., & Fritsche-Neto, R. (2021).",
+    "EnvRtype: a software to interplay enviromics and quantitative genomics in agriculture.",
+    "G3 Genes|Genomes|Genetics, 11(4), jkab040.",
+    "https://doi.org/10.1093/g3journal/jkab040"
+  )
 )
 
 bibentry(
   bibtype  = "Manual",
   title    = "EnvRtype: Envirotyping for Quantitative Genetics and Plant Breeding",
   author   = c(
-    person("Germano", "Costa-Neto", email = "germano.cneto@gmail.com"),
-    person("Fernanda", "Pontes", email = "ferpoontes@gmail.com")
+    person("Germano", "Costa-Neto"),
+    person("Fernanda", "Pontes")
   ),
-  year     = "2026",
-  note     = "R package version 0.1.0",
-  url      = "https://github.com/gcostaneto/EnvRtype"
+  year     = "2025",
+  note     = sprintf("R package version %s", meta$Version),
+  url      = "https://gcostaneto.github.io/EnvRtype/",
+  textVersion = paste0(
+    "Costa-Neto, G., & Pontes, F. (2025). ",
+    "EnvRtype: Envirotyping for Quantitative Genetics and Plant Breeding. ",
+    "R package version ", meta$Version, ". ",
+    "https://gcostaneto.github.io/EnvRtype/"
+  )
 )

@@ -187,7 +187,7 @@ the informative result. Join back to your own table on \code{env}.
 }
 
 \examples{
-\dontrun{
+\donttest{
 library(mclust)
 
 ## ---------------------------------------------------------------

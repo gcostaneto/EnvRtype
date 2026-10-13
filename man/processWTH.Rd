@@ -57,7 +57,7 @@ duplicated names. Note that \code{get_weather()} derives \code{n} from
 \code{ALLSKY_SFC_SW_DWN}, so the recomputed values may differ.
 }
 \examples{
-\dontrun{
+\donttest{
 env.data <- get_weather(lat = -13.05, lon = -56.05)
 processWTH(env.data)
 }

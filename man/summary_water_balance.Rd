@@ -64,7 +64,7 @@ deficit during vegetative growth (Steduto et al. 2012). Prefer
 over a single season-long mean.
 }
 \examples{
-\dontrun{
+\donttest{
 wb <- water_balance(wth, soil)
 
 ## Season-level, one row per environment

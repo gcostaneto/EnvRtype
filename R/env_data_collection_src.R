@@ -344,7 +344,7 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ## Single location
 #' get_weather(env.id = "NM", lat = -13.05, lon = -56.05,
 #'             start.day = "2015-02-15", end.day = "2015-06-15",
@@ -631,7 +631,7 @@ get_weather <- function(env.id = NULL, lat = NULL, lon = NULL,
 #' otherwise yields silent \code{NA}s or values from the wrong hemisphere.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ref <- data.frame(env = "NM", lat = -13.05, lng = -56.05)
 #' get_spatial(env.dataframe = ref, digital.raster = my_elevation_raster,
 #'             lat = "lat", lng = "lng", env.id = "env",
@@ -762,7 +762,7 @@ get_spatial <- function(digital.raster = NULL, which.raster.number = NULL,
 #' conversion is applied; the \code{unit} column records what was served.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' get_soil(env.id = "NM", lat = -13.05, lon = -56.05,
 #'          variables.names = c("clay", "nitrogen"))
 #' }
@@ -944,7 +944,7 @@ get_soil <- function(env.id = NULL, lat = NULL, lon = NULL,
 #' \code{n} is bounded to \code{[0, N]}.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' env.data <- get_weather(lat = -13.05, lon = -56.05)
 #' param_radiation(env.data)
 #' }
@@ -1032,7 +1032,7 @@ param_radiation <- function(env.data, day.id = "DOY", latitude = "LAT",
 #' unphysical and indicates a data problem. A warning is raised when this occurs.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' env.data <- get_weather(lat = -13.05, lon = -56.05)
 #' param_atmospheric(env.data, Alt = 850)
 #' }
@@ -1152,7 +1152,7 @@ param_atmospheric <- function(env.data, PREC = NULL, Tdew = NULL,
 #' 1 across the optimum, and falls to 0 at \code{Tbase2}.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' env.data <- get_weather(lat = -13.05, lon = -56.05)
 #' param_temperature(env.data)
 #' param_temperature(env.data, method = "legacy")  # pre-refactor behaviour
@@ -1253,7 +1253,7 @@ param_temperature <- function(env.data, Tmax = NULL, Tmin = NULL,
 #' \code{ALLSKY_SFC_SW_DWN}, so the recomputed values may differ.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' env.data <- get_weather(lat = -13.05, lon = -56.05)
 #' processWTH(env.data)
 #' }
@@ -1338,7 +1338,7 @@ processWTH <- function(env.data, PREC = NULL, Tdew = NULL, Tmin = NULL, Tmax = N
 #' ran sequentially while emitting a warning on every call.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' env.data <- get_weather(lat = -13.05, lon = -56.05)
 #' summaryWTH(env.data, env.id = "env", statistic = "mean")
 #'
@@ -1958,7 +1958,7 @@ summaryWTH <- function(env.data, id.names = NULL, env.id = NULL, days.id = NULL,
 #'   \code{get_weather}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' sites <- data.frame(env = paste0("E", 1:200),
 #'                     lat = runif(200, -30, -5),
 #'                     lon = runif(200, -60, -40))
@@ -2126,7 +2126,7 @@ get_weather_resumable <- function(env.id = NULL, lat = NULL, lon = NULL,
 #'   \code{get_soil}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' grid <- data.frame(env = paste0("P", 1:200),
 #'                    lat = runif(200, -13, -12),
 #'                    lon = runif(200, -56, -55))
@@ -2289,7 +2289,7 @@ get_soil_resumable <- function(env.id = NULL, lat = NULL, lon = NULL,
 #'   \code{get_soil_resumable}, \code{read_progress_log}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ## A long soil job dies at environment 137 of 200.
 #' ## In a brand-new session -- no need to remember the arguments:
 #' soil <- restart_from_log(run.id = "zoning_grid")
@@ -2435,7 +2435,7 @@ restart_from_log <- function(run.id, dir.path = NULL, retry.failed = TRUE,
 #' @seealso \code{restart_from_log}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' lg <- read_progress_log(run.id = "zoning_grid")
 #' table(lg$status)
 #'
@@ -2526,7 +2526,7 @@ read_progress_log <- function(run.id, dir.path = NULL, all = FALSE, verbose = TR
 #' naming them, rather than silently propagating NA into downstream kernels.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' sites <- data.frame(env = c("PIRA", "SETE"),
 #'                     lat = c(-22.7, -19.4), lon = c(-47.6, -44.2))
 #' alt <- get_elevation(env.id = sites$env, lat = sites$lat, lon = sites$lon)
@@ -2600,7 +2600,7 @@ get_elevation <- function(env.id = NULL, lat = NULL, lon = NULL,
 #'   precipitation in mm, BIO3/BIO4/BIO15 dimensionless or percent.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' sites <- data.frame(env = c("PIRA", "SETE"),
 #'                     lat = c(-22.7, -19.4), lon = c(-47.6, -44.2))
 #' bc  <- get_bioclim(env.id = sites$env, lat = sites$lat, lon = sites$lon)
@@ -2866,7 +2866,7 @@ get_bioclim <- function(env.id = NULL, lat = NULL, lon = NULL, vars = 1:19,
 #' GeoTIFFs and the function will use the cache.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' sites <- data.frame(env = c("PIRA", "SETE"),
 #'                     lat = c(-22.7, -19.4), lon = c(-47.6, -44.2))
 #'
@@ -3500,7 +3500,7 @@ aez_legend <- function(classes = 57) {
 #' is effectively arbitrary at that location.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' sites <- data.frame(
 #'   env = c("Ames_IA", "Lincoln_NE", "Piracicaba_BR"),
 #'   lat = c(42.03, 40.81, -22.71),

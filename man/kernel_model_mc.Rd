@@ -18,6 +18,14 @@ kernel_model_mc(..., n_chains = 3, seed = 1, tol = 1e-10, scale_kernels = TRUE)
 
 \item{scale_kernels}{logical. If \code{TRUE} (default) kernels are scaled before fitting.}
 }
+\value{
+An object of class \code{"kernel_model"} (the fit of the first chain;
+  see \code{\link{kernel_model}}) with two added elements:
+  \code{diagnostics}, a data.frame giving the Gelman-Rubin \code{Rhat} and
+  effective sample size \code{ESS} for the residual variance and each
+  kernel-scale parameter, and \code{all_chains}, the list of individual
+  per-chain fits.
+}
 \description{
 Runs independent chains with different seeds and reports R-hat and a crude
 ESS for the residual and each kernel-scale parameter. R-hat above 1.01 or a

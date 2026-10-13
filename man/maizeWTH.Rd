@@ -14,7 +14,7 @@ data(maizeWTH)
 Weather data collected from NASA POWER for each one of the five environments in HELIX dataset.
 }
 \examples{
-\dontrun{
+\donttest{
 data(maizeWTH); head(maizeWTH)
 }
 }

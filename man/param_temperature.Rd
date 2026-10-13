@@ -62,7 +62,7 @@ Pass \code{method = "legacy"} to reproduce earlier output.
 1 across the optimum, and falls to 0 at \code{Tbase2}.
 }
 \examples{
-\dontrun{
+\donttest{
 env.data <- get_weather(lat = -13.05, lon = -56.05)
 param_temperature(env.data)
 param_temperature(env.data, method = "legacy")  # pre-refactor behaviour

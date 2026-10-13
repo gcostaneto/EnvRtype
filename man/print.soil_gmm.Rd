@@ -25,7 +25,7 @@ strong (6-10) and very strong (> 10). A weak gap means several partitions fit
 about equally well.
 }
 \examples{
-\dontrun{
+\donttest{
 fit <- soil_classification(soil_grid, risk.vars = "soc")
 print(fit)
 }

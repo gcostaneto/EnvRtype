@@ -13,7 +13,7 @@ Soil profile for clay content (g/kg) around Nairobi, downloaded from SoilGrids
 with \pkg{terra}.
 }
 \examples{
-\dontrun{
+\donttest{
 f <- system.file("extdata", "clay_5_15.tif", package = "EnvRtype")
 clay <- terra::rast(f)
 terra::plot(clay)

@@ -136,7 +136,7 @@ relative scale, not as a validated phenology prediction, unless you have
 calibrated \code{stages} against observed dates.
 }
 \examples{
-\dontrun{
+\donttest{
 data("maizeWTH")
 
 ## 1. Default maize staging on cumulative GDD

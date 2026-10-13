@@ -191,7 +191,7 @@
 #' @seealso \code{\link{kernel_model}}, \code{\link{decompose_kernels}}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("maizeYield"); data("maizeG"); data("maizeWTH")
 #'
 #' ECs <- W_matrix(env.data = maizeWTH[maizeWTH$daysFromStart < 100, ],
@@ -535,6 +535,10 @@ get_kernel <- function(K_G = NULL,
 #'
 #' @param x object of class \code{"kernel_set"} from \code{\link{get_kernel}}.
 #' @param ... ignored.
+#' @return Returns \code{x} invisibly. Called for its side effect of printing a
+#'   one-line header and a per-kernel table (kernel name, retained rank,
+#'   mean diagonal and rank as a percentage of the number of observations) to
+#'   the console.
 #' @export
 print.kernel_set <- function(x, ...) {
   m <- attr(x, "kd_meta"); o <- attr(x, "obs")
@@ -1055,7 +1059,7 @@ undecompose_kernels <- function(K) {
 #' \code{env_summary} and \code{variance_proportions}.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("maizeYield"); data("maizeG"); data("maizeWTH")
 #'
 #' ECs <- W_matrix(env.data = maizeWTH[maizeWTH$daysFromStart < 100, ],
@@ -1180,6 +1184,15 @@ if (!exists("%||%")) `%||%` <- function(a, b) if (is.null(a)) b else a
 #' @param p integer. Number of genotypes. Inferred from \code{fit$meta$gid} when \code{NULL}.
 #' @param q integer. Number of environments. Inferred from \code{fit$meta$env} when \code{NULL}.
 #' @param digits integer. Number of decimal places in the summary table. Default 4.
+#' @return An object of class \code{"km_varcomp"}, a list with elements
+#'   \code{table} (a data.frame of variance components with their absolute
+#'   values and proportions of the phenotypic variance), the individual
+#'   variances \code{varG}, \code{varE}, \code{varGE}, \code{var_resid} and
+#'   \code{var_total}, the heritabilities \code{h2_entry_mean} and
+#'   \code{h2_plot}, the genetic correlation \code{rg}, the counts \code{p}
+#'   and \code{q}, the \code{method} used, and the logical flags
+#'   \code{negative_residual} and \code{few_environments}. A dedicated
+#'   \code{print} method displays the table and derived quantities.
 #' @export
 varcomp_summary <- function(fit, method = c("postmean", "gibbs"),
                             y = NULL, p = NULL, q = NULL, digits = 4) {
@@ -1270,6 +1283,11 @@ print.km_varcomp <- function(x, ...) {
 #'   Default 0.75.
 #' @param pattern character. Regular expression selecting the GxE kernels to truncate.
 #'   Default \code{"GE"}.
+#' @return The input \code{random} list of kernels, with the selected GxE
+#'   kernels replaced by their reduced-rank (truncated) version and any cached
+#'   spectral decomposition removed so the kernels are re-decomposed on the next
+#'   fit. When no kernel matches \code{pattern}, or \code{keep_prop >= 1}, the
+#'   list is returned unchanged.
 #' @export
 truncate_gxe_kernel <- function(random, keep_prop = 0.75, pattern = "GE") {
   if (keep_prop >= 1) return(random)
@@ -2119,6 +2137,14 @@ summary.kernel_model <- function(object, ...)
 #' @param tol numeric. Eigenvalue tolerance passed to the kernel decomposition.
 #' @param scale_kernels logical. If \code{TRUE} (default) kernels are scaled before fitting.
 #' @param ... further arguments passed to \code{kernel_model}.
+#' @return A list summarising out-of-sample predictive ability, with components
+#'   \code{scheme} (the validation scheme used), \code{folds} (number of folds),
+#'   \code{accuracy} (overall correlation between held-out predictions and
+#'   observations), \code{rmse} (overall root-mean-square error),
+#'   \code{per_fold} (a data.frame of per-fold \code{accuracy} and \code{rmse}),
+#'   \code{fold_id} (integer fold assignment for each row of \code{data}),
+#'   \code{predicted} (held-out predictions) and \code{observed} (the observed
+#'   response).
 #' @export
 kernel_cv <- function(y, data, random, env, gid, folds = 5,
                       scheme = c("cv1", "cv0"), seed = NULL,
@@ -2178,6 +2204,12 @@ kernel_cv <- function(y, data, random, env, gid, folds = 5,
 #' @param seed integer. Base seed; chain \code{c} uses \code{seed + c}. Default 1.
 #' @param tol numeric. Eigenvalue tolerance passed to the kernel decomposition.
 #' @param scale_kernels logical. If \code{TRUE} (default) kernels are scaled before fitting.
+#' @return An object of class \code{"kernel_model"} (the fit of the first chain;
+#'   see \code{\link{kernel_model}}) with two added elements:
+#'   \code{diagnostics}, a data.frame giving the Gelman-Rubin \code{Rhat} and
+#'   effective sample size \code{ESS} for the residual variance and each
+#'   kernel-scale parameter, and \code{all_chains}, the list of individual
+#'   per-chain fits.
 #' @export
 kernel_model_mc <- function(..., n_chains = 3, seed = 1,
                             tol = 1e-10, scale_kernels = TRUE) {
@@ -2343,7 +2375,7 @@ kernel_model_mc <- function(..., n_chains = 3, seed = 1,
 #' cluster_environments(R, distance = "sqrt",
 #'                      hclust_linkage = "complete")$clusters
 #'
-#' \dontrun{
+#' \donttest{
 #' ## ------------------------------------------------------------------
 #' ## 4. Full workflow from phenotypes, kernels and a fitted model
 #' ## ------------------------------------------------------------------
@@ -2490,6 +2522,12 @@ cluster_environments <- function(object, k = NULL,
 #'   block-diagonalise. Default \code{"^KGE_|GE"}.
 #' @param fixed optional fixed-effects specification passed to \code{kernel_model}.
 #' @param ... further arguments passed to \code{kernel_model}.
+#' @return An object of class \code{"kernel_model"} (see \code{\link{kernel_model}})
+#'   with an added \code{cluster_info} element: a list recording the
+#'   environment-to-cluster \code{mapping}, the number of clusters \code{k}, the
+#'   \code{mechanism} used (\code{"block"}, \code{"fixed"} or \code{"both"}), the
+#'   \code{gxe_pattern}, the number of added fixed columns \code{n_fixed_cols}
+#'   and the names of the \code{blocked_kernels}.
 #' @export
 kernel_model_clustered <- function(y, data, random, env, gid,
                                    clusters, use = c("block", "fixed", "both"),
@@ -2720,7 +2758,7 @@ kernel_model_clustered <- function(y, data, random, env, gid,
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("maizeWTH"); data("maizeYield"); data("maizeG")
 #'
 #' ## Training covariates (first 100 days after sowing)
@@ -3971,7 +4009,7 @@ scan_spatial_table <- function(scan, coords, lon_col = "lon", lat_col = "lat",
 #' head(ww_tab$who_won_where)
 #' head(ww_tab$winners)
 #'
-#' \dontrun{
+#' \donttest{
 #' ## ---- Realistic scan: 50 new locations across Mato Grosso, Brazil --------
 #' ## The bundled maize datasets are multi-environment trials from Mato Grosso:
 #' ## maizeWTH (daily weather), maizeYield (grain yield) and maizeG (genomic
@@ -4391,6 +4429,25 @@ coverage_summary <- function(scan) {
   K / (sum(diag(K)) / nrow(K))
 }
 
+#' Reshape the marginal distribution of covariables away from Gaussian while
+#' preserving their rank structure (and hence, approximately, their
+#' correlations), via a rank-based quantile transform.
+#' @noRd
+.sim_marginal <- function(W, marginal = c("gaussian", "right-skewed",
+                                          "heavy-tailed", "bounded")) {
+  marginal <- match.arg(marginal)
+  if (marginal == "gaussian") return(W)
+  q <- nrow(W)
+  trans <- function(z) {
+    u <- rank(z, ties.method = "average") / (q + 1)
+    switch(marginal,
+      "right-skewed" = stats::qgamma(u, shape = 1.5, rate = 1),
+      "heavy-tailed" = stats::qt(u, df = 3),
+      "bounded"      = stats::qbeta(u, 2, 2))
+  }
+  matrix(apply(W, 2, trans), nrow = q, dimnames = dimnames(W))
+}
+
 #' Off-diagonal Pearson correlation between two symmetric matrices.
 #' Off-diagonals ONLY: including the diagonal inflates this badly, since both
 #' matrices have large near-constant diagonals.
@@ -4513,7 +4570,7 @@ coverage_summary <- function(scan) {
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data(maizeG)
 #' met <- sim_met(maizeG, n_env = 10, min.cor = 0.2, max.cor = 0.8,
 #'                min.h2 = 0.3, max.h2 = 0.7, seed = 1)
@@ -4761,7 +4818,7 @@ as.data.frame.sim_met <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' requested/target values).
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' C <- sim_met_C(q = 10, min.cor = 0.2, max.cor = 0.8, seed = 1)
 #'
 #' ## An envirome that recovers ~70% of C
@@ -5005,7 +5062,7 @@ sim_met_C <- function(q, min.cor = 0.0, max.cor = 0.8, env_names = NULL,
 #' @return A \eqn{q \times q} correlation matrix.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' met <- sim_met(maizeG, n_env = 6, seed = 1)
 #' env_cor(met, "target")
 #' env_cor(met, "realised")
@@ -5054,7 +5111,7 @@ env_cor.default <- function(x, type = c("target", "realised"), ...)
 #'   \code{r_sd}, \code{r2}, and mean \code{eff_rank}.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' C <- sim_met_C(q = 10, min.cor = 0.2, max.cor = 0.8, seed = 1)
 #' grid <- sim_W_grid(C, noise = c(0, 0.3, 0.6), n_var = c(20, 100),
 #'                    collinearity = c(0, 0.8), n_rep = 5)
@@ -5082,4 +5139,203 @@ sim_W_grid <- function(C_env, noise = seq(0, 1, 0.25), n_var = c(10, 50, 200),
   }))
   rownames(res) <- NULL
   res
+}
+
+#' @title Simulate an Envirome with a Controllable Environmental Diversity
+#'
+#' @description
+#' Generates an environmental covariable matrix (environments in rows,
+#' covariables in columns) whose diversity among environments is set by explicit
+#' knobs: the structure (unstructured, mega-environment clusters, or a continuous
+#' gradient), the redundancy among covariables and their marginal shape. The
+#' induced environment correlation and environmental kernel are attached, so the
+#' result feeds \code{\link{sim_met}} (as \code{W} or \code{C}) and
+#' \code{\link{get_kernel}} directly. It complements \code{\link{sim_W}} by
+#' generating a structured envirome from scratch.
+#'
+#' @details
+#' Each environment gets a latent profile that drives its covariables; the
+#' \code{structure} controls how those profiles are arranged.
+#' \code{"random"} places environments independently (maximal diversity),
+#' \code{"clusters"} groups them into \code{n_cluster} mega-environments (high
+#' within-cluster similarity, between-cluster similarity set by
+#' \code{between.cor}), and \code{"gradient"} orders environments along a latent
+#' continuum (neighbours similar, extremes different), as for a latitude or
+#' season gradient. \code{redundancy} collapses a share of covariables onto
+#' \code{n_blocks} drivers, lowering the effective rank, and \code{marginal}
+#' reshapes the covariables away from Gaussian.
+#'
+#' @param n_env integer. Number of environments (rows, >= 2).
+#' @param n_var integer. Number of covariables (columns, >= 2).
+#' @param structure character. \code{"random"} (default), \code{"clusters"} or
+#'   \code{"gradient"}.
+#' @param n_cluster integer. Number of mega-environments when
+#'   \code{structure = "clusters"}.
+#' @param between.cor numeric in [0, 1). Similarity between clusters
+#'   (0 = well separated).
+#' @param spread numeric. Within-cluster / along-gradient dispersion; larger
+#'   values make environments within a group more diverse.
+#' @param redundancy numeric in [0, 1). Share of covariables collapsed onto
+#'   drivers (collinearity), lowering effective rank.
+#' @param n_blocks integer. Number of covariable drivers when
+#'   \code{redundancy > 0}.
+#' @param marginal character. Marginal of the covariables: \code{"gaussian"}
+#'   (default), \code{"right-skewed"}, \code{"heavy-tailed"} or \code{"bounded"}.
+#' @param env_names,var_names character. Optional names for rows / columns.
+#' @param seed integer. RNG seed. The caller's RNG stream is restored on exit.
+#' @param verbose logical. Print a diversity summary. Default \code{TRUE}.
+#'
+#' @return
+#' A matrix of class \code{"sim_envirome"} (environments x covariables).
+#' Attributes: \code{"cluster"} (mega-environment of each environment, when
+#' applicable), \code{"C_env"} (the induced environment correlation), \code{"K_E"}
+#' (the environmental kernel) and \code{"diversity"} (\code{mean_similarity} off
+#' the environment correlation and \code{eff_dim}, the effective dimension of the
+#' environmental kernel).
+#'
+#' @examples
+#' \donttest{
+#' ## High diversity: unstructured environments
+#' E_hi <- sim_envirome(20, n_var = 30, structure = "random", seed = 1)
+#'
+#' ## Mega-environments: three tight clusters
+#' E_cl <- sim_envirome(20, n_var = 30, structure = "clusters",
+#'                      n_cluster = 3, between.cor = 0.1, seed = 1)
+#' attr(E_cl, "diversity")
+#'
+#' ## A latitudinal / seasonal gradient
+#' E_gr <- sim_envirome(20, n_var = 30, structure = "gradient", seed = 1)
+#'
+#' ## Feed the induced environment correlation into sim_met() as a target C
+#' data(maizeG)
+#' met <- sim_met(maizeG, C = attr(E_cl, "C_env"), seed = 1)
+#'
+#' ## Contrast G x E under low vs high environmental diversity (genetics fixed)
+#' g_hi <- cor(sim_met(maizeG, C = attr(E_hi, "C_env"), seed = 1)$truth$g)
+#' g_cl <- cor(sim_met(maizeG, C = attr(E_cl, "C_env"), seed = 1)$truth$g)
+#' c(diverse = mean(g_hi[lower.tri(g_hi)]),   # low genetic cor -> more G x E
+#'   clustered = mean(g_cl[lower.tri(g_cl)]))
+#' }
+#'
+#' @seealso \code{\link{sim_W}}, \code{\link{sim_met}}, \code{\link{sim_met_C}},
+#'   \code{\link{env_kernel}}
+#' @export
+sim_envirome <- function(n_env, n_var = 20L,
+                         structure = c("random", "clusters", "gradient"),
+                         n_cluster = 3L, between.cor = 0.2, spread = 1,
+                         redundancy = 0, n_blocks = 1L,
+                         marginal = c("gaussian", "right-skewed",
+                                      "heavy-tailed", "bounded"),
+                         env_names = NULL, var_names = NULL,
+                         seed = NULL, verbose = TRUE) {
+  structure <- match.arg(structure)
+  marginal  <- match.arg(marginal)
+  if (!is.null(seed)) {
+    if (exists(".Random.seed", envir = .GlobalEnv)) {
+      .oldseed <- get(".Random.seed", envir = .GlobalEnv)
+      on.exit(assign(".Random.seed", .oldseed, envir = .GlobalEnv), add = TRUE)
+    }
+    set.seed(seed)
+  }
+  if (n_env < 2L) stop("'n_env' must be at least 2.", call. = FALSE)
+  if (n_var < 2L) stop("'n_var' must be at least 2.", call. = FALSE)
+  if (between.cor < 0 || between.cor >= 1)
+    stop("'between.cor' must lie in [0, 1).", call. = FALSE)
+  if (redundancy < 0 || redundancy >= 1)
+    stop("'redundancy' must lie in [0, 1).", call. = FALSE)
+
+  q <- n_env; p <- n_var
+  m <- max(2L, min(q - 1L, 5L))          # latent dimensions
+  cluster <- NULL
+
+  if (structure == "random") {
+    L <- matrix(stats::rnorm(q * m), q, m)
+  } else if (structure == "clusters") {
+    cluster  <- rep(seq_len(max(1L, n_cluster)), length.out = q)
+    centroid <- matrix(stats::rnorm(max(1L, n_cluster) * m), ncol = m)
+    shared   <- matrix(stats::rnorm(m), 1, m)      # common component -> between.cor
+    L <- sqrt(1 - between.cor) * centroid[cluster, , drop = FALSE] +
+         sqrt(between.cor) * matrix(shared, q, m, byrow = TRUE) +
+         spread * matrix(stats::rnorm(q * m), q, m)
+  } else {                                # "gradient"
+    t  <- seq(-1, 1, length.out = q)
+    L  <- matrix(0, q, m)
+    L[, 1] <- t / stats::sd(t)
+    if (m > 1L)
+      L[, -1] <- spread * 0.3 * matrix(stats::rnorm(q * (m - 1L)), q, m - 1L)
+  }
+
+  B <- matrix(stats::rnorm(m * p), m, p)
+  W <- L %*% B + matrix(stats::rnorm(q * p), q, p)   # covariables + noise
+
+  if (redundancy > 0 && n_blocks >= 1L) {
+    nb <- round(p * redundancy)
+    if (nb >= 2L) {
+      idx <- sample.int(p, nb)
+      grp <- split(idx, rep_len(seq_len(n_blocks), length(idx)))
+      for (g in grp) {
+        drv <- W[, g[1]]
+        W[, g] <- sqrt(redundancy) * drv +
+                  sqrt(1 - redundancy) * W[, g, drop = FALSE]
+      }
+    }
+  }
+
+  W  <- scale(W)
+  rn <- if (!is.null(env_names)) env_names else paste0("E", seq_len(q))
+  cn <- if (!is.null(var_names)) var_names else paste0("V", seq_len(p))
+  dimnames(W) <- list(rn, cn)
+  W <- .sim_marginal(W, marginal)
+
+  K_E  <- .sim_GB(W)
+  Cenv <- stats::cor(t(W))
+  dimnames(Cenv) <- list(rn, rn)
+  ev   <- eigen(K_E, symmetric = TRUE, only.values = TRUE)$values
+  div  <- c(mean_similarity = mean(Cenv[lower.tri(Cenv)]),
+            eff_dim = sum(ev)^2 / sum(ev^2))
+
+  attr(W, "cluster")   <- cluster
+  attr(W, "C_env")     <- Cenv
+  attr(W, "K_E")       <- K_E
+  attr(W, "structure") <- structure
+  attr(W, "diversity") <- div
+  class(W) <- c("sim_envirome", "matrix", "array")
+  if (verbose) print(W)
+  W
+}
+
+#' @title Print a Simulated Envirome Diversity Matrix
+#' @param x a \code{sim_envirome} object.
+#' @param ... ignored.
+#' @return \code{x}, invisibly.
+#' @seealso \code{\link{sim_envirome}}
+#' @export
+print.sim_envirome <- function(x, ...) {
+  d <- attr(x, "diversity"); cl <- attr(x, "cluster")
+  cat("<sim_envirome>\n")
+  cat(sprintf("  environments x covariables . %d x %d\n", nrow(x), ncol(x)))
+  cat(sprintf("  structure .................. %s%s\n", attr(x, "structure"),
+              if (!is.null(cl)) sprintf(" (%d clusters)", length(unique(cl))) else ""))
+  cat(sprintf("  mean environment similarity  %.3f\n", d["mean_similarity"]))
+  cat(sprintf("  effective dimension ........ %.1f of %d environments\n",
+              d["eff_dim"], nrow(x)))
+  invisible(x)
+}
+
+#' @rdname env_cor
+#' @export
+env_cor.sim_envirome <- function(x, type = c("target", "realised"), ...)
+  attr(x, "C_env")
+
+#' @title Coerce a Simulated Envirome Diversity Matrix to a Plain Matrix
+#' @param x a \code{sim_envirome} object.
+#' @param ... ignored.
+#' @return A numeric matrix with no \code{sim_envirome} class or attributes.
+#' @seealso \code{\link{sim_envirome}}
+#' @export
+as.matrix.sim_envirome <- function(x, ...) {
+  m <- unclass(x)
+  attr(m, "cluster") <- attr(m, "C_env") <- attr(m, "K_E") <-
+    attr(m, "structure") <- attr(m, "diversity") <- NULL
+  m
 }

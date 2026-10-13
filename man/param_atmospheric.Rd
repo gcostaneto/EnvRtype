@@ -59,7 +59,7 @@ negatives can only arise from a dew point above air temperature, which is
 unphysical and indicates a data problem. A warning is raised when this occurs.
 }
 \examples{
-\dontrun{
+\donttest{
 env.data <- get_weather(lat = -13.05, lon = -56.05)
 param_atmospheric(env.data, Alt = 850)
 }

@@ -152,7 +152,7 @@ ww_tab <- map_scan(scan, coords, type = "which_won_where", output = "table")
 head(ww_tab$who_won_where)
 head(ww_tab$winners)
 
-\dontrun{
+\donttest{
 ## ---- Realistic scan: 50 new locations across Mato Grosso, Brazil --------
 ## The bundled maize datasets are multi-environment trials from Mato Grosso:
 ## maizeWTH (daily weather), maizeYield (grain yield) and maizeG (genomic

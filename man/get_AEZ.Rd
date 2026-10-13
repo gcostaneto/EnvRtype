@@ -107,7 +107,7 @@ be misleading near a zone boundary. With \code{buffer > 0} the returned
 is effectively arbitrary at that location.
 }
 \examples{
-\dontrun{
+\donttest{
 sites <- data.frame(
   env = c("Ames_IA", "Lincoln_NE", "Piracicaba_BR"),
   lat = c(42.03, 40.81, -22.71),

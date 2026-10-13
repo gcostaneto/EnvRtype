@@ -42,7 +42,7 @@ Sites in the sea or outside the land mask return \code{NA} with a warning
 naming them, rather than silently propagating NA into downstream kernels.
 }
 \examples{
-\dontrun{
+\donttest{
 sites <- data.frame(env = c("PIRA", "SETE"),
                     lat = c(-22.7, -19.4), lon = c(-47.6, -44.2))
 alt <- get_elevation(env.id = sites$env, lat = sites$lat, lon = sites$lon)

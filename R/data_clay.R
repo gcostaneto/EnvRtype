@@ -9,7 +9,7 @@
 #'@name clay_5_15
 #'
 #'@examples
-#'\dontrun{
+#'\donttest{
 #' f <- system.file("extdata", "clay_5_15.tif", package = "EnvRtype")
 #' clay <- terra::rast(f)
 #' terra::plot(clay)

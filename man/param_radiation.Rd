@@ -45,7 +45,7 @@ The sunset hour angle is clamped so polar day/night yields 0 rather than
 \code{n} is bounded to \code{[0, N]}.
 }
 \examples{
-\dontrun{
+\donttest{
 env.data <- get_weather(lat = -13.05, lon = -56.05)
 param_radiation(env.data)
 }

@@ -118,7 +118,7 @@ cluster_environments(R, method = "kmeans", k_range = 2:4, seed = 1)$clusters
 cluster_environments(R, distance = "sqrt",
                      hclust_linkage = "complete")$clusters
 
-\dontrun{
+\donttest{
 ## ------------------------------------------------------------------
 ## 4. Full workflow from phenotypes, kernels and a fitted model
 ## ------------------------------------------------------------------

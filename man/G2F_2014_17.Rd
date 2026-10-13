@@ -23,32 +23,28 @@ computational sciences, statistics, and engineering. See https://bmcresnotes.bio
 Here we used the geographic coordinates from 93 environments (diverse locations across 4 years)
 }
 \examples{
-\dontrun{
 require(EnvRtype)
 data(G2F_2014_17)
 head(G2F_2014_17)
 
 # let's use the first 10 locations only
-
-data = G2F_2014_17
+data  = G2F_2014_17
 env   = data$env[1:10]
 lon   = data$lon[1:10]
 lat   = data$lat[1:10]
-env   = data$env[1:10]
 start = data$start[1:10]
-end = data$end[1:10]
+end   = data$end[1:10]
 
-
+\donttest{
+# get_weather() queries the NASA POWER web service
 weather.data =
   EnvRtype::get_weather(env.id = env,
                         lat = lat,
                         lon = lon,
                         start.day = start,
-                        end.day = end,
-                        parallel = TRUE)
+                        end.day = end)
 
 head(weather.data)
-
 }
 }
 \keyword{datasets}

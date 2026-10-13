@@ -59,7 +59,7 @@ nested \code{foreach} loops, which registered no parallel backend and therefore
 ran sequentially while emitting a warning on every call.
 }
 \examples{
-\dontrun{
+\donttest{
 env.data <- get_weather(lat = -13.05, lon = -56.05)
 summaryWTH(env.data, env.id = "env", statistic = "mean")
 

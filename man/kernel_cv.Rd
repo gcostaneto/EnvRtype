@@ -41,6 +41,16 @@ kernel_cv(
 
 \item{...}{further arguments passed to \code{kernel_model}.}
 }
+\value{
+A list summarising out-of-sample predictive ability, with components
+  \code{scheme} (the validation scheme used), \code{folds} (number of folds),
+  \code{accuracy} (overall correlation between held-out predictions and
+  observations), \code{rmse} (overall root-mean-square error),
+  \code{per_fold} (a data.frame of per-fold \code{accuracy} and \code{rmse}),
+  \code{fold_id} (integer fold assignment for each row of \code{data}),
+  \code{predicted} (held-out predictions) and \code{observed} (the observed
+  response).
+}
 \description{
 In-sample yHat overstates accuracy. This masks a fold of phenotypes as NA,
 refits, and correlates held-out predictions against observed values.

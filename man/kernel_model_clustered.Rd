@@ -41,6 +41,14 @@ block-diagonalise. Default \code{"^KGE_|GE"}.}
 
 \item{...}{further arguments passed to \code{kernel_model}.}
 }
+\value{
+An object of class \code{"kernel_model"} (see \code{\link{kernel_model}})
+  with an added \code{cluster_info} element: a list recording the
+  environment-to-cluster \code{mapping}, the number of clusters \code{k}, the
+  \code{mechanism} used (\code{"block"}, \code{"fixed"} or \code{"both"}), the
+  \code{gxe_pattern}, the number of added fixed columns \code{n_fixed_cols}
+  and the names of the \code{blocked_kernels}.
+}
 \description{
 "fixed" adds mega-environment means as fixed effects; "block" zeroes
 between-cluster entries of the GxE kernel so genotypes may rank differently

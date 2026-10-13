@@ -143,7 +143,7 @@ them, so build once and reuse across folds, chains and models.
 }
 
 \examples{
-\dontrun{
+\donttest{
 data("maizeYield"); data("maizeG"); data("maizeWTH")
 
 ECs <- W_matrix(env.data = maizeWTH[maizeWTH$daysFromStart < 100, ],
