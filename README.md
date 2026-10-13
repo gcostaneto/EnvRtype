@@ -1,4 +1,4 @@
-# EnvRtype <img src="man/figures/logo.png" align="right" height="139" alt="EnvRtype logo" />
+# {EnvRtype} - The Envirotyper Library in Quantitative Genetics <img src="man/figures/logo.png" align="right" height="139" alt="EnvRtype logo" />
 
 <!-- badges: start -->
 [![version](https://img.shields.io/github/r-package/v/gcostaneto/EnvRtype?label=version&color=blue)](https://github.com/gcostaneto/EnvRtype)
@@ -10,7 +10,6 @@
 [![GitHub stars](https://img.shields.io/github/stars/gcostaneto/EnvRtype?style=social)](https://github.com/gcostaneto/EnvRtype/stargazers)
 <!-- badges: end -->
 
-### Envirotyping for Quantitative Genetics and Plant Breeding
 
 **EnvRtype** is an R package for **enviromics** — the study of the *envirome*, the set of
 environmental conditions linked to the biological performance of living beings (Costa-Neto and Fritsche-Neto, 2021; Crossa et al., 2021). It collects
