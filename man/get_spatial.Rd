@@ -53,10 +53,17 @@ otherwise yields silent \code{NA}s or values from the wrong hemisphere.
 }
 \examples{
 \donttest{
+if (requireNamespace("terra", quietly = TRUE) &&
+    requireNamespace("sf", quietly = TRUE)) {
+## A small synthetic elevation raster covering the example site.
+elevation <- terra::rast(nrows = 2, ncols = 2, xmin = -57, xmax = -55,
+                         ymin = -14, ymax = -12, crs = "EPSG:4326")
+terra::values(elevation) <- c(100, 200, 300, 400)
 ref <- data.frame(env = "NM", lat = -13.05, lng = -56.05)
-get_spatial(env.dataframe = ref, digital.raster = my_elevation_raster,
+get_spatial(env.dataframe = ref, digital.raster = elevation,
             lat = "lat", lng = "lng", env.id = "env",
             name.feature = "Elevation")
+}
 }
 
 }

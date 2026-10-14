@@ -65,6 +65,15 @@ over a single season-long mean.
 }
 \examples{
 \donttest{
+## Synthetic daily weather and a uniform soil profile (mapped units).
+wth <- expand.grid(daysFromStart = 1:120, env = c("E1", "E2"))
+wth$PRECTOT <- ifelse(wth$daysFromStart \%\% 10 == 0, 25, 0)
+wth$ETP <- 5
+soil <- data.frame(env = c("E1", "E2"))
+for (layer in c("0_5cm", "5_15cm", "15_30cm", "30_60cm", "60_100cm")) {
+  soil[[paste0("wv0033|", layer)]] <- 300
+  soil[[paste0("wv1500|", layer)]] <- 150
+}
 wb <- water_balance(wth, soil)
 
 ## Season-level, one row per environment

@@ -3222,7 +3222,8 @@ print.env_risk <- function(x, ...) {
 #' climatology still holds.
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' ## Requires an observed multi-year weather series (wth).
 #' rp <- env_risk_profile(wth, planting = "10-15", crop = "maize")
 #'
 #' ## How much of the TPE is each drought class at flowering?
@@ -3320,7 +3321,8 @@ tpe_weights <- function(risk, stage = NULL, var = NULL,
 #' that the mean-preserving perturbation left wet-day counts alone.
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' ## Requires site coordinates and an observed weather series (wth).
 #' fut <- get_climate_scenario(env.id = sites$env, lat = sites$lat,
 #'                             lon = sites$lon, baseline = wth,
 #'                             scenario = "ssp585", period = "2061-2080")

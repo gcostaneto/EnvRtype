@@ -123,7 +123,9 @@ aez25[, c("env", "aez_label", "majority_share")]
 
 ## Raw codes, no labelling
 get_AEZ(sites$env, sites$lat, sites$lon, legend = NA)
+}
 
+\dontrun{
 ## A different GAEZ layer you downloaded yourself
 get_AEZ(sites$env, sites$lat, sites$lon, file = "GAEZ_AEZ_scenario.tif")
 }

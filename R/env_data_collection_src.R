@@ -632,10 +632,17 @@ get_weather <- function(env.id = NULL, lat = NULL, lon = NULL,
 #'
 #' @examples
 #' \donttest{
+#' if (requireNamespace("terra", quietly = TRUE) &&
+#'     requireNamespace("sf", quietly = TRUE)) {
+#' ## A small synthetic elevation raster covering the example site.
+#' elevation <- terra::rast(nrows = 2, ncols = 2, xmin = -57, xmax = -55,
+#'                          ymin = -14, ymax = -12, crs = "EPSG:4326")
+#' terra::values(elevation) <- c(100, 200, 300, 400)
 #' ref <- data.frame(env = "NM", lat = -13.05, lng = -56.05)
-#' get_spatial(env.dataframe = ref, digital.raster = my_elevation_raster,
+#' get_spatial(env.dataframe = ref, digital.raster = elevation,
 #'             lat = "lat", lng = "lng", env.id = "env",
 #'             name.feature = "Elevation")
+#' }
 #' }
 #'
 #' @seealso \code{get_weather}, \code{get_soil}
@@ -762,7 +769,8 @@ get_spatial <- function(digital.raster = NULL, which.raster.number = NULL,
 #' conversion is applied; the \code{unit} column records what was served.
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' ## Requires the live SoilGrids service.
 #' get_soil(env.id = "NM", lat = -13.05, lon = -56.05,
 #'          variables.names = c("clay", "nitrogen"))
 #' }
@@ -1958,7 +1966,8 @@ summaryWTH <- function(env.data, id.names = NULL, env.id = NULL, days.id = NULL,
 #'   \code{get_weather}
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' ## Long-running download job requiring access to NASA POWER.
 #' sites <- data.frame(env = paste0("E", 1:200),
 #'                     lat = runif(200, -30, -5),
 #'                     lon = runif(200, -60, -40))
@@ -2126,7 +2135,8 @@ get_weather_resumable <- function(env.id = NULL, lat = NULL, lon = NULL,
 #'   \code{get_soil}
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' ## Long-running download job requiring access to SoilGrids.
 #' grid <- data.frame(env = paste0("P", 1:200),
 #'                    lat = runif(200, -13, -12),
 #'                    lon = runif(200, -56, -55))
@@ -2289,7 +2299,7 @@ get_soil_resumable <- function(env.id = NULL, lat = NULL, lon = NULL,
 #'   \code{get_soil_resumable}, \code{read_progress_log}
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' ## A long soil job dies at environment 137 of 200.
 #' ## In a brand-new session -- no need to remember the arguments:
 #' soil <- restart_from_log(run.id = "zoning_grid")
@@ -2435,7 +2445,8 @@ restart_from_log <- function(run.id, dir.path = NULL, retry.failed = TRUE,
 #' @seealso \code{restart_from_log}
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' ## Requires a saved run created by get_soil_resumable().
 #' lg <- read_progress_log(run.id = "zoning_grid")
 #' table(lg$status)
 #'
@@ -2879,9 +2890,6 @@ get_bioclim <- function(env.id = NULL, lat = NULL, lon = NULL, vars = 1:19,
 #'                             lon = sites$lon, baseline = base,
 #'                             model = "ensemble", scenario = "ssp245",
 #'                             period = "2041-2060")
-#'
-#' ## Which GCMs fully cover a scenario? (GFDL-ESM4 has no ssp245.)
-#' .cs_models_for("ssp245")
 #'
 #' ## GFDL-ESM4 is fine for ssp126 or ssp370, just not ssp245/ssp585:
 #' fut126 <- get_climate_scenario(env.id = sites$env, lat = sites$lat,
@@ -3516,7 +3524,9 @@ aez_legend <- function(classes = 57) {
 #'
 #' ## Raw codes, no labelling
 #' get_AEZ(sites$env, sites$lat, sites$lon, legend = NA)
+#' }
 #'
+#' \dontrun{
 #' ## A different GAEZ layer you downloaded yourself
 #' get_AEZ(sites$env, sites$lat, sites$lon, file = "GAEZ_AEZ_scenario.tif")
 #' }

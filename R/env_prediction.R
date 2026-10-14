@@ -2507,7 +2507,10 @@ cluster_environments <- function(object, k = NULL,
 #' across mega-environments; "both" does each.
 #'
 #' Block-diagonalisation MODIFIES the GxE kernels, so any cached decomposition
-#' for those kernels is dropped and recomputed.
+#' for those kernels is dropped and recomputed. Both dense and factored kernels
+#' are supported. Selected factored kernels are reconstructed as dense
+#' observation-by-observation matrices before blocking; unselected kernels are
+#' left unchanged.
 #'
 #' @param y character. Name of the response column in \code{data}.
 #' @param data data.frame with the response, environment and genotype columns.
@@ -2568,10 +2571,26 @@ kernel_model_clustered <- function(y, data, random, env, gid,
       warning("No kernels matched gxe_pattern = '", gxe_pattern,
               "'; nothing was block-diagonalised.")
     for (i in hit) {
-      random2[[i]]$Kernel <- random2[[i]]$Kernel * same_cluster
+      K <- random2[[i]]$Kernel
+      if (is.null(K)) {
+        decomp <- random2[[i]]$decomp
+        if (!length(decomp))
+          stop("Kernel '", names(random2)[i],
+               "' requires `$Kernel` or `$decomp` for cluster blocking.")
+        K <- matrix(0, nrow(data), nrow(data))
+        for (d in decomp) {
+          if (!is.matrix(d$U) || nrow(d$U) != nrow(data) ||
+              ncol(d$U) != length(d$s))
+            stop("Invalid factored decomposition for kernel '",
+                 names(random2)[i], "'.")
+          K <- K + tcrossprod(d$U * rep(sqrt(d$s), each = nrow(d$U)))
+        }
+      }
+      random2[[i]]$Kernel <- K * same_cluster
       random2[[i]]$Type   <- "D"
       random2[[i]]$decomp <- NULL          # kernel changed: invalidate cache
       random2[[i]]$base <- random2[[i]]$idx <- NULL
+      random2[[i]]$kron <- NULL
     }
     attr(random2, "kd_meta") <- NULL       # force revalidation
   }
@@ -4068,10 +4087,13 @@ scan_spatial_table <- function(scan, coords, lon_col = "lon", lat_col = "lat",
 #' ## 7. Overlay the Mato Grosso state border for context. geobr serves the
 #' ##    official IBGE boundaries for Brazil as sf objects; clip = TRUE also
 #' ##    drops any scanned site that falls outside the polygon.
+#' if (requireNamespace("geobr", quietly = TRUE) &&
+#'     requireNamespace("sf", quietly = TRUE)) {
 #' mt <- geobr::read_state(code_state = "MT", year = 2020)
 #' map_scan(sc, coords, type = "coverage", shp = mt)
 #' map_scan(sc, coords, type = "performance", genotypes = g1,
 #'          shp = mt, clip = TRUE)
+#' }
 #' }
 #' @export
 map_scan <- function(scan, coords, lon_col = "lon", lat_col = "lat",

@@ -187,7 +187,8 @@ the informative result. Join back to your own table on \code{env}.
 }
 
 \examples{
-\donttest{
+\dontrun{
+## This workflow downloads SoilGrids data for a 200-site grid.
 library(mclust)
 
 ## ---------------------------------------------------------------

@@ -456,7 +456,8 @@
 #'   \code{Mclust} for the underlying model.
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' ## This workflow downloads SoilGrids data for a 200-site grid.
 #' library(mclust)
 #'
 #' ## ---------------------------------------------------------------
@@ -789,7 +790,8 @@ soil_classification <- function(soil.data, env.id = "env",
 #' @param ... ignored.
 #' @return \code{x}, invisibly.
 #' @examples
-#' \donttest{
+#' \dontrun{
+#' ## Requires a soil_grid data set, as in the soil_classification() example.
 #' fit <- soil_classification(soil_grid, risk.vars = "soc")
 #' print(fit)
 #' }

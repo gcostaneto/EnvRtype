@@ -36,7 +36,8 @@ precipitation-class frequencies do not mean rainfall risk is unchanged, only
 that the mean-preserving perturbation left wet-day counts alone.
 }
 \examples{
-\donttest{
+\dontrun{
+## Requires site coordinates and an observed weather series (wth).
 fut <- get_climate_scenario(env.id = sites$env, lat = sites$lat,
                             lon = sites$lon, baseline = wth,
                             scenario = "ssp585", period = "2061-2080")

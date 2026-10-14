@@ -56,5 +56,8 @@ across mega-environments; "both" does each.
 }
 \details{
 Block-diagonalisation MODIFIES the GxE kernels, so any cached decomposition
-for those kernels is dropped and recomputed.
+for those kernels is dropped and recomputed. Both dense and factored kernels
+are supported. Selected factored kernels are reconstructed as dense
+observation-by-observation matrices before blocking; unselected kernels are
+left unchanged.
 }

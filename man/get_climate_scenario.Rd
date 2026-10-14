@@ -120,9 +120,6 @@ fut <- get_climate_scenario(env.id = sites$env, lat = sites$lat,
                             model = "ensemble", scenario = "ssp245",
                             period = "2041-2060")
 
-## Which GCMs fully cover a scenario? (GFDL-ESM4 has no ssp245.)
-.cs_models_for("ssp245")
-
 ## GFDL-ESM4 is fine for ssp126 or ssp370, just not ssp245/ssp585:
 fut126 <- get_climate_scenario(env.id = sites$env, lat = sites$lat,
                                lon = sites$lon, baseline = base,

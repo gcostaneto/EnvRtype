@@ -59,7 +59,8 @@ pre-widened parts could have mismatched columns.
 See \code{get_weather_resumable} for the full checkpoint design.
 }
 \examples{
-\donttest{
+\dontrun{
+## Long-running download job requiring access to SoilGrids.
 grid <- data.frame(env = paste0("P", 1:200),
                    lat = runif(200, -13, -12),
                    lon = runif(200, -56, -55))

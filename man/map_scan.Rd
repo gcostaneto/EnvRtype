@@ -211,9 +211,12 @@ map_scan(sc, coords, type = "performance",
 ## 7. Overlay the Mato Grosso state border for context. geobr serves the
 ##    official IBGE boundaries for Brazil as sf objects; clip = TRUE also
 ##    drops any scanned site that falls outside the polygon.
+if (requireNamespace("geobr", quietly = TRUE) &&
+    requireNamespace("sf", quietly = TRUE)) {
 mt <- geobr::read_state(code_state = "MT", year = 2020)
 map_scan(sc, coords, type = "coverage", shp = mt)
 map_scan(sc, coords, type = "performance", genotypes = g1,
          shp = mt, clip = TRUE)
+}
 }
 }

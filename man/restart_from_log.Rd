@@ -55,7 +55,7 @@ every time. Once you have confirmed a failure is permanent, pass
 \code{retry.failed = FALSE}.
 }
 \examples{
-\donttest{
+\dontrun{
 ## A long soil job dies at environment 137 of 200.
 ## In a brand-new session -- no need to remember the arguments:
 soil <- restart_from_log(run.id = "zoning_grid")

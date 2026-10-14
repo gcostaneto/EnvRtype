@@ -79,7 +79,8 @@ The cost is wall-clock time; the benefit is a log you can trust. For speed
 on a job you can afford to lose, use \code{get_weather(parallel = TRUE)}.
 }
 \examples{
-\donttest{
+\dontrun{
+## Long-running download job requiring access to NASA POWER.
 sites <- data.frame(env = paste0("E", 1:200),
                     lat = runif(200, -30, -5),
                     lon = runif(200, -60, -40))

@@ -27,7 +27,8 @@ Returns the per-environment retrieval history written by
 what succeeded, what failed, when, and with which error message.
 }
 \examples{
-\donttest{
+\dontrun{
+## Requires a saved run created by get_soil_resumable().
 lg <- read_progress_log(run.id = "zoning_grid")
 table(lg$status)
 
