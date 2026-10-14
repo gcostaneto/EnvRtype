@@ -62,9 +62,16 @@ Journal of Climatology* 37(12), 4302-4315.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 sites <- data.frame(env = c("PIRA", "SETE"),
                     lat = c(-22.7, -19.4), lon = c(-47.6, -44.2))
 alt <- get_elevation(env.id = sites$env, lat = sites$lat, lon = sites$lon)
-} # }
+#> ---------------------------------------------------------------
+#> get_elevation -- WorldClim 2.1 elevation
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - downloading wc2.1_2.5m_elev.zip (this is a large file)
+#>   - extracting
+#>   - extracted elevation for 2 site(s)
+# }
 ```

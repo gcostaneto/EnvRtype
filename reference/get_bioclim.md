@@ -77,10 +77,22 @@ supporting ecological applications in the conterminous United States.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 sites <- data.frame(env = c("PIRA", "SETE"),
                     lat = c(-22.7, -19.4), lon = c(-47.6, -44.2))
 bc  <- get_bioclim(env.id = sites$env, lat = sites$lat, lon = sites$lon)
+#> ---------------------------------------------------------------
+#> get_bioclim -- WorldClim 2.1 bioclimatic variables
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - downloading wc2.1_2.5m_bio.zip (this is a large file)
+#>   - extracting
+#>   - extracted 19 index/indices for 2 site(s)
 bc2 <- get_bioclim(sites$env, sites$lat, sites$lon, vars = c(1, 12))
-} # }
+#> ---------------------------------------------------------------
+#> get_bioclim -- WorldClim 2.1 bioclimatic variables
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - extracted 2 index/indices for 2 site(s)
+# }
 ```

@@ -9,7 +9,7 @@ user-defined time intervals such as phenological stages."><meta property="og:ima
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -131,14 +131,178 @@ ran sequentially while emitting a warning on every call.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">env.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_weather.html">get_weather</a></span><span class="op">(</span>lat <span class="op">=</span> <span class="op">-</span><span class="fl">13.05</span>, lon <span class="op">=</span> <span class="op">-</span><span class="fl">56.05</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> get_weather -- downloads daily weather from NASA POWER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> start.day is NULL; matched as 2024-01-18</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> end.day is NULL; matched as 2024-02-17</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> get_weather() - daily weather from NASA POWER</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> https://docs.ropensci.org/nasapower</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Start .............................. Wed Oct 14 03:16:57 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units ................ 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Parallel ........................... [   ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [1/1] env1 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Note: no valid data returned for: FROST_DAYS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>       These columns are entirely NA (parameter unavailable at this site/period).</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing VPD ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing N, RTA ................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing n ........................ [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing TH1 ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing TH2 ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing PAR_TEMP ................. [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units downloaded ..... 1/1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Daily weather features ............. 25</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Done ............................... Wed Oct 14 03:16:58 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total time ......................... 0.89s</span>
 <span class="r-in"><span><span class="fu">summaryWTH</span><span class="op">(</span><span class="va">env.data</span>, env.id <span class="op">=</span> <span class="st">"env"</span>, statistic <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> summaryWTH -- summarises weather by environment and interval</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No valid data for: FROST_DAYS. Their summaries are NA/NaN; consider dropping them via 'var.id'.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     env           variable        mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  env1                T2M 26.31645161</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  env1            T2M_MAX 31.01806452</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  env1            T2M_MIN 22.43258065</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  env1             T2MDEW 22.93387097</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  env1  ALLSKY_SFC_LW_DWN 36.18354839</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  env1  ALLSKY_SFC_SW_DWN 21.17741935</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  env1  ALLSKY_SFC_SW_DNI 13.59032258</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  env1 ALLSKY_SFC_PAR_TOT 10.25645161</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  env1     ALLSKY_SFC_UVA  1.41935484</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 env1     ALLSKY_SFC_UVB  0.04483871</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 env1            PRECTOT  8.74225806</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 env1            EVPTRNS  9.03000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 env1               QV2M 18.18451613</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 env1               RH2M 83.30096774</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 env1           GWETROOT  0.72677419</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 env1            GWETTOP  0.77096774</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 env1         FROST_DAYS          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 env1               WS2M  0.45516129</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 env1                VPD  0.81727393</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 env1                  N 12.65741935</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 env1                RTA 40.03732258</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 env1                  n  4.29764516</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 env1                TH1 77.37432518</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 env1                TH2 75.77264516</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 env1           PAR_TEMP  0.38885407</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">summaryWTH</span><span class="op">(</span><span class="va">env.data</span>, env.id <span class="op">=</span> <span class="st">"env"</span>, by.interval <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>           time.window  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">14</span>, <span class="fl">35</span>, <span class="fl">60</span>, <span class="fl">90</span>, <span class="fl">120</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>           names.window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P-E"</span>, <span class="st">"E-V1"</span>, <span class="st">"V1-V4"</span>, <span class="st">"V4-VT"</span>, <span class="st">"VT-GF"</span>, <span class="st">"GF-PM"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> summaryWTH -- summarises weather by environment and interval</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No valid data for: FROST_DAYS. Their summaries are NA/NaN; consider dropping them via 'var.id'.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     env interval           variable        mean         sum  prob_0.25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  env1     E-V1  ALLSKY_SFC_LW_DWN 36.08833333  649.590000 35.9650000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  env1     E-V1 ALLSKY_SFC_PAR_TOT  9.65500000  173.790000  7.9225000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  env1     E-V1  ALLSKY_SFC_SW_DNI 11.46833333  206.430000  4.6500000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  env1     E-V1  ALLSKY_SFC_SW_DWN 19.86166667  357.510000 15.9875000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  env1     E-V1     ALLSKY_SFC_UVA  1.33944444   24.110000  1.1300000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  env1     E-V1     ALLSKY_SFC_UVB  0.04333333    0.780000  0.0400000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  env1     E-V1            EVPTRNS  9.42055556  169.570000  7.6625000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  env1     E-V1         FROST_DAYS          NA          NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  env1     E-V1           GWETROOT  0.74944444   13.490000  0.7300000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 env1     E-V1            GWETTOP  0.80166667   14.430000  0.7625000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 env1     E-V1                  N 12.59461111  226.703000 12.5497500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 env1     E-V1           PAR_TEMP  0.37183143    6.692966  0.3214373</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 env1     E-V1            PRECTOT 10.45666667  188.220000  4.5575000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 env1     E-V1               QV2M 18.16166667  326.910000 17.8125000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 env1     E-V1               RH2M 84.98666667 1529.760000 82.6500000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 env1     E-V1                RTA 39.88094444  717.857000 39.7412500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 env1     E-V1                T2M 25.90500000  466.290000 24.9650000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 env1     E-V1             T2MDEW 22.92944444  412.730000 22.6375000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 env1     E-V1            T2M_MAX 30.42277778  547.610000 29.1075000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 env1     E-V1            T2M_MIN 22.16388889  398.950000 21.7325000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 env1     E-V1                TH1 76.88914863 1384.004675 75.7643346</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 env1     E-V1                TH2 75.35960000 1356.472800 74.3871000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 env1     E-V1                VPD  0.72381251   13.028625  0.6224861</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 env1     E-V1               WS2M  0.48222222    8.680000  0.4525000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 env1     E-V1                  n  3.62211111   65.198000  1.4682500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 env1      P-E  ALLSKY_SFC_LW_DWN 36.31538462  472.100000 35.9000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 env1      P-E ALLSKY_SFC_PAR_TOT 11.08923077  144.160000  9.8400000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 env1      P-E  ALLSKY_SFC_SW_DNI 16.52846154  214.870000 10.9200000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 env1      P-E  ALLSKY_SFC_SW_DWN 22.99923077  298.990000 19.8000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 env1      P-E     ALLSKY_SFC_UVA  1.53000000   19.890000  1.3700000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 env1      P-E     ALLSKY_SFC_UVB  0.04692308    0.610000  0.0400000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32 env1      P-E            EVPTRNS  8.48923077  110.360000  6.8400000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33 env1      P-E         FROST_DAYS          NA          NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34 env1      P-E           GWETROOT  0.69538462    9.040000  0.6800000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35 env1      P-E            GWETTOP  0.72846154    9.470000  0.7100000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36 env1      P-E                  N 12.74438462  165.677000 12.7200000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37 env1      P-E           PAR_TEMP  0.41242389    5.361511  0.3693694</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38 env1      P-E            PRECTOT  6.36846154   82.790000  1.8700000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39 env1      P-E               QV2M 18.21615385  236.810000 17.4600000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40 env1      P-E               RH2M 80.96692308 1052.570000 78.2500000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41 env1      P-E                RTA 40.25384615  523.300000 40.2160000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42 env1      P-E                T2M 26.88615385  349.520000 26.6800000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43 env1      P-E             T2MDEW 22.94000000  298.220000 22.2600000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44 env1      P-E            T2M_MAX 31.84230769  413.950000 31.0300000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45 env1      P-E            T2M_MIN 22.80461538  296.460000 22.2400000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46 env1      P-E                TH1 78.04610810 1014.599405 77.6140656</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47 env1      P-E                TH2 76.34455385  992.479200 76.0212000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48 env1      P-E                VPD  0.94668205   12.306867  0.7845527</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49 env1      P-E               WS2M  0.41769231    5.430000  0.3500000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 env1      P-E                  n  5.23300000   68.029000  3.4570000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      prob_0.5  prob_0.75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  36.0300000 36.2425000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  10.1600000 11.4650000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  12.9500000 17.3550000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  20.8950000 23.9075000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   1.4350000  1.5475000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.0500000  0.0500000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  10.2200000 12.2875000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8          NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0.7550000  0.7700000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.8000000  0.8275000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 12.5960000 12.6405000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  0.3967668  0.4347733</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  9.2350000 13.6050000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 18.2000000 18.5675000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 84.7300000 86.5225000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 39.9030000 40.0350000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 26.2550000 26.6900000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 22.9500000 23.3100000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 30.8550000 31.8725000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 22.1400000 22.5250000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 77.0831490 78.0306901</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 75.5802000 76.2768000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  0.7055348  0.8454940</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24  0.4700000  0.5225000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25  4.0880000  5.4795000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 36.3700000 36.8900000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 11.4300000 12.5600000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 16.3600000 22.3900000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 23.9300000 26.2400000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30  1.5600000  1.7200000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31  0.0500000  0.0500000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32  7.8400000 10.8900000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33         NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34  0.6900000  0.7100000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35  0.7200000  0.7500000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36 12.7460000 12.7700000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37  0.4209945  0.4590462</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38  4.2600000  8.4800000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39 18.1100000 18.9300000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40 80.3700000 84.2100000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41 40.2610000 40.2970000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42 26.7500000 27.0200000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43 22.8900000 23.6200000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44 31.3800000 32.9600000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45 22.8800000 23.3500000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46 78.0612210 78.3335893</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47 76.3636000 76.5360000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48  0.9479085  1.1329342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49  0.4200000  0.4500000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50  5.1840000  7.0980000</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

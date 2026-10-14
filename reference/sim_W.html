@@ -17,7 +17,7 @@ would it recover? Pairs with sim_met."><meta property="og:image" content="https:
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -201,46 +201,161 @@ multi-environment prediction. <em>G3</em> 13(2), jkac313.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">C</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_met_C.html">sim_met_C</a></span><span class="op">(</span>q <span class="op">=</span> <span class="fl">10</span>, min.cor <span class="op">=</span> <span class="fl">0.2</span>, max.cor <span class="op">=</span> <span class="fl">0.8</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Rejection sampling failed in 200 tries; C was repaired by eigenvalue clamping.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   Requested off-diagonal range [0.200, 0.800]; realised [0.235, 0.712].</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 1. An envirome that recovers ~70% of C (noise is on the outcome scale)</span></span></span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . 0.8001   (target 0.7000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 64.0%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 7.14 of 50 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 20.6%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 0.0868</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... gaussian / linear</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">W</span>, <span class="st">"explained"</span><span class="op">)</span><span class="op">$</span><span class="va">r</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.800051</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 2. Perfect vs pure-noise enviromes</span></span></span>
 <span class="r-in"><span><span class="va">W_good</span>  <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.0</span>, n_var <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . 1.0000   (target 1.0000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 100.0%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 5.84 of 50 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 24.6%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... gaussian / linear</span>
 <span class="r-in"><span><span class="va">W_noise</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">1.0</span>, n_var <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . -0.0776   (target 0.0000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 0.6%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 7.36 of 50 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 22.2%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 1.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... gaussian / linear</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 3. Redundant envirome: many collinear columns, low effective rank</span></span></span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">200</span>, collinearity <span class="op">=</span> <span class="fl">0.8</span>, n_blocks <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . 0.1501   (target 0.7000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 2.3%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 8.54 of 200 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 15.2%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 0.3000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... gaussian / linear</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 4. Non-Gaussian covariables (rank-preserving marginal transform)</span></span></span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">60</span>, marginal <span class="op">=</span> <span class="st">"right-skewed"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . 0.2371   (target 0.7000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 5.6%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 7.77 of 60 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 18.5%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 0.3000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... right-skewed / linear</span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">60</span>, marginal <span class="op">=</span> <span class="st">"heavy-tailed"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . 0.7213   (target 0.7000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 52.0%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 7.04 of 60 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 20.1%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 0.0353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... heavy-tailed / linear</span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">60</span>, marginal <span class="op">=</span> <span class="st">"bounded"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . -0.2372   (target 0.7000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 5.6%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 7.75 of 60 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 19.3%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 0.3000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... bounded / linear</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 5. Gaussian RBF kernel instead of the linear WW'</span></span></span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">60</span>, kernel <span class="op">=</span> <span class="st">"rbf"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . 0.8003   (target 0.7000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 64.0%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 6.95 of 60 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 22.2%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 0.0770</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... gaussian / rbf</span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">60</span>, kernel <span class="op">=</span> <span class="st">"rbf"</span>, bandwidth <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . 0.5236   (target 0.7000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 27.4%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 6.89 of 60 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 22.8%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 0.0688</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... gaussian / rbf</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 6. Inject missing values AFTER the truth is computed</span></span></span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">60</span>, na.frac <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . 0.6721   (target 0.7000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 45.2%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 6.84 of 60 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 25.2%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 0.0865</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... gaussian / linear</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   missing values injected .... 10.0%</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">W</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 60</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 7. Named covariable families (sizes must sum to n_var)</span></span></span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, n_var <span class="op">=</span> <span class="fl">12</span>, family.sizes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>temp <span class="op">=</span> <span class="fl">4</span>, rain <span class="op">=</span> <span class="fl">5</span>, rad <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . 0.3512   (target 1.0000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 12.3%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 2.68 of 12 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 53.5%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... gaussian / linear</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">W</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "temp_1" "temp_2" "temp_3" "temp_4" "rain_1" "rain_2" "rain_3" "rain_4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "rain_5" "rad_1"  "rad_2"  "rad_3" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 8. Custom names and a faster/looser calibration</span></span></span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.4</span>, n_var <span class="op">=</span> <span class="fl">30</span>, cal.nrep <span class="op">=</span> <span class="fl">5</span>,</span></span>
 <span class="r-in"><span>           env_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Loc"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>           var_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"bio"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">30</span><span class="op">)</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . 0.4270   (target 0.6000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 18.2%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 6.86 of 30 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 22.7%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 0.1438</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... gaussian / linear</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 9. Raw (uncalibrated) internal variance share</span></span></span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu">sim_W</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fl">0.5</span>, n_var <span class="op">=</span> <span class="fl">50</span>, calibrate <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . 0.1849   (target 0.5000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 3.4%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 7.34 of 50 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 21.0%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 0.5000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... gaussian / linear</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">W</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-plt img"><img src="sim_W-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

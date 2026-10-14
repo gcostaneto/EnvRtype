@@ -101,6 +101,7 @@ For speed on a job you can afford to lose, use
 
 ``` r
 if (FALSE) { # \dontrun{
+## Long-running download job requiring access to NASA POWER.
 sites <- data.frame(env = paste0("E", 1:200),
                     lat = runif(200, -30, -5),
                     lon = runif(200, -60, -40))

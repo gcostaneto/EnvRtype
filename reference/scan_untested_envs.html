@@ -77,7 +77,7 @@ draw. Per-site genomic heritability is reported as
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -310,28 +310,76 @@ Gaussian-process conditional mean.)</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"maizeWTH"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"maizeYield"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"maizeG"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Training covariates (first 100 days after sowing)</span></span></span>
 <span class="r-in"><span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FRUE"</span>, <span class="st">"PETP"</span>, <span class="st">"GDD"</span>, <span class="st">"T2M_MAX"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">Wtr</span>  <span class="op">&lt;-</span> <span class="fu"><a href="W_matrix.html">W_matrix</a></span><span class="op">(</span>env.data <span class="op">=</span> <span class="va">maizeWTH</span><span class="op">[</span><span class="va">maizeWTH</span><span class="op">$</span><span class="va">daysFromStart</span> <span class="op">&lt;</span> <span class="fl">100</span>, <span class="op">]</span>,</span></span>
 <span class="r-in"><span>                 var.id <span class="op">=</span> <span class="va">vars</span>, statistic <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> W_matrix -- builds the environmental covariable (W) matrix</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - summarising weather data into environmental covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - centring, scaling and quality-controlling W</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Fit KEEPING the effect chains -- required by the scan</span></span></span>
 <span class="r-in"><span><span class="va">K</span>   <span class="op">&lt;-</span> <span class="fu"><a href="get_kernel.html">get_kernel</a></span><span class="op">(</span>K_G <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>G <span class="op">=</span> <span class="va">maizeG</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                  K_E <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>W <span class="op">=</span> <span class="fu"><a href="env_kernel.html">env_kernel</a></span><span class="op">(</span>env.data <span class="op">=</span> <span class="va">Wtr</span><span class="op">)</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                  data <span class="op">=</span> <span class="va">maizeYield</span>, model <span class="op">=</span> <span class="st">"RNMM"</span>,</span></span>
 <span class="r-in"><span>                  env <span class="op">=</span> <span class="st">"env"</span>, gid <span class="op">=</span> <span class="st">"gid"</span>, y <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> env_kernel -- builds environmental relatedness kernels</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - computing a single environmental kernel</span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="kernel_model.html">kernel_model</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"value"</span>, data <span class="op">=</span> <span class="va">maizeYield</span>, random <span class="op">=</span> <span class="va">K</span>,</span></span>
 <span class="r-in"><span>                    env <span class="op">=</span> <span class="st">"env"</span>, gid <span class="op">=</span> <span class="st">"gid"</span>, keep_effects <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Predict the trained genotypes at new sites (reuse the training W here)</span></span></span>
 <span class="r-in"><span><span class="va">sc</span> <span class="op">&lt;-</span> <span class="fu">scan_untested_envs</span><span class="op">(</span><span class="va">fit</span>, W_train <span class="op">=</span> <span class="va">Wtr</span>, W_new <span class="op">=</span> <span class="va">Wtr</span>, K_G <span class="op">=</span> <span class="va">maizeG</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Only 5 training environments. This tool is designed for a LARGE training network; with few environments the covariate-to-performance mapping is poorly estimated.</span>
 <span class="r-in"><span><span class="va">sc</span>                                   <span class="co"># print method: per-site diagnostics</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;scan_untested_envs&gt; 150 genotypes x 5 new environments</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   trained on 5 environments | 4 covariates | 100 draws</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   GxE included: TRUE | credible level: 0.95 | envelope: keep </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  env      position   pred ci_ratio mahal out w_neg max_sim</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   NM interpolation -0.491     1.84  0.22  0% -0.78       1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   SO          edge  0.953     3.04  1.00  0% -0.79       1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PM interpolation  0.519     2.00  0.57  0% -0.49       1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   IP interpolation -1.117     3.35  0.99  0% -0.79       1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   SE interpolation  0.427     2.42  0.73  0% -0.69       1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   position: interpolation 4 | edge 1 | mild_extrapolation 0 | gross_extrapolation 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Position is GEOMETRIC: where the site sits relative to the training</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   covariate cloud. It is not a reliability verdict. Calibrated on 60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   held-out environments:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ci_width_ratio   vs accuracy       r = -0.66  (best accuracy guide)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     divergence_index vs accuracy       r = -0.41</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     max_similarity   vs accuracy       r = +0.12  (NOT predictive)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     max_similarity   vs gain-over-mean r = +0.69  (best gain guide)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Lower ci_width_ratio = more precise. Higher max_similarity = the</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   covariates are more likely to beat a plain genotype mean. To know your</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   real accuracy, run leave-environments-out CV on your own data.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sc</span><span class="op">$</span><span class="va">yHat</span><span class="op">)</span>                        <span class="co"># predictions + credible intervals</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    gid env       yHat      lower      upper  ci_width</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 G001  NM -0.4519297 -0.6343264 -0.2475748 0.3867516</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 G002  NM -0.4883372 -0.6542589 -0.3228566 0.3314023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 G003  NM -0.4882496 -0.6542457 -0.3233927 0.3308530</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 G004  NM -0.5660495 -0.8463357 -0.2748072 0.5715285</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 G005  NM -0.4501614 -0.7187839 -0.2195134 0.4992705</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 G006  NM -0.7938049 -1.2915761 -0.3402577 0.9513184</span>
 <span class="r-in"><span><span class="va">sc</span><span class="op">$</span><span class="va">interpolation</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"env"</span>, <span class="st">"position"</span>, <span class="st">"mahalanobis_ratio"</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   env      position mahalanobis_ratio</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  NM interpolation         0.2151366</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  SO          edge         1.0022725</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  PM interpolation         0.5666292</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  IP interpolation         0.9909099</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  SE interpolation         0.7312492</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -11,7 +11,7 @@ recovery and effective rank at each design point."><meta property="og:image" con
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,11 +103,45 @@ recovery and effective rank at each design point.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">C</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_met_C.html">sim_met_C</a></span><span class="op">(</span>q <span class="op">=</span> <span class="fl">10</span>, min.cor <span class="op">=</span> <span class="fl">0.2</span>, max.cor <span class="op">=</span> <span class="fl">0.8</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Rejection sampling failed in 200 tries; C was repaired by eigenvalue clamping.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   Requested off-diagonal range [0.200, 0.800]; realised [0.235, 0.712].</span>
 <span class="r-in"><span><span class="va">grid</span> <span class="op">&lt;-</span> <span class="fu">sim_W_grid</span><span class="op">(</span><span class="va">C</span>, noise <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span><span class="op">)</span>, n_var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">100</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                   collinearity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.8</span><span class="op">)</span>, n_rep <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [1/12] noise=0.00  n_var=20  collinearity=0.00</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [2/12] noise=0.30  n_var=20  collinearity=0.00</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [3/12] noise=0.60  n_var=20  collinearity=0.00</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [4/12] noise=0.00  n_var=100  collinearity=0.00</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [5/12] noise=0.30  n_var=100  collinearity=0.00</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [6/12] noise=0.60  n_var=100  collinearity=0.00</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [7/12] noise=0.00  n_var=20  collinearity=0.80</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [8/12] noise=0.30  n_var=20  collinearity=0.80</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [9/12] noise=0.60  n_var=20  collinearity=0.80</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [10/12] noise=0.00  n_var=100  collinearity=0.80</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [11/12] noise=0.30  n_var=100  collinearity=0.80</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [12/12] noise=0.60  n_var=100  collinearity=0.80</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Calibration failed; using noise as the raw variance share.</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

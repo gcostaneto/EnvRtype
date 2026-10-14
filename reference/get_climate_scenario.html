@@ -15,7 +15,7 @@ applying the monthly change signal to an observed baseline series
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -195,12 +195,37 @@ projections for crop modelling. <em>Agric. For. Meteorol.</em> 170, 19-31.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PIRA"</span>, <span class="st">"SETE"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                    lat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">22.7</span>, <span class="op">-</span><span class="fl">19.4</span><span class="op">)</span>, lon <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">47.6</span>, <span class="op">-</span><span class="fl">44.2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_weather.html">get_weather</a></span><span class="op">(</span>env.id <span class="op">=</span> <span class="va">sites</span><span class="op">$</span><span class="va">env</span>, lat <span class="op">=</span> <span class="va">sites</span><span class="op">$</span><span class="va">lat</span>, lon <span class="op">=</span> <span class="va">sites</span><span class="op">$</span><span class="va">lon</span>,</span></span>
 <span class="r-in"><span>                    start.day <span class="op">=</span> <span class="st">"2015-10-01"</span>, end.day <span class="op">=</span> <span class="st">"2016-03-31"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> get_weather -- downloads daily weather from NASA POWER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> get_weather() - daily weather from NASA POWER</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> https://docs.ropensci.org/nasapower</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Start .............................. Wed Oct 14 03:13:17 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units ................ 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Parallel ........................... [   ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [1/2] PIRA downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [2/2] SETE downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Note: no valid data returned for: FROST_DAYS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>       These columns are entirely NA (parameter unavailable at this site/period).</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing VPD ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing N, RTA ................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing n ........................ [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing TH1 ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing TH2 ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing PAR_TEMP ................. [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units downloaded ..... 2/2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Daily weather features ............. 25</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Done ............................... Wed Oct 14 03:13:19 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total time ......................... 1.97s</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Mid-century, intermediate scenario, 4-model ensemble.</span></span></span>
 <span class="r-in"><span><span class="co">## The default 'models' set covers all four SSPs.</span></span></span>
@@ -208,23 +233,104 @@ projections for crop modelling. <em>Agric. For. Meteorol.</em> 170, 19-31.</p>
 <span class="r-in"><span>                            lon <span class="op">=</span> <span class="va">sites</span><span class="op">$</span><span class="va">lon</span>, baseline <span class="op">=</span> <span class="va">base</span>,</span></span>
 <span class="r-in"><span>                            model <span class="op">=</span> <span class="st">"ensemble"</span>, scenario <span class="op">=</span> <span class="st">"ssp245"</span>,</span></span>
 <span class="r-in"><span>                            period <span class="op">=</span> <span class="st">"2041-2060"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Which GCMs fully cover a scenario? (GFDL-ESM4 has no ssp245.)</span></span></span>
-<span class="r-in"><span><span class="fu">.cs_models_for</span><span class="op">(</span><span class="st">"ssp245"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> get_climate_scenario -- CMIP6 downscaled scenario weather</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CMIP6 downscaled scenario (WorldClim 2.1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Scenario ........... ssp245</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Period ............. 2041-2060</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Model(s) ........... IPSL-CM6A-LR, MPI-ESM1-2-HR, MRI-ESM2-0, UKESM1-0-LL</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Resolution ......... 2.5m</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Cache .............. /home/runner/.cache/R/et</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_tmin_IPSL-CM6A-LR_ssp245_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_tmax_IPSL-CM6A-LR_ssp245_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_prec_IPSL-CM6A-LR_ssp245_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_tmin_MPI-ESM1-2-HR_ssp245_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_tmax_MPI-ESM1-2-HR_ssp245_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_prec_MPI-ESM1-2-HR_ssp245_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_tmin_MRI-ESM2-0_ssp245_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_tmax_MRI-ESM2-0_ssp245_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_prec_MRI-ESM2-0_ssp245_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_tmin_UKESM1-0-LL_ssp245_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_tmax_UKESM1-0-LL_ssp245_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_prec_UKESM1-0-LL_ssp245_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - computing monthly baseline climatology</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - applying monthly delta-change signal</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Dropping baseline-derived column(s) invalidated by the shift: n, N, RTA, VPD. Re-run processWTH().</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mean applied signal across sites and months</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Tmax  +0.80 C</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Tmin  -0.56 C</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Prec  x1.25</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## GFDL-ESM4 is fine for ssp126 or ssp370, just not ssp245/ssp585:</span></span></span>
 <span class="r-in"><span><span class="va">fut126</span> <span class="op">&lt;-</span> <span class="fu">get_climate_scenario</span><span class="op">(</span>env.id <span class="op">=</span> <span class="va">sites</span><span class="op">$</span><span class="va">env</span>, lat <span class="op">=</span> <span class="va">sites</span><span class="op">$</span><span class="va">lat</span>,</span></span>
 <span class="r-in"><span>                               lon <span class="op">=</span> <span class="va">sites</span><span class="op">$</span><span class="va">lon</span>, baseline <span class="op">=</span> <span class="va">base</span>,</span></span>
 <span class="r-in"><span>                               model <span class="op">=</span> <span class="st">"GFDL-ESM4"</span>, scenario <span class="op">=</span> <span class="st">"ssp126"</span>,</span></span>
 <span class="r-in"><span>                               period <span class="op">=</span> <span class="st">"2041-2060"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> get_climate_scenario -- CMIP6 downscaled scenario weather</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CMIP6 downscaled scenario (WorldClim 2.1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Scenario ........... ssp126</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Period ............. 2041-2060</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Model(s) ........... GFDL-ESM4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Resolution ......... 2.5m</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Cache .............. /home/runner/.cache/R/et</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_tmin_GFDL-ESM4_ssp126_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_tmax_GFDL-ESM4_ssp126_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - downloading wc2.1_2.5m_prec_GFDL-ESM4_ssp126_2041-2060.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - computing monthly baseline climatology</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - applying monthly delta-change signal</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Dropping baseline-derived column(s) invalidated by the shift: n, N, RTA, VPD. Re-run processWTH().</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mean applied signal across sites and months</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Tmax  +0.57 C</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Tmin  -0.79 C</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Prec  x1.10</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Drop straight into the existing pipeline</span></span></span>
 <span class="r-in"><span><span class="va">fut</span> <span class="op">&lt;-</span> <span class="fu"><a href="processWTH.html">processWTH</a></span><span class="op">(</span><span class="va">fut</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> processWTH -- derives all agro-meteorological parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - radiation parameters computed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - atmospheric-demand parameters computed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - temperature-response parameters computed</span>
 <span class="r-in"><span><span class="va">ph</span>  <span class="op">&lt;-</span> <span class="fu"><a href="env_phenology.html">env_phenology</a></span><span class="op">(</span><span class="va">fut</span>, crop <span class="op">=</span> <span class="st">"maize"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> env_phenology -- maps weather onto thermal-time stages</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - computing daily thermal time (method = gdd)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - assigning developmental stages</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>2 environment(s) did not accumulate enough thermal time to reach 'R6': PIRA, SETE. Days beyond the last reached stage are NA. Extend the series or lower the stage thresholds.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Thermal-time stages (GDD, Tbase = 10 C, Tupper = 30 C)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   VE      &lt;=     125 C d       18 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   V6      &lt;=     475 C d       50 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   V12     &lt;=     740 C d       37 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   VT      &lt;=    1135 C d       55 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   R1      &lt;=    1250 C d       16 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   R3      &lt;=    1660 C d       56 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   R5      &lt;=    2110 C d       63 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   R6      &lt;=    2700 C d       71 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Compare thermal time now vs mid-century</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span><span class="va">ph</span><span class="op">$</span><span class="va">dTT</span>, <span class="va">ph</span><span class="op">$</span><span class="va">env</span>, <span class="va">sum</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     PIRA     SETE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2611.382 2625.824 </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

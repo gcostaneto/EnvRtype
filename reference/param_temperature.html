@@ -9,7 +9,7 @@ factor, and daily temperature range."><meta property="og:image" content="https:/
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -130,11 +130,119 @@ Pass <code>method = "legacy"</code> to reproduce earlier output.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">env.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_weather.html">get_weather</a></span><span class="op">(</span>lat <span class="op">=</span> <span class="op">-</span><span class="fl">13.05</span>, lon <span class="op">=</span> <span class="op">-</span><span class="fl">56.05</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> get_weather -- downloads daily weather from NASA POWER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> start.day is NULL; matched as 2024-01-18</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> end.day is NULL; matched as 2024-02-17</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> get_weather() - daily weather from NASA POWER</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> https://docs.ropensci.org/nasapower</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Start .............................. Wed Oct 14 03:16:26 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units ................ 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Parallel ........................... [   ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [1/1] env1 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Note: no valid data returned for: FROST_DAYS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>       These columns are entirely NA (parameter unavailable at this site/period).</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing VPD ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing N, RTA ................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing n ........................ [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing TH1 ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing TH2 ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing PAR_TEMP ................. [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units downloaded ..... 1/1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Daily weather features ............. 25</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Done ............................... Wed Oct 14 03:16:27 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total time ......................... 0.92s</span>
 <span class="r-in"><span><span class="fu">param_temperature</span><span class="op">(</span><span class="va">env.data</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> param_temperature -- derives temperature-response parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Growing Degree Day (GDD, C/day) - method: standard</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Effect of temperature on radiation use efficiency (FRUE, 0-1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Daily temperature range (T2M_RANGE, C)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       GDD      FRUE T2M_RANGE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  18.990 1.0000000     10.22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  17.955 1.0000000      8.15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  17.810 1.0000000      9.14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  17.825 1.0000000      6.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  19.125 1.0000000      9.67</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  18.495 1.0000000      7.43</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  18.195 1.0000000      7.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  18.360 1.0000000      6.58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  18.335 1.0000000     10.03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 18.225 1.0000000     11.21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 18.430 1.0000000     11.12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 17.790 1.0000000      9.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 18.670 1.0000000     10.94</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 18.455 1.0000000      9.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 19.595 1.0000000     12.83</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 17.355 1.0000000      6.11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 16.715 0.9832353      6.73</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 15.595 0.9173529      5.21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 14.975 0.8808824      5.41</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 16.105 0.9473529      8.17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 17.415 1.0000000      9.45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 17.370 1.0000000      9.38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 17.635 1.0000000      8.49</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 17.805 1.0000000      8.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 16.505 0.9708824      4.45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 16.505 0.9708824      6.23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 16.880 0.9929412      9.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 17.705 1.0000000      9.69</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 18.060 1.0000000      9.92</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 18.095 1.0000000     10.17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 18.510 1.0000000      9.88</span>
 <span class="r-in"><span><span class="fu">param_temperature</span><span class="op">(</span><span class="va">env.data</span>, method <span class="op">=</span> <span class="st">"legacy"</span><span class="op">)</span>  <span class="co"># pre-refactor behaviour</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> param_temperature -- derives temperature-response parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Growing Degree Day (GDD, C/day) - method: legacy</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Effect of temperature on radiation use efficiency (FRUE, 0-1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Daily temperature range (T2M_RANGE, C)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       GDD      FRUE T2M_RANGE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  18.990 1.0000000     10.22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  17.955 1.0000000      8.15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  17.810 1.0000000      9.14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  17.825 1.0000000      6.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  19.125 1.0000000      9.67</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  18.495 1.0000000      7.43</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  18.195 1.0000000      7.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  18.360 1.0000000      6.58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  18.335 1.0000000     10.03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 18.225 1.0000000     11.21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 18.430 1.0000000     11.12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 17.790 1.0000000      9.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 18.670 1.0000000     10.94</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 18.455 1.0000000      9.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 19.595 1.0000000     12.83</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 17.355 1.0000000      6.11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 16.715 0.9832353      6.73</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 15.595 0.9173529      5.21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 14.975 0.8808824      5.41</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 16.105 0.9473529      8.17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 17.415 1.0000000      9.45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 17.370 1.0000000      9.38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 17.635 1.0000000      8.49</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 17.805 1.0000000      8.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 16.505 0.9708824      4.45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 16.505 0.9708824      6.23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 16.880 0.9929412      9.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 17.705 1.0000000      9.69</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 18.060 1.0000000      9.92</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 18.095 1.0000000     10.17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 18.510 1.0000000      9.88</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

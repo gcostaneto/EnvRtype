@@ -17,7 +17,7 @@ sim_W to study how well an envirome recovers \(C\)."><meta property="og:image" c
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -292,51 +292,228 @@ multi-environment prediction. <em>G3</em> 13(2), jkac313.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">maizeG</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 1. Baseline: random C and random h2 within a range</span></span></span>
 <span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">maizeG</span>, n_env <span class="op">=</span> <span class="fl">10</span>, min.cor <span class="op">=</span> <span class="fl">0.2</span>, max.cor <span class="op">=</span> <span class="fl">0.8</span>,</span></span>
 <span class="r-in"><span>               min.h2 <span class="op">=</span> <span class="fl">0.3</span>, max.h2 <span class="op">=</span> <span class="fl">0.7</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Rejection sampling failed in 200 tries; C was repaired by eigenvalue clamping.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   Requested off-diagonal range [0.200, 0.800]; realised [0.235, 0.712].</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. kronecker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 150 x 10   (K is 150 x 150, C_env is 10 x 10)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 1500  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.305 - 0.699</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.338 - 0.589   max err 0.134</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.338 - 0.589</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ 0.235 - 0.712</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) 0.234 - 0.714   max err 0.00501</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">met</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   env  gid rep       value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  E1 G001   1  0.07832088</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  E1 G002   1 -1.86981920</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  E1 G003   1 -0.30046219</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  E1 G004   1 -0.24730764</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  E1 G005   1  1.69483009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  E1 G006   1 -0.12096435</span>
 <span class="r-in"><span><span class="fu"><a href="env_cor.html">env_cor</a></span><span class="op">(</span><span class="va">met</span>, <span class="st">"realised"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            E1        E2        E3        E4        E5        E6        E7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E1  1.0000000 0.5840974 0.6572148 0.3107441 0.3068992 0.2765301 0.5642779</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E2  0.5840974 1.0000000 0.3541772 0.5999238 0.5707302 0.6713132 0.6333932</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E3  0.6572148 0.3541772 1.0000000 0.2608467 0.3553860 0.2338209 0.6526962</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E4  0.3107441 0.5999238 0.2608467 1.0000000 0.3998467 0.2989908 0.4735922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E5  0.3068992 0.5707302 0.3553860 0.3998467 1.0000000 0.6064850 0.6627049</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E6  0.2765301 0.6713132 0.2338209 0.2989908 0.6064850 1.0000000 0.6996137</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E7  0.5642779 0.6333932 0.6526962 0.4735922 0.6627049 0.6996137 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E8  0.3706377 0.6761573 0.4516344 0.4648517 0.4819571 0.5737005 0.5112892</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E9  0.5129352 0.4146917 0.3002566 0.2996984 0.5282520 0.7141863 0.5530359</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E10 0.2796059 0.6345446 0.5961043 0.6411305 0.4455481 0.5753977 0.6963337</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            E8        E9       E10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E1  0.3706377 0.5129352 0.2796059</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E2  0.6761573 0.4146917 0.6345446</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E3  0.4516344 0.3002566 0.5961043</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E4  0.4648517 0.2996984 0.6411305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E5  0.4819571 0.5282520 0.4455481</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E6  0.5737005 0.7141863 0.5753977</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E7  0.5112892 0.5530359 0.6963337</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E8  1.0000000 0.2704832 0.4598730</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E9  0.2704832 1.0000000 0.4406982</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E10 0.4598730 0.4406982 1.0000000</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 2. Supply an explicit environment correlation (e.g. a year-like series)</span></span></span>
 <span class="r-in"><span><span class="va">C</span>   <span class="op">&lt;-</span> <span class="fu"><a href="sim_met_C.html">sim_met_C</a></span><span class="op">(</span>q <span class="op">=</span> <span class="fl">8</span>, structure <span class="op">=</span> <span class="st">"ar1"</span>, rho <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">maizeG</span>, C <span class="op">=</span> <span class="va">C</span>, h2 <span class="op">=</span> <span class="fl">0.5</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. kronecker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 150 x 8   (K is 150 x 150, C_env is 8 x 8)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 1200  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.500 - 0.500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.334 - 0.576   max err 0.166</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.334 - 0.576</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ 0.028 - 0.600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) 0.031 - 0.602   max err 0.00617</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 3. Fixed per-environment heritabilities and environment means</span></span></span>
 <span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">maizeG</span>, n_env <span class="op">=</span> <span class="fl">4</span>, h2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.8</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>               env_effects <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">6</span>, <span class="fl">8</span><span class="op">)</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. kronecker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 150 x 4   (K is 150 x 150, C_env is 4 x 4)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 600  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.300 - 0.800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.316 - 0.684   max err 0.116</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.316 - 0.684</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ 0.161 - 0.727</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) 0.161 - 0.726   max err 0.00167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 4. Replicates and an unbalanced design (retain 70% of g x e cells)</span></span></span>
 <span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">maizeG</span>, n_env <span class="op">=</span> <span class="fl">6</span>, n_rep <span class="op">=</span> <span class="fl">3</span>,</span></span>
 <span class="r-in"><span>               subset <span class="op">=</span> <span class="fl">0.7</span>, subset.by <span class="op">=</span> <span class="st">"gid_env"</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. kronecker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 150 x 6   (K is 150 x 150, C_env is 6 x 6)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 1953  (n_rep = 3, unbalanced)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.312 - 0.696</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.297 - 0.557   max err 0.263</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.559 - 0.791</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ 0.011 - 0.794</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) 0.011 - 0.794   max err 0.00525</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 5. Several genetic variance components (additive + dominance + epistasis)</span></span></span>
 <span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>K <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>add <span class="op">=</span> <span class="va">maizeG</span>, dom <span class="op">=</span> <span class="va">maizeG</span>, epi <span class="op">=</span> <span class="va">maizeG</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>               K.weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.3</span>, <span class="fl">0.1</span><span class="op">)</span>, n_env <span class="op">=</span> <span class="fl">8</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. kronecker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 150 x 8   (K is 150 x 150, C_env is 8 x 8)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 1200  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.235 - 0.654</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.243 - 0.719   max err 0.066</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.243 - 0.719</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ 0.067 - 0.768</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) 0.001 - 0.804   max err 0.13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 6. Causal reaction-norm: C is INDUCED by the envirome, not imposed</span></span></span>
 <span class="r-in"><span><span class="va">Wenv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span> <span class="op">*</span> <span class="fl">6</span><span class="op">)</span>, <span class="fl">10</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">rn</span>   <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">maizeG</span>, W <span class="op">=</span> <span class="va">Wenv</span>, rn.main <span class="op">=</span> <span class="fl">0.4</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. reaction-norm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 150 x 10   (K is 150 x 150, C_env is 10 x 10)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 1500  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.237 - 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.237 - 0.767   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.237 - 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ -0.021 - 0.905</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) -0.051 - 0.896   max err 0.0931</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span><span class="fu"><a href="env_cor.html">env_cor</a></span><span class="op">(</span><span class="va">rn</span>, <span class="st">"target"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              E1         E2        E3        E4         E5         E6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E1   1.00000000 0.37236401 0.1741295 0.4811845 0.54581582 0.10591644</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E2   0.37236401 1.00000000 0.7284125 0.3382733 0.52070000 0.09694033</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E3   0.17412948 0.72841250 1.0000000 0.2384691 0.13907531 0.10341481</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E4   0.48118448 0.33827330 0.2384691 1.0000000 0.28741262 0.90498306</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E5   0.54581582 0.52070000 0.1390753 0.2874126 1.00000000 0.04549415</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E6   0.10591644 0.09694033 0.1034148 0.9049831 0.04549415 1.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E7  -0.02119905 0.53081135 0.2539145 0.6468183 0.42874917 0.64886297</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E8   0.09478600 0.05221871 0.2727087 0.6164205 0.38527456 0.63643506</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E9   0.45531366 0.42769016 0.5908951 0.3514882 0.60486646 0.15110470</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E10  0.29642827 0.59802829 0.5700999 0.3999195 0.36995999 0.32841792</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              E7         E8        E9       E10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E1  -0.02119905 0.09478600 0.4553137 0.2964283</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E2   0.53081135 0.05221871 0.4276902 0.5980283</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E3   0.25391446 0.27270867 0.5908951 0.5700999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E4   0.64681832 0.61642047 0.3514882 0.3999195</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E5   0.42874917 0.38527456 0.6048665 0.3699600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E6   0.64886297 0.63643506 0.1511047 0.3284179</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E7   1.00000000 0.56599436 0.3736693 0.1816172</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E8   0.56599436 1.00000000 0.6710402 0.1871572</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E9   0.37366930 0.67104020 1.0000000 0.1841931</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E10  0.18161717 0.18715717 0.1841931 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"realised")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              E1         E2        E3        E4        E5         E6          E7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E1   1.00000000 0.41537626 0.2377120 0.4812204 0.5853953 0.08184723 -0.05100674</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E2   0.41537626 1.00000000 0.7590231 0.3407629 0.5409448 0.07748665  0.47584331</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E3   0.23771198 0.75902308 1.0000000 0.2461491 0.2111550 0.08304380  0.22800903</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E4   0.48122038 0.34076289 0.2461491 1.0000000 0.3495093 0.89624658  0.65482379</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E5   0.58539533 0.54094475 0.2111550 0.3495093 1.0000000 0.08585040  0.39387356</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E6   0.08184723 0.07748665 0.0830438 0.8962466 0.0858504 1.00000000  0.67748119</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E7  -0.05100674 0.47584331 0.2280090 0.6548238 0.3938736 0.67748119  1.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E8   0.07993050 0.04928493 0.2725673 0.6368018 0.3889459 0.66610385  0.57225594</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E9   0.51128202 0.47984655 0.6397830 0.4128318 0.6248904 0.18392359  0.34859652</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E10  0.32871274 0.61844197 0.6165831 0.3983267 0.4264267 0.30416230  0.16093504</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             E8        E9       E10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E1  0.07993050 0.5112820 0.3287127</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E2  0.04928493 0.4798465 0.6184420</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E3  0.27256727 0.6397830 0.6165831</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E4  0.63680177 0.4128318 0.3983267</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E5  0.38894587 0.6248904 0.4264267</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E6  0.66610385 0.1839236 0.3041623</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E7  0.57225594 0.3485965 0.1609350</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E8  1.00000000 0.6496896 0.2215585</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E9  0.64968963 1.0000000 0.2772830</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> E10 0.22155846 0.2772830 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "C_env"  "matrix" "array" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 7. Marker / QTL architecture instead of the infinitesimal draw</span></span></span>
 <span class="r-in"><span><span class="va">X</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fl">200</span> <span class="op">*</span> <span class="fl">500</span>, <span class="fl">2</span>, <span class="fl">0.3</span><span class="op">)</span>, <span class="fl">200</span>, <span class="fl">500</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">qtl</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X</span>, n_env <span class="op">=</span> <span class="fl">6</span>, n.qtl <span class="op">=</span> <span class="fl">30</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. marker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 200 x 6   (K is 200 x 200, C_env is 6 x 6)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 1200  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.312 - 0.696</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.312 - 0.696   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.312 - 0.696</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ 0.011 - 0.794</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) 0.132 - 0.798   max err 0.248</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 8. Non-separable GxE: 25% of genetic variance is environment-specific</span></span></span>
 <span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">maizeG</span>, n_env <span class="op">=</span> <span class="fl">6</span>, gxe.specific <span class="op">=</span> <span class="fl">0.25</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. kronecker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 150 x 6   (K is 150 x 150, C_env is 6 x 6)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 900  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.312 - 0.696</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.296 - 0.555   max err 0.264</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.296 - 0.555</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ 0.011 - 0.794</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) -0.138 - 0.165   max err 0.876</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 9. Field realism: replicate/block noise plus an AR1 x AR1 spatial trend</span></span></span>
 <span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">maizeG</span>, n_env <span class="op">=</span> <span class="fl">4</span>, n_rep <span class="op">=</span> <span class="fl">2</span>, rep.var <span class="op">=</span> <span class="fl">0.5</span>,</span></span>
 <span class="r-in"><span>               spatial <span class="op">=</span> <span class="cn">TRUE</span>, field.dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">15</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>               spatial.rho <span class="op">=</span> <span class="fl">0.7</span>, spatial.var <span class="op">=</span> <span class="fl">1.5</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. kronecker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 150 x 4   (K is 150 x 150, C_env is 4 x 4)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 1200  (n_rep = 2)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.237 - 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.089 - 0.328   max err 0.495</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.164 - 0.494</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ 0.161 - 0.727</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) 0.164 - 0.727   max err 0.0024</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 10. Pair with a simulated envirome and diagnose the recovery</span></span></span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_W.html">sim_W</a></span><span class="op">(</span><span class="va">met</span><span class="op">$</span><span class="va">C_env</span>, noise <span class="op">=</span> <span class="fl">0.3</span>, n_var <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 4 x 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . 0.7746   (target 0.7000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 60.0%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 2.76 of 50 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 45.9%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 0.0864</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... gaussian / linear</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">met</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="sim_met-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 11. End-to-end: simulate kinship + MET + envirome, then fit a model</span></span></span>
 <span class="r-in"><span><span class="co">##     Simulate a genomic kinship KG from markers (VanRaden)</span></span></span>
@@ -351,12 +528,35 @@ multi-environment prediction. <em>G3</em> 13(2), jkac313.</p>
 <span class="r-in"><span><span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span><span class="va">Kg</span>, n_env <span class="op">=</span> <span class="fl">10</span>, n_rep <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>               min.cor <span class="op">=</span> <span class="fl">0.3</span>, max.cor <span class="op">=</span> <span class="fl">0.8</span>,</span></span>
 <span class="r-in"><span>               min.h2 <span class="op">=</span> <span class="fl">0.3</span>, max.h2 <span class="op">=</span> <span class="fl">0.7</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. kronecker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 150 x 10   (K is 150 x 150, C_env is 10 x 10)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 1500  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.303 - 0.664</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.315 - 0.668   max err 0.018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.315 - 0.668</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ 0.320 - 0.747</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) 0.321 - 0.746   max err 0.00673</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span><span class="va">df</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">met</span><span class="op">$</span><span class="va">data</span><span class="op">)</span>                  <span class="co"># base data.frame for get_kernel()</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">##     Simulate a redundant, noisier envirome on the same environments</span></span></span>
 <span class="r-in"><span><span class="va">W2</span>  <span class="op">&lt;-</span> <span class="fu"><a href="sim_W.html">sim_W</a></span><span class="op">(</span><span class="va">met</span><span class="op">$</span><span class="va">C_env</span>, noise <span class="op">=</span> <span class="fl">0.6</span>, n_var <span class="op">=</span> <span class="fl">200</span>,</span></span>
 <span class="r-in"><span>             collinearity <span class="op">=</span> <span class="fl">0.8</span>, n_blocks <span class="op">=</span> <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_W&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r(K_W, C_env) off-diagonal . 0.4592   (target 0.4000)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   r2  % of env relatedness ... 21.1%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective rank ............. 7.99 of 200 covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PC1 share .................. 20.3%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   internal variance share a .. 0.0787</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marginal / kernel .......... gaussian / linear</span>
 <span class="r-in"><span><span class="va">KE2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>W <span class="op">=</span> <span class="fu"><a href="env_kernel.html">env_kernel</a></span><span class="op">(</span>env.data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">W2</span><span class="op">)</span><span class="op">)</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> env_kernel -- builds environmental relatedness kernels</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - computing a single environmental kernel</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">##     Build reaction-norm kernels and fit the Bayesian model</span></span></span>
 <span class="r-in"><span><span class="va">K2</span>  <span class="op">&lt;-</span> <span class="fu"><a href="get_kernel.html">get_kernel</a></span><span class="op">(</span>K_G <span class="op">=</span> <span class="va">KG</span>, K_E <span class="op">=</span> <span class="va">KE2</span>, data <span class="op">=</span> <span class="va">df</span>, model <span class="op">=</span> <span class="st">"RNMM"</span>,</span></span>
@@ -368,22 +568,99 @@ multi-environment prediction. <em>G3</em> 13(2), jkac313.</p>
 <span class="r-in"><span><span class="co">## 12. Phenotypes for contrasting GENETIC diversity (envirome fixed)</span></span></span>
 <span class="r-in"><span><span class="co">##     Low diversity: few rare markers, strong structure; high: many common.</span></span></span>
 <span class="r-in"><span><span class="va">E</span>    <span class="op">&lt;-</span> <span class="fu"><a href="sim_envirome.html">sim_envirome</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">40</span>, structure <span class="op">=</span> <span class="st">"clusters"</span>, n_cluster <span class="op">=</span> <span class="fl">3</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_envirome&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 12 x 40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   structure .................. clusters (3 clusters)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean environment similarity  -0.086</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective dimension ........ 4.8 of 12 environments</span>
 <span class="r-in"><span><span class="va">X_lo</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_markers.html">sim_markers</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">500</span>,  maf <span class="op">=</span> <span class="st">"rare"</span>,   n_subpop <span class="op">=</span> <span class="fl">5</span>, Fst <span class="op">=</span> <span class="fl">0.2</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_markers&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x markers ........ 200 x 500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   subpopulations ......... 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expected heterozygosity  0.286</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean relatedness ....... -0.005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective dimension .... 44.0 of 200 lines</span>
 <span class="r-in"><span><span class="va">X_hi</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_markers.html">sim_markers</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">4000</span>, maf <span class="op">=</span> <span class="st">"common"</span>, n_subpop <span class="op">=</span> <span class="fl">1</span>, Fst <span class="op">=</span> <span class="fl">0.0</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_markers&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x markers ........ 200 x 4000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   subpopulations ......... 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expected heterozygosity  0.439</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean relatedness ....... -0.005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective dimension .... 189.6 of 200 lines</span>
 <span class="r-in"><span><span class="va">met_lo</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X_lo</span>, C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">E</span>, <span class="st">"C_env"</span><span class="op">)</span>, n.qtl <span class="op">=</span> <span class="fl">80</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. marker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 200 x 12   (K is 200 x 200, C_env is 12 x 12)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 2400  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.237 - 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.237 - 0.767   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.237 - 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ -0.755 - 0.571</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) -0.785 - 0.650   max err 0.399</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span><span class="va">met_hi</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X_hi</span>, C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">E</span>, <span class="st">"C_env"</span><span class="op">)</span>, n.qtl <span class="op">=</span> <span class="fl">80</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. marker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 200 x 12   (K is 200 x 200, C_env is 12 x 12)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 2400  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.237 - 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.237 - 0.767   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.237 - 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ -0.755 - 0.571</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) -0.788 - 0.636   max err 0.382</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>low <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">met_lo</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">value</span><span class="op">)</span>, high <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">met_hi</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">value</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      low     high </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2.554634 2.443633 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 13. Phenotypes for contrasting ENVIROME diversity (genetics fixed)</span></span></span>
 <span class="r-in"><span><span class="co">##     Diverse environments induce lower cross-environment correlation (more GxE).</span></span></span>
 <span class="r-in"><span><span class="va">X</span>    <span class="op">&lt;-</span> <span class="fu"><a href="sim_markers.html">sim_markers</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">3000</span>, n_subpop <span class="op">=</span> <span class="fl">3</span>, Fst <span class="op">=</span> <span class="fl">0.08</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_markers&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x markers ........ 200 x 3000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   subpopulations ......... 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expected heterozygosity  0.352</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean relatedness ....... -0.005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective dimension .... 103.7 of 200 lines</span>
 <span class="r-in"><span><span class="va">E_lo</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_envirome.html">sim_envirome</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">40</span>, structure <span class="op">=</span> <span class="st">"gradient"</span>, redundancy <span class="op">=</span> <span class="fl">0.7</span>,</span></span>
 <span class="r-in"><span>                     n_blocks <span class="op">=</span> <span class="fl">2</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_envirome&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 12 x 40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   structure .................. gradient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean environment similarity  -0.089</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective dimension ........ 4.3 of 12 environments</span>
 <span class="r-in"><span><span class="va">E_hi</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_envirome.html">sim_envirome</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">40</span>, structure <span class="op">=</span> <span class="st">"random"</span>, redundancy <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_envirome&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 12 x 40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   structure .................. random</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean environment similarity  -0.085</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective dimension ........ 4.8 of 12 environments</span>
 <span class="r-in"><span><span class="va">met_eLo</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X</span>, C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">E_lo</span>, <span class="st">"C_env"</span><span class="op">)</span>, n.qtl <span class="op">=</span> <span class="fl">80</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. marker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 200 x 12   (K is 200 x 200, C_env is 12 x 12)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 2400  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.277 - 0.766</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.277 - 0.766   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.277 - 0.766</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ -0.807 - 0.760</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) -0.849 - 0.811   max err 0.25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span><span class="va">met_eHi</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X</span>, C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">E_hi</span>, <span class="st">"C_env"</span><span class="op">)</span>, n.qtl <span class="op">=</span> <span class="fl">80</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. marker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 200 x 12   (K is 200 x 200, C_env is 12 x 12)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 2400  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.277 - 0.766</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.277 - 0.766   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.277 - 0.766</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ -0.814 - 0.701</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) -0.745 - 0.811   max err 0.337</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">met_eLo</span><span class="op">$</span><span class="va">truth</span><span class="op">$</span><span class="va">g</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span>   <span class="co"># high  cross-environment genetic correlation</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2203529</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">met_eHi</span><span class="op">$</span><span class="va">truth</span><span class="op">$</span><span class="va">g</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span>   <span class="co"># low   correlation -&gt; stronger GxE</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.33089</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 14. Full 2 x 2 factorial of genetic x envirome diversity</span></span></span>
 <span class="r-in"><span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">gen</span>, <span class="va">env</span>, <span class="va">seed</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -408,24 +685,143 @@ multi-environment prediction. <em>G3</em> 13(2), jkac313.</p>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu">scenario</span><span class="op">(</span><span class="st">"low"</span>,  <span class="st">"low"</span><span class="op">)</span>,  <span class="fu">scenario</span><span class="op">(</span><span class="st">"low"</span>,  <span class="st">"high"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                    <span class="fu">scenario</span><span class="op">(</span><span class="st">"high"</span>, <span class="st">"low"</span><span class="op">)</span>,  <span class="fu">scenario</span><span class="op">(</span><span class="st">"high"</span>, <span class="st">"high"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. marker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 200 x 12   (K is 200 x 200, C_env is 12 x 12)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 2400  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.319 - 0.583</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.319 - 0.583   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.319 - 0.583</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ -0.728 - 0.622</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) -0.650 - 0.515   max err 0.294</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. marker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 200 x 12   (K is 200 x 200, C_env is 12 x 12)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 2400  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.319 - 0.583</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.319 - 0.583   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.319 - 0.583</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ -0.681 - 0.673</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) -0.661 - 0.650   max err 0.33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. marker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 200 x 12   (K is 200 x 200, C_env is 12 x 12)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 2400  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.319 - 0.583</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.319 - 0.583   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.319 - 0.583</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ -0.728 - 0.622</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) -0.706 - 0.557   max err 0.34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. marker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 200 x 12   (K is 200 x 200, C_env is 12 x 12)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 2400  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.319 - 0.583</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.319 - 0.583   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.319 - 0.583</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ -0.681 - 0.673</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) -0.649 - 0.661   max err 0.326</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    gen  env     gxe_cor pheno_var</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  low  low -0.08585772  2.457431</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  low high -0.08469055  2.466050</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 high  low -0.08596142  2.450384</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 high high -0.08704493  2.447744</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 15. Sweep population structure (Fst) and record phenotype variance</span></span></span>
 <span class="r-in"><span><span class="va">E</span> <span class="op">&lt;-</span> <span class="fu"><a href="sim_envirome.html">sim_envirome</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">40</span>, structure <span class="op">=</span> <span class="st">"clusters"</span>, n_cluster <span class="op">=</span> <span class="fl">3</span>, seed <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_envirome&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   structure .................. clusters (3 clusters)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean environment similarity  -0.108</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective dimension ........ 4.1 of 10 environments</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.05</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">f</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">X</span>   <span class="op">&lt;-</span> <span class="fu"><a href="sim_markers.html">sim_markers</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">3000</span>, n_subpop <span class="op">=</span> <span class="fl">4</span>, Fst <span class="op">=</span> <span class="va">f</span>, seed <span class="op">=</span> <span class="fl">3</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">met</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X</span>, C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">E</span>, <span class="st">"C_env"</span><span class="op">)</span>, n.qtl <span class="op">=</span> <span class="fl">80</span>, seed <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Fst <span class="op">=</span> <span class="va">f</span>, eff_dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">X</span>, <span class="st">"diversity"</span><span class="op">)</span><span class="op">[</span><span class="st">"eff_dim"</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>             pheno_var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">met</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">value</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. marker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 200 x 10   (K is 200 x 200, C_env is 10 x 10)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 2000  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.275 - 0.685</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.275 - 0.685   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.275 - 0.685</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ -0.703 - 0.630</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) -0.670 - 0.603   max err 0.272</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. marker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 200 x 10   (K is 200 x 200, C_env is 10 x 10)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 2000  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.275 - 0.685</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.275 - 0.685   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.275 - 0.685</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ -0.703 - 0.630</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) -0.660 - 0.613   max err 0.261</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. marker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 200 x 10   (K is 200 x 200, C_env is 10 x 10)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 2000  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.275 - 0.685</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.275 - 0.685   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.275 - 0.685</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ -0.703 - 0.630</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) -0.737 - 0.670   max err 0.302</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. marker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 200 x 10   (K is 200 x 200, C_env is 10 x 10)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 2000  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.275 - 0.685</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.275 - 0.685   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.275 - 0.685</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ -0.703 - 0.630</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) -0.667 - 0.663   max err 0.274</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           Fst   eff_dim pheno_var</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eff_dim  0.00 186.72381  2.272693</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eff_dim1 0.05 142.75387  2.320645</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eff_dim2 0.10  91.05794  2.341435</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eff_dim3 0.20  40.65146  2.258988</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 16. Reaction-norm phenotypes driven directly by a diverse envirome</span></span></span>
 <span class="r-in"><span><span class="va">X</span>    <span class="op">&lt;-</span> <span class="fu"><a href="sim_markers.html">sim_markers</a></span><span class="op">(</span><span class="fl">150</span>, <span class="fl">2500</span>, n_subpop <span class="op">=</span> <span class="fl">2</span>, Fst <span class="op">=</span> <span class="fl">0.06</span>, seed <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_markers&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x markers ........ 150 x 2500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   subpopulations ......... 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expected heterozygosity  0.354</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean relatedness ....... -0.007</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective dimension .... 101.4 of 150 lines</span>
 <span class="r-in"><span><span class="va">E2</span>   <span class="op">&lt;-</span> <span class="fu"><a href="sim_envirome.html">sim_envirome</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">25</span>, structure <span class="op">=</span> <span class="st">"gradient"</span>,</span></span>
 <span class="r-in"><span>                     marginal <span class="op">=</span> <span class="st">"right-skewed"</span>, seed <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_envirome&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   environments x covariables . 10 x 25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   structure .................. gradient</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean environment similarity  -0.109</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   effective dimension ........ 1.9 of 10 environments</span>
 <span class="r-in"><span><span class="va">met2</span> <span class="op">&lt;-</span> <span class="fu">sim_met</span><span class="op">(</span>markers <span class="op">=</span> <span class="va">X</span>, W <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">E2</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                reaction.norm <span class="op">=</span> <span class="cn">TRUE</span>, rn.main <span class="op">=</span> <span class="fl">0.6</span>, seed <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Rejection sampling failed in 200 tries; C was repaired by eigenvalue clamping.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   Requested off-diagonal range [0.000, 0.800]; realised [0.055, 0.767].</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sim_met&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mechanism .............. marker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lines x environments ... 150 x 10   (K is 150 x 150, C_env is 10 x 10)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations ........... 1500  (n_rep = 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 target .............. 0.202 - 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (plot) ..... 0.202 - 0.767   max err 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 realised (line-mean). 0.202 - 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor target ............ 0.055 - 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gcor realised (whitened) 0.010 - 0.738   max err 0.127</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   exact .................. TRUE</span>
 <span class="r-in"><span><span class="va">met2</span><span class="op">$</span><span class="va">truth</span><span class="op">$</span><span class="va">mechanism</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "marker"</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -29,7 +29,7 @@ total timings; verbose = FALSE (default) is entirely silent."><meta property="og
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -275,7 +275,7 @@ component. The raw scale is always returned as <code>$sigb</code>.</p>
 
 
 <p>Costa-Neto et al (2021)</p>
-<p>EnvRtype v.1.2.3, Sep 2026</p>
+<p>EnvRtype v.0.1.3, Sep 2026</p>
     </div>
     <div class="section level2">
     <h2 id="performance-changes-vs-the-original">Performance changes vs. the original<a class="anchor" aria-label="anchor" href="#performance-changes-vs-the-original"></a></h2>
@@ -340,30 +340,104 @@ prediction incorporating genotype x environment interaction models.
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"maizeYield"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"maizeG"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"maizeWTH"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ECs</span> <span class="op">&lt;-</span> <span class="fu"><a href="W_matrix.html">W_matrix</a></span><span class="op">(</span>env.data <span class="op">=</span> <span class="va">maizeWTH</span><span class="op">[</span><span class="va">maizeWTH</span><span class="op">$</span><span class="va">daysFromStart</span> <span class="op">&lt;</span> <span class="fl">100</span>, <span class="op">]</span>,</span></span>
 <span class="r-in"><span>                var.id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FRUE"</span>, <span class="st">"PETP"</span>, <span class="st">"SRAD"</span>, <span class="st">"T2M_MAX"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                statistic <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> W_matrix -- builds the environmental covariable (W) matrix</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - summarising weather data into environmental covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - centring, scaling and quality-controlling W</span>
 <span class="r-in"><span><span class="va">K</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_kernel.html">get_kernel</a></span><span class="op">(</span>K_G <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>G <span class="op">=</span> <span class="va">maizeG</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                K_E <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>W <span class="op">=</span> <span class="fu"><a href="env_kernel.html">env_kernel</a></span><span class="op">(</span>env.data <span class="op">=</span> <span class="va">ECs</span><span class="op">)</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                data <span class="op">=</span> <span class="va">maizeYield</span>, model <span class="op">=</span> <span class="st">"RNMM"</span>,</span></span>
 <span class="r-in"><span>                env <span class="op">=</span> <span class="st">"env"</span>, gid <span class="op">=</span> <span class="st">"gid"</span>, y <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> env_kernel -- builds environmental relatedness kernels</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - computing a single environmental kernel</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## silent fit</span></span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">kernel_model</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"value"</span>, data <span class="op">=</span> <span class="va">maizeYield</span>, random <span class="op">=</span> <span class="va">K</span>,</span></span>
 <span class="r-in"><span>                    env <span class="op">=</span> <span class="st">"env"</span>, gid <span class="op">=</span> <span class="st">"gid"</span>,</span></span>
 <span class="r-in"><span>                    iterations <span class="op">=</span> <span class="fl">5000</span>, burnin <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fit</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;kernel_model&gt; Bayesian G + GxE fit (BGGE sampler, Granato et al. 2018)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   observations : 750 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   kernels      : KE_W, KG_G, KGE_GW </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   iterations   : 5000 (burn-in 1000 , thinning 10 )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   residual var : 0.2967 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   runtime (s)  : 5.51 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   variance components:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Type        K    Var CI_lower CI_upper SD.var</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Environment (E)        W 0.5952   0.5477   0.6495 0.0331</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Genotype (G)        G 0.0735   0.0670   0.0810 0.0114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              GxE       GW 0.0471   0.0429   0.0520 0.0081</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Residual Residual 0.2967   0.2704   0.3273 0.0172</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   (re-fit with keep_effects = TRUE to include the report tables)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   validated varcomp (method = 'gibbs'):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     h2 entry-mean 0.0730 | h2 plot 0.0730 | rg NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ! q &lt; 20 environments: sigma2_GE only approximate</span>
 <span class="r-in"><span><span class="va">fit</span><span class="op">$</span><span class="va">varcomp</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Variance components  (method = 'gibbs')</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   genotypes p = 150   environments q = 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        Component Variance  Prop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Genotype (G)   0.0735 0.073</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Environment (E)       NA    NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              GxE       NA    NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Residual   0.9333 0.927</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Total (var(y))   1.0068 1.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 (entry-mean) : 0.0730</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   h2 (plot-level) : 0.0730</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rg  vG/(vG+vGE) : NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ! q &lt; 20 environments: sigma2_GE is only approximate.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Validated GxE bias: +0.90 at q=8 vs +0.09 at q=20.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## traced fit, with effect chains for the report tables</span></span></span>
 <span class="r-in"><span><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu">kernel_model</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"value"</span>, data <span class="op">=</span> <span class="va">maizeYield</span>, random <span class="op">=</span> <span class="va">K</span>,</span></span>
 <span class="r-in"><span>                     env <span class="op">=</span> <span class="st">"env"</span>, gid <span class="op">=</span> <span class="st">"gid"</span>,</span></span>
 <span class="r-in"><span>                     iterations <span class="op">=</span> <span class="fl">5000</span>, burnin <span class="op">=</span> <span class="fl">1000</span>,</span></span>
 <span class="r-in"><span>                     keep_effects <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> =========================================================</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  kernel_model: Bayesian genomic prediction for multi-</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    environment trials. Fits y = 1mu + Xb + sum_j u_j + e</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    with u_j ~ N(0, K_j sigma2_j) by Gibbs sampling in the</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    spectral basis of each kernel, returning predictions,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    variance components and heritabilities.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Original Version: Costa-Neto et al (2021)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  EnvRtype v.0.1.3, Sep 2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> =========================================================</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Gibbs sampler after Granato et al (2018) G3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1/6] Validating inputs ...                             0.00s  750 obs, 3 kernels</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2/6] Assembling response and design ...                0.00s  5 env, 150 gid</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [3/6] Spectral decomposition ...                        0.00s  all kernels pre-factored; eigen skipped</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [4/6] Computing prior scales ...                        0.00s  R2 = 0.50 split 'per_kernel', prior_scale 'eigen'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [5/6] Gibbs sampling (5000 iter) ...                    5.64s  400 draws kept</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [6/6] Variance components and heritability ...          0.00s  method 'postmean', h2 = 0.121</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Total running time: 5.70s  (sampler 5.64s, 99%)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Residual variance  : 0.2984</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> =========================================================</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fit2</span><span class="op">$</span><span class="va">genotype_effects</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      gid mean_effect min_effect max_effect     range stability_sd   post_sd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92  G092   0.5700298  0.2636566  0.7998444 0.5361878    0.1951406 0.1756836</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 132 G132   0.5269830  0.3201177  0.6947423 0.3746245    0.1390777 0.1728714</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71  G071   0.4861233  0.2374689  0.8138733 0.5764044    0.2185658 0.1661643</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65  G065   0.4861134  0.2374571  0.8138807 0.5764236    0.2185805 0.1661877</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  G014   0.4671437  0.3349233  0.7488440 0.4139206    0.1641661 0.1802682</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103 G103   0.4626073  0.3660940  0.7462059 0.3801119    0.1594609 0.1742715</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## leave-one-environment-out: kernels do not depend on y, so build once</span></span></span>
 <span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">e</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">maizeYield</span><span class="op">$</span><span class="va">env</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -371,7 +445,7 @@ prediction incorporating genotype x environment interaction models.
 <span class="r-in"><span>  <span class="va">f</span> <span class="op">&lt;-</span> <span class="fu">kernel_model</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"value"</span>, data <span class="op">=</span> <span class="va">tr</span>, random <span class="op">=</span> <span class="va">K</span>,</span></span>
 <span class="r-in"><span>                    env <span class="op">=</span> <span class="st">"env"</span>, gid <span class="op">=</span> <span class="st">"gid"</span>, iterations <span class="op">=</span> <span class="fl">2000</span>, burnin <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

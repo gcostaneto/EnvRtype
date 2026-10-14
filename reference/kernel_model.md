@@ -232,7 +232,7 @@ always returned as `$sigb`.
 
 Costa-Neto et al (2021)
 
-EnvRtype v.1.2.3, Sep 2026
+EnvRtype v.0.1.3, Sep 2026
 
 ## Performance changes vs. the original
 
@@ -301,30 +301,104 @@ BGGE package. Refactored version.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 data("maizeYield"); data("maizeG"); data("maizeWTH")
 
 ECs <- W_matrix(env.data = maizeWTH[maizeWTH$daysFromStart < 100, ],
                 var.id = c("FRUE", "PETP", "SRAD", "T2M_MAX"),
                 statistic = "mean")
+#> ---------------------------------------------------------------
+#> W_matrix -- builds the environmental covariable (W) matrix
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - summarising weather data into environmental covariables
+#>   - centring, scaling and quality-controlling W
 K <- get_kernel(K_G = list(G = maizeG),
                 K_E = list(W = env_kernel(env.data = ECs)[[2]]),
                 data = maizeYield, model = "RNMM",
                 env = "env", gid = "gid", y = "value")
+#> ---------------------------------------------------------------
+#> env_kernel -- builds environmental relatedness kernels
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - computing a single environmental kernel
 
 ## silent fit
 fit <- kernel_model(y = "value", data = maizeYield, random = K,
                     env = "env", gid = "gid",
                     iterations = 5000, burnin = 1000)
 fit
+#> <kernel_model> Bayesian G + GxE fit (BGGE sampler, Granato et al. 2018)
+#>   observations : 750 
+#>   kernels      : KE_W, KG_G, KGE_GW 
+#>   iterations   : 5000 (burn-in 1000 , thinning 10 )
+#>   residual var : 0.2967 
+#>   runtime (s)  : 5.51 
+#>   variance components:
+#>             Type        K    Var CI_lower CI_upper SD.var
+#>  Environment (E)        W 0.5952   0.5477   0.6495 0.0331
+#>     Genotype (G)        G 0.0735   0.0670   0.0810 0.0114
+#>              GxE       GW 0.0471   0.0429   0.0520 0.0081
+#>         Residual Residual 0.2967   0.2704   0.3273 0.0172
+#>   (re-fit with keep_effects = TRUE to include the report tables)
+#>   validated varcomp (method = 'gibbs'):
+#>     h2 entry-mean 0.0730 | h2 plot 0.0730 | rg NA
+#>     ! q < 20 environments: sigma2_GE only approximate
 fit$varcomp
+#> ------------------------------------------------------------
+#> Variance components  (method = 'gibbs')
+#>   genotypes p = 150   environments q = 5
+#> ------------------------------------------------------------
+#>        Component Variance  Prop
+#>     Genotype (G)   0.0735 0.073
+#>  Environment (E)       NA    NA
+#>              GxE       NA    NA
+#>         Residual   0.9333 0.927
+#>   Total (var(y))   1.0068 1.000
+#> ------------------------------------------------------------
+#>   h2 (entry-mean) : 0.0730
+#>   h2 (plot-level) : 0.0730
+#>   rg  vG/(vG+vGE) : NA
+#> ------------------------------------------------------------
+#>   ! q < 20 environments: sigma2_GE is only approximate.
+#>     Validated GxE bias: +0.90 at q=8 vs +0.09 at q=20.
 
 ## traced fit, with effect chains for the report tables
 fit2 <- kernel_model(y = "value", data = maizeYield, random = K,
                      env = "env", gid = "gid",
                      iterations = 5000, burnin = 1000,
                      keep_effects = TRUE, verbose = TRUE)
+#> 
+#> =========================================================
+#>  kernel_model: Bayesian genomic prediction for multi-
+#>    environment trials. Fits y = 1mu + Xb + sum_j u_j + e
+#>    with u_j ~ N(0, K_j sigma2_j) by Gibbs sampling in the
+#>    spectral basis of each kernel, returning predictions,
+#>    variance components and heritabilities.
+#>  Original Version: Costa-Neto et al (2021)
+#>  EnvRtype v.0.1.3, Sep 2026
+#> =========================================================
+#>  Gibbs sampler after Granato et al (2018) G3
+#> ---------------------------------------------------------
+#>   [1/6] Validating inputs ...                             0.00s  750 obs, 3 kernels
+#>   [2/6] Assembling response and design ...                0.00s  5 env, 150 gid
+#>   [3/6] Spectral decomposition ...                        0.00s  all kernels pre-factored; eigen skipped
+#>   [4/6] Computing prior scales ...                        0.00s  R2 = 0.50 split 'per_kernel', prior_scale 'eigen'
+#>   [5/6] Gibbs sampling (5000 iter) ...                    5.64s  400 draws kept
+#>   [6/6] Variance components and heritability ...          0.00s  method 'postmean', h2 = 0.121
+#> ---------------------------------------------------------
+#>  Total running time: 5.70s  (sampler 5.64s, 99%)
+#>  Residual variance  : 0.2984
+#> =========================================================
+#> 
 head(fit2$genotype_effects)
+#>      gid mean_effect min_effect max_effect     range stability_sd   post_sd
+#> 92  G092   0.5700298  0.2636566  0.7998444 0.5361878    0.1951406 0.1756836
+#> 132 G132   0.5269830  0.3201177  0.6947423 0.3746245    0.1390777 0.1728714
+#> 71  G071   0.4861233  0.2374689  0.8138733 0.5764044    0.2185658 0.1661643
+#> 65  G065   0.4861134  0.2374571  0.8138807 0.5764236    0.2185805 0.1661877
+#> 14  G014   0.4671437  0.3349233  0.7488440 0.4139206    0.1641661 0.1802682
+#> 103 G103   0.4626073  0.3660940  0.7462059 0.3801119    0.1594609 0.1742715
 
 ## leave-one-environment-out: kernels do not depend on y, so build once
 for (e in unique(maizeYield$env)) {
@@ -332,5 +406,5 @@ for (e in unique(maizeYield$env)) {
   f <- kernel_model(y = "value", data = tr, random = K,
                     env = "env", gid = "gid", iterations = 2000, burnin = 500)
 }
-} # }
+# }
 ```

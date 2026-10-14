@@ -217,26 +217,97 @@ Germano Costa Neto
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 data("maizeWTH")
 
 ## 1. Default maize staging on cumulative GDD
 ph <- env_phenology(maizeWTH, crop = "maize")
+#> ---------------------------------------------------------------
+#> env_phenology -- maps weather onto thermal-time stages
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - computing daily thermal time (method = gdd)
+#>   - assigning developmental stages
+#> Warning: 5 environment(s) did not accumulate enough thermal time to reach 'R6': IP, NM, PM, SE, SO. Days beyond the last reached stage are NA. Extend the series or lower the stage thresholds.
+#> ---------------------------------------------------------------
+#> Thermal-time stages (GDD, Tbase = 10 C, Tupper = 30 C)
+#>   VE      <=     125 C d       40 day(s)
+#>   V6      <=     475 C d      123 day(s)
+#>   V12     <=     740 C d       94 day(s)
+#>   VT      <=    1135 C d      152 day(s)
+#>   R1      <=    1250 C d       47 day(s)
+#>   R3      <=    1660 C d      161 day(s)
+#>   R5      <=    2110 C d      107 day(s)
+#>   R6      <=    2700 C d       32 day(s)
+#> ---------------------------------------------------------------
 table(ph$env, ph$stage)
+#>     
+#>      VE V6 V12 VT R1 R3 R5 R6
+#>   NM  8 23  18 26  8 28 25  0
+#>   SO  7 22  16 25  7 26 29 22
+#>   PM  8 27  20 34 11 36 17  0
+#>   IP  8 24  18 27  9 32 36 10
+#>   SE  9 27  22 40 12 39  0  0
 
 ## 2. Photothermal time, daylength taken from param_radiation()'s N column
 ph2 <- env_phenology(processWTH(maizeWTH), crop = "maize",
                      photoperiod = TRUE, daylength.id = "N")
+#> ---------------------------------------------------------------
+#> env_phenology -- maps weather onto thermal-time stages
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#> ---------------------------------------------------------------
+#> processWTH -- derives all agro-meteorological parameters
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#> Dropping existing column(s) before recomputation: n, N, RTA, VPD, SPV, ETP, PETP, GDD, FRUE, T2M_RANGE
+#>   - radiation parameters computed
+#>   - atmospheric-demand parameters computed
+#>   - temperature-response parameters computed
+#>   - computing daily thermal time (method = gdd)
+#>   - thermal time modulated by photoperiod (PTT)
+#>   - assigning developmental stages
+#> Warning: 5 environment(s) did not accumulate enough thermal time to reach 'R6': IP, NM, PM, SE, SO. Days beyond the last reached stage are NA. Extend the series or lower the stage thresholds.
+#> ---------------------------------------------------------------
+#> Thermal-time stages (PTT, Tbase = 10 C, Tupper = 30 C)
+#>   VE      <=     125 C d       40 day(s)
+#>   V6      <=     475 C d      123 day(s)
+#>   V12     <=     740 C d       94 day(s)
+#>   VT      <=    1135 C d      152 day(s)
+#>   R1      <=    1250 C d       47 day(s)
+#>   R3      <=    1660 C d      161 day(s)
+#>   R5      <=    2110 C d      107 day(s)
+#>   R6      <=    2700 C d       32 day(s)
+#> ---------------------------------------------------------------
 
 ## 3. Custom stages and the Baskerville-Emin method
 ph3 <- env_phenology(maizeWTH,
                      stages = c(veg = 500, flow = 1200, fill = 2200),
                      Tbase = 8, Tupper = 32, method = "baskerville")
+#> ---------------------------------------------------------------
+#> env_phenology -- maps weather onto thermal-time stages
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - computing daily thermal time (method = baskerville)
+#>   - assigning developmental stages
+#> Warning: 2 environment(s) did not accumulate enough thermal time to reach 'fill': PM, SE. Days beyond the last reached stage are NA. Extend the series or lower the stage thresholds.
+#> ---------------------------------------------------------------
+#> Thermal-time stages (GDD, Tbase = 8 C, Tupper = 32 C)
+#>   veg     <=     500 C d      149 day(s)
+#>   flow    <=    1200 C d      223 day(s)
+#>   fill    <=    2200 C d      314 day(s)
+#> ---------------------------------------------------------------
 
 ## 4. Hand the stage factor to the existing covariable machinery.
 ##    This is the point of the function: W columns now align on
 ##    development instead of on calendar date.
 W <- W_matrix(env.data = ph, var.id = c("T2M", "PRECTOT"),
               by.interval = TRUE, time.window = NULL)
-} # }
+#> ---------------------------------------------------------------
+#> W_matrix -- builds the environmental covariable (W) matrix
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - summarising weather data into environmental covariables
+#>   - centring, scaling and quality-controlling W
+# }
 ```

@@ -13,7 +13,7 @@ abs bias 0.333 -&amp;gt; 0.130) at essentially no cost in cross-validated predic
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,6 +69,14 @@ Default 0.75.</p></dd>
 Default <code>"GE"</code>.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>The input <code>random</code> list of kernels, with the selected GxE
+  kernels replaced by their reduced-rank (truncated) version and any cached
+  spectral decomposition removed so the kernels are re-decomposed on the next
+  fit. When no kernel matches <code>pattern</code>, or <code>keep_prop &gt;= 1</code>, the
+  list is returned unchanged.</p>
+    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>CAUTION: truncation distorts the G:GxE ratio – rg moved to 0.72 vs a true

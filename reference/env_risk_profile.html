@@ -21,7 +21,7 @@ carry the same weight as one that appears in 12."><meta property="og:image" cont
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -215,7 +215,7 @@ production areas in Brazil. <em>Agric. For. Meteorol.</em> 225, 1-12.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co">## 30 seasons of weather for three sites</span></span></span>
 <span class="r-in"><span><span class="va">sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PIRA"</span>, <span class="st">"SETE"</span>, <span class="st">"NMAC"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                    lat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">22.7</span>, <span class="op">-</span><span class="fl">19.4</span>, <span class="op">-</span><span class="fl">21.2</span><span class="op">)</span>,</span></span>
@@ -223,20 +223,98 @@ production areas in Brazil. <em>Agric. For. Meteorol.</em> 225, 1-12.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">wth</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_weather.html">get_weather</a></span><span class="op">(</span>env.id <span class="op">=</span> <span class="va">sites</span><span class="op">$</span><span class="va">env</span>, lat <span class="op">=</span> <span class="va">sites</span><span class="op">$</span><span class="va">lat</span>, lon <span class="op">=</span> <span class="va">sites</span><span class="op">$</span><span class="va">lon</span>,</span></span>
 <span class="r-in"><span>                   start.day <span class="op">=</span> <span class="st">"1994-01-01"</span>, end.day <span class="op">=</span> <span class="st">"2024-12-31"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> get_weather -- downloads daily weather from NASA POWER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> get_weather() - daily weather from NASA POWER</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> https://docs.ropensci.org/nasapower</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Start .............................. Wed Oct 14 03:12:56 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units ................ 3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Parallel ........................... [   ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [1/3] PIRA downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [2/3] SETE downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [3/3] NMAC downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing VPD ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing N, RTA ................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing n ........................ [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing TH1 ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing TH2 ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing PAR_TEMP ................. [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units downloaded ..... 3/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Daily weather features ............. 25</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Done ............................... Wed Oct 14 03:13:02 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total time ......................... 5.8s</span>
 <span class="r-in"><span><span class="va">wth</span> <span class="op">&lt;-</span> <span class="fu"><a href="processWTH.html">processWTH</a></span><span class="op">(</span><span class="va">wth</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> processWTH -- derives all agro-meteorological parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Dropping existing column(s) before recomputation: n, N, RTA, VPD</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - radiation parameters computed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - atmospheric-demand parameters computed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - temperature-response parameters computed</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Risk of heat and drought at flowering, sown 15 October each year</span></span></span>
 <span class="r-in"><span><span class="va">rp</span> <span class="op">&lt;-</span> <span class="fu">env_risk_profile</span><span class="op">(</span><span class="va">wth</span>, site.id <span class="op">=</span> <span class="st">"env"</span>, planting <span class="op">=</span> <span class="st">"10-15"</span>,</span></span>
 <span class="r-in"><span>                       var.id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T2M_MAX"</span>, <span class="st">"PETP"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                       crop <span class="op">=</span> <span class="st">"maize"</span>, by.stage <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> env_risk_profile -- multi-year envirotype frequency and risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - assembling 3 site(s) x 31 season(s)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - 93 complete site-year(s) retained</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - assigning thermal-time stages per season</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>93 environment(s) did not accumulate enough thermal time to reach 'R6': NMAC_1994, NMAC_1995, NMAC_1996, NMAC_1997, NMAC_1998, NMAC_1999, NMAC_2000, NMAC_2001, .... Days beyond the last reached stage are NA. Extend the series or lower the stage thresholds.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - classifying stress envirotypes</span>
 <span class="r-in"><span><span class="va">rp</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> --------------------------------------------------------------- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> env_risk_profile() - historical envirotype risk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> --------------------------------------------------------------- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sites .............. 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Seasons ............ 31 (1994-2024)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Site-years ......... 93</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Variables .......... PETP, T2M_MAX</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Stage-resolved ..... [ x ]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Most frequent stress classes:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   SETE     R3     PETP      drought_severe freq 1.00   16.4 d/season</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PIRA     V6     PETP      drought_severe freq 1.00   15.6 d/season</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   NMAC     R3     PETP      drought_severe freq 1.00   15.3 d/season</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PIRA     R5     PETP      drought_severe freq 1.00   14.5 d/season</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   NMAC     V6     PETP      drought_severe freq 1.00   14.4 d/season</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   SETE     R5     PETP      drought_severe freq 1.00   14.1 d/season</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   SETE     V6     PETP      drought_severe freq 1.00   13.7 d/season</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PIRA     R3     PETP      drought_severe freq 1.00   13.2 d/season</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PIRA     VT     PETP      drought_severe freq 1.00   12.9 d/season</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PIRA     V6     T2M_MAX   heat_mild      freq 1.00   12.5 d/season</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> --------------------------------------------------------------- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $frequency  $severity  $return_period</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## How often is flowering heat-stressed at each site?</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">rp</span><span class="op">$</span><span class="va">frequency</span>, <span class="va">stage</span> <span class="op">==</span> <span class="st">"R1"</span> <span class="op">&amp;</span> <span class="va">class</span> <span class="op">==</span> <span class="st">"heat_severe"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    site stage variable       class n_years n_occur       freq  mean_days</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  NMAC    R1  T2M_MAX heat_severe      30       1 0.03333333 0.23333333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 PIRA    R1  T2M_MAX heat_severe      30       1 0.03333333 0.03333333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47 SETE    R1  T2M_MAX heat_severe      30       2 0.06666667 0.13333333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    max_days</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47        2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Weights for a target population of environments</span></span></span>
 <span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="tpe_weights.html">tpe_weights</a></span><span class="op">(</span><span class="va">rp</span>, stage <span class="op">=</span> <span class="st">"R1"</span>, var <span class="op">=</span> <span class="st">"PETP"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TPE weights by class (measure = freq)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   drought_severe      0.364  ===========</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   drought_mild        0.329  ==========</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   wet                 0.307  =========</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------ </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

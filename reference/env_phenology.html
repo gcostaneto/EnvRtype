@@ -19,7 +19,7 @@ summaryWTH() and env_typing()."><meta property="og:image" content="https://gcost
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -245,28 +245,99 @@ Iowa State University Extension.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"maizeWTH"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 1. Default maize staging on cumulative GDD</span></span></span>
 <span class="r-in"><span><span class="va">ph</span> <span class="op">&lt;-</span> <span class="fu">env_phenology</span><span class="op">(</span><span class="va">maizeWTH</span>, crop <span class="op">=</span> <span class="st">"maize"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> env_phenology -- maps weather onto thermal-time stages</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - computing daily thermal time (method = gdd)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - assigning developmental stages</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>5 environment(s) did not accumulate enough thermal time to reach 'R6': IP, NM, PM, SE, SO. Days beyond the last reached stage are NA. Extend the series or lower the stage thresholds.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Thermal-time stages (GDD, Tbase = 10 C, Tupper = 30 C)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   VE      &lt;=     125 C d       40 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   V6      &lt;=     475 C d      123 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   V12     &lt;=     740 C d       94 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   VT      &lt;=    1135 C d      152 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   R1      &lt;=    1250 C d       47 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   R3      &lt;=    1660 C d      161 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   R5      &lt;=    2110 C d      107 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   R6      &lt;=    2700 C d       32 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">ph</span><span class="op">$</span><span class="va">env</span>, <span class="va">ph</span><span class="op">$</span><span class="va">stage</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      VE V6 V12 VT R1 R3 R5 R6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   NM  8 23  18 26  8 28 25  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   SO  7 22  16 25  7 26 29 22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PM  8 27  20 34 11 36 17  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   IP  8 24  18 27  9 32 36 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   SE  9 27  22 40 12 39  0  0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 2. Photothermal time, daylength taken from param_radiation()'s N column</span></span></span>
 <span class="r-in"><span><span class="va">ph2</span> <span class="op">&lt;-</span> <span class="fu">env_phenology</span><span class="op">(</span><span class="fu"><a href="processWTH.html">processWTH</a></span><span class="op">(</span><span class="va">maizeWTH</span><span class="op">)</span>, crop <span class="op">=</span> <span class="st">"maize"</span>,</span></span>
 <span class="r-in"><span>                     photoperiod <span class="op">=</span> <span class="cn">TRUE</span>, daylength.id <span class="op">=</span> <span class="st">"N"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> env_phenology -- maps weather onto thermal-time stages</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> processWTH -- derives all agro-meteorological parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Dropping existing column(s) before recomputation: n, N, RTA, VPD, SPV, ETP, PETP, GDD, FRUE, T2M_RANGE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - radiation parameters computed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - atmospheric-demand parameters computed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - temperature-response parameters computed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - computing daily thermal time (method = gdd)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - thermal time modulated by photoperiod (PTT)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - assigning developmental stages</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>5 environment(s) did not accumulate enough thermal time to reach 'R6': IP, NM, PM, SE, SO. Days beyond the last reached stage are NA. Extend the series or lower the stage thresholds.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Thermal-time stages (PTT, Tbase = 10 C, Tupper = 30 C)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   VE      &lt;=     125 C d       40 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   V6      &lt;=     475 C d      123 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   V12     &lt;=     740 C d       94 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   VT      &lt;=    1135 C d      152 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   R1      &lt;=    1250 C d       47 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   R3      &lt;=    1660 C d      161 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   R5      &lt;=    2110 C d      107 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   R6      &lt;=    2700 C d       32 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 3. Custom stages and the Baskerville-Emin method</span></span></span>
 <span class="r-in"><span><span class="va">ph3</span> <span class="op">&lt;-</span> <span class="fu">env_phenology</span><span class="op">(</span><span class="va">maizeWTH</span>,</span></span>
 <span class="r-in"><span>                     stages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>veg <span class="op">=</span> <span class="fl">500</span>, flow <span class="op">=</span> <span class="fl">1200</span>, fill <span class="op">=</span> <span class="fl">2200</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                     Tbase <span class="op">=</span> <span class="fl">8</span>, Tupper <span class="op">=</span> <span class="fl">32</span>, method <span class="op">=</span> <span class="st">"baskerville"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> env_phenology -- maps weather onto thermal-time stages</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - computing daily thermal time (method = baskerville)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - assigning developmental stages</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>2 environment(s) did not accumulate enough thermal time to reach 'fill': PM, SE. Days beyond the last reached stage are NA. Extend the series or lower the stage thresholds.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Thermal-time stages (GDD, Tbase = 8 C, Tupper = 32 C)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   veg     &lt;=     500 C d      149 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   flow    &lt;=    1200 C d      223 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   fill    &lt;=    2200 C d      314 day(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 4. Hand the stage factor to the existing covariable machinery.</span></span></span>
 <span class="r-in"><span><span class="co">##    This is the point of the function: W columns now align on</span></span></span>
 <span class="r-in"><span><span class="co">##    development instead of on calendar date.</span></span></span>
 <span class="r-in"><span><span class="va">W</span> <span class="op">&lt;-</span> <span class="fu"><a href="W_matrix.html">W_matrix</a></span><span class="op">(</span>env.data <span class="op">=</span> <span class="va">ph</span>, var.id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T2M"</span>, <span class="st">"PRECTOT"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>              by.interval <span class="op">=</span> <span class="cn">TRUE</span>, time.window <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> W_matrix -- builds the environmental covariable (W) matrix</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - summarising weather data into environmental covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - centring, scaling and quality-controlling W</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

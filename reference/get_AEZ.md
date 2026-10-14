@@ -164,7 +164,7 @@ FAO & IIASA (2021). *Global Agro-Ecological Zones (GAEZ v4)*. Rome, FAO.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 sites <- data.frame(
   env = c("Ames_IA", "Lincoln_NE", "Piracicaba_BR"),
   lat = c(42.03, 40.81, -22.71),
@@ -172,15 +172,42 @@ sites <- data.frame(
 
 ## Default: uses the raster bundled with the package (offline)
 aez <- get_AEZ(sites$env, sites$lat, sites$lon)
+#> Using bundled GAEZ raster: aez_v9v2red_5m_CRUTS32_Hist_8110_100_avg.tif
+#> Extracting cell values at 3 site(s) ...
+#> Done. 3/3 site(s) classified.
 aez
+#>             env    lat    lon aez_code                   aez_label    thermal
+#> 1       Ames_IA  42.03 -93.62       17 Subtropics, cool; semi-arid Subtropics
+#> 2    Lincoln_NE  40.81 -96.68       32  Temperate, cool; per-humid  Temperate
+#> 3 Piracicaba_BR -22.71 -47.63        3     Tropics, lowland; humid    Tropics
+#>    moisture arable
+#> 1 semi-arid   TRUE
+#> 2 per-humid   TRUE
+#> 3     humid   TRUE
 
 ## Check zone purity in a 25 km neighbourhood
 aez25 <- get_AEZ(sites$env, sites$lat, sites$lon, buffer = 25000)
+#> Using bundled GAEZ raster: aez_v9v2red_5m_CRUTS32_Hist_8110_100_avg.tif
+#> Extracting majority class within 25000 m ...
+#> Done. 3/3 site(s) classified.
 aez25[, c("env", "aez_label", "majority_share")]
+#>             env                   aez_label majority_share
+#> 1       Ames_IA Subtropics, cool; semi-arid            1.0
+#> 2    Lincoln_NE Subtropics, cool; semi-arid            0.9
+#> 3 Piracicaba_BR     Tropics, lowland; humid            1.0
 
 ## Raw codes, no labelling
 get_AEZ(sites$env, sites$lat, sites$lon, legend = NA)
+#> Using bundled GAEZ raster: aez_v9v2red_5m_CRUTS32_Hist_8110_100_avg.tif
+#> Extracting cell values at 3 site(s) ...
+#> Done. 3/3 site(s) classified.
+#>             env    lat    lon aez_code
+#> 1       Ames_IA  42.03 -93.62       17
+#> 2    Lincoln_NE  40.81 -96.68       32
+#> 3 Piracicaba_BR -22.71 -47.63        3
+# }
 
+if (FALSE) { # \dontrun{
 ## A different GAEZ layer you downloaded yourself
 get_AEZ(sites$env, sites$lat, sites$lon, file = "GAEZ_AEZ_scenario.tif")
 } # }

@@ -9,7 +9,7 @@ refits, and correlates held-out predictions against observed values."><meta prop
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,6 +105,17 @@ refits, and correlates held-out predictions against observed values.</p>
 <dd><p>further arguments passed to <code>kernel_model</code>.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>A list summarising out-of-sample predictive ability, with components
+  <code>scheme</code> (the validation scheme used), <code>folds</code> (number of folds),
+  <code>accuracy</code> (overall correlation between held-out predictions and
+  observations), <code>rmse</code> (overall root-mean-square error),
+  <code>per_fold</code> (a data.frame of per-fold <code>accuracy</code> and <code>rmse</code>),
+  <code>fold_id</code> (integer fold assignment for each row of <code>data</code>),
+  <code>predicted</code> (held-out predictions) and <code>observed</code> (the observed
+  response).</p>
+    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The kernels are decomposed ONCE and reused across all folds: they depend only

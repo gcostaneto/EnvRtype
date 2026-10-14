@@ -162,12 +162,37 @@ Germano Costa Neto
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 sites <- data.frame(env = c("PIRA", "SETE"),
                     lat = c(-22.7, -19.4), lon = c(-47.6, -44.2))
 
 base <- get_weather(env.id = sites$env, lat = sites$lat, lon = sites$lon,
                     start.day = "2015-10-01", end.day = "2016-03-31")
+#> ---------------------------------------------------------------
+#> get_weather -- downloads daily weather from NASA POWER
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#> ---------------------------------------------------------------
+#> get_weather() - daily weather from NASA POWER
+#> https://docs.ropensci.org/nasapower
+#> ---------------------------------------------------------------
+#> Start .............................. Wed Oct 14 03:13:17 2026
+#> Environmental units ................ 2
+#> Parallel ........................... [   ]
+#>   [1/2] PIRA downloaded
+#>   [2/2] SETE downloaded
+#> Note: no valid data returned for: FROST_DAYS
+#>       These columns are entirely NA (parameter unavailable at this site/period).
+#> Computing VPD ...................... [ x ]
+#> Computing N, RTA ................... [ x ]
+#> Computing n ........................ [ x ]
+#> Computing TH1 ...................... [ x ]
+#> Computing TH2 ...................... [ x ]
+#> Computing PAR_TEMP ................. [ x ]
+#> Environmental units downloaded ..... 2/2
+#> Daily weather features ............. 25
+#> Done ............................... Wed Oct 14 03:13:19 2026
+#> Total time ......................... 1.97s
 
 ## Mid-century, intermediate scenario, 4-model ensemble.
 ## The default 'models' set covers all four SSPs.
@@ -175,21 +200,102 @@ fut <- get_climate_scenario(env.id = sites$env, lat = sites$lat,
                             lon = sites$lon, baseline = base,
                             model = "ensemble", scenario = "ssp245",
                             period = "2041-2060")
-
-## Which GCMs fully cover a scenario? (GFDL-ESM4 has no ssp245.)
-.cs_models_for("ssp245")
+#> ---------------------------------------------------------------
+#> get_climate_scenario -- CMIP6 downscaled scenario weather
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#> ---------------------------------------------------------------
+#> CMIP6 downscaled scenario (WorldClim 2.1)
+#> Scenario ........... ssp245
+#> Period ............. 2041-2060
+#> Model(s) ........... IPSL-CM6A-LR, MPI-ESM1-2-HR, MRI-ESM2-0, UKESM1-0-LL
+#> Resolution ......... 2.5m
+#> Cache .............. /home/runner/.cache/R/et
+#> ---------------------------------------------------------------
+#>   - downloading wc2.1_2.5m_tmin_IPSL-CM6A-LR_ssp245_2041-2060.tif
+#>   - downloading wc2.1_2.5m_tmax_IPSL-CM6A-LR_ssp245_2041-2060.tif
+#>   - downloading wc2.1_2.5m_prec_IPSL-CM6A-LR_ssp245_2041-2060.tif
+#>   - downloading wc2.1_2.5m_tmin_MPI-ESM1-2-HR_ssp245_2041-2060.tif
+#>   - downloading wc2.1_2.5m_tmax_MPI-ESM1-2-HR_ssp245_2041-2060.tif
+#>   - downloading wc2.1_2.5m_prec_MPI-ESM1-2-HR_ssp245_2041-2060.tif
+#>   - downloading wc2.1_2.5m_tmin_MRI-ESM2-0_ssp245_2041-2060.tif
+#>   - downloading wc2.1_2.5m_tmax_MRI-ESM2-0_ssp245_2041-2060.tif
+#>   - downloading wc2.1_2.5m_prec_MRI-ESM2-0_ssp245_2041-2060.tif
+#>   - downloading wc2.1_2.5m_tmin_UKESM1-0-LL_ssp245_2041-2060.tif
+#>   - downloading wc2.1_2.5m_tmax_UKESM1-0-LL_ssp245_2041-2060.tif
+#>   - downloading wc2.1_2.5m_prec_UKESM1-0-LL_ssp245_2041-2060.tif
+#>   - computing monthly baseline climatology
+#>   - applying monthly delta-change signal
+#> Dropping baseline-derived column(s) invalidated by the shift: n, N, RTA, VPD. Re-run processWTH().
+#> ---------------------------------------------------------------
+#> Mean applied signal across sites and months
+#>   Tmax  +0.80 C
+#>   Tmin  -0.56 C
+#>   Prec  x1.25
+#> ---------------------------------------------------------------
 
 ## GFDL-ESM4 is fine for ssp126 or ssp370, just not ssp245/ssp585:
 fut126 <- get_climate_scenario(env.id = sites$env, lat = sites$lat,
                                lon = sites$lon, baseline = base,
                                model = "GFDL-ESM4", scenario = "ssp126",
                                period = "2041-2060")
+#> ---------------------------------------------------------------
+#> get_climate_scenario -- CMIP6 downscaled scenario weather
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#> ---------------------------------------------------------------
+#> CMIP6 downscaled scenario (WorldClim 2.1)
+#> Scenario ........... ssp126
+#> Period ............. 2041-2060
+#> Model(s) ........... GFDL-ESM4
+#> Resolution ......... 2.5m
+#> Cache .............. /home/runner/.cache/R/et
+#> ---------------------------------------------------------------
+#>   - downloading wc2.1_2.5m_tmin_GFDL-ESM4_ssp126_2041-2060.tif
+#>   - downloading wc2.1_2.5m_tmax_GFDL-ESM4_ssp126_2041-2060.tif
+#>   - downloading wc2.1_2.5m_prec_GFDL-ESM4_ssp126_2041-2060.tif
+#>   - computing monthly baseline climatology
+#>   - applying monthly delta-change signal
+#> Dropping baseline-derived column(s) invalidated by the shift: n, N, RTA, VPD. Re-run processWTH().
+#> ---------------------------------------------------------------
+#> Mean applied signal across sites and months
+#>   Tmax  +0.57 C
+#>   Tmin  -0.79 C
+#>   Prec  x1.10
+#> ---------------------------------------------------------------
 
 ## Drop straight into the existing pipeline
 fut <- processWTH(fut)
+#> ---------------------------------------------------------------
+#> processWTH -- derives all agro-meteorological parameters
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - radiation parameters computed
+#>   - atmospheric-demand parameters computed
+#>   - temperature-response parameters computed
 ph  <- env_phenology(fut, crop = "maize")
+#> ---------------------------------------------------------------
+#> env_phenology -- maps weather onto thermal-time stages
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - computing daily thermal time (method = gdd)
+#>   - assigning developmental stages
+#> Warning: 2 environment(s) did not accumulate enough thermal time to reach 'R6': PIRA, SETE. Days beyond the last reached stage are NA. Extend the series or lower the stage thresholds.
+#> ---------------------------------------------------------------
+#> Thermal-time stages (GDD, Tbase = 10 C, Tupper = 30 C)
+#>   VE      <=     125 C d       18 day(s)
+#>   V6      <=     475 C d       50 day(s)
+#>   V12     <=     740 C d       37 day(s)
+#>   VT      <=    1135 C d       55 day(s)
+#>   R1      <=    1250 C d       16 day(s)
+#>   R3      <=    1660 C d       56 day(s)
+#>   R5      <=    2110 C d       63 day(s)
+#>   R6      <=    2700 C d       71 day(s)
+#> ---------------------------------------------------------------
 
 ## Compare thermal time now vs mid-century
 tapply(ph$dTT, ph$env, sum)
-} # }
+#>     PIRA     SETE 
+#> 2611.382 2625.824 
+# }
 ```

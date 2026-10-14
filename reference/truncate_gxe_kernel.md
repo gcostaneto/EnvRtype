@@ -27,6 +27,14 @@ truncate_gxe_kernel(random, keep_prop = 0.75, pattern = "GE")
   character. Regular expression selecting the GxE kernels to truncate.
   Default `"GE"`.
 
+## Value
+
+The input `random` list of kernels, with the selected GxE kernels
+replaced by their reduced-rank (truncated) version and any cached
+spectral decomposition removed so the kernels are re-decomposed on the
+next fit. When no kernel matches `pattern`, or `keep_prop >= 1`, the
+list is returned unchanged.
+
 ## Details
 
 CAUTION: truncation distorts the G:GxE ratio – rg moved to 0.72 vs a

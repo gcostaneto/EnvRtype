@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -244,7 +244,7 @@ column marks sites outside the envelope. `"table"` needs no ggplot2.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  S5   2   2         2  G1, G2 0.6456563          edge   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  S6   3   2         2  G1, G2 0.7109495          edge   FALSE</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co">## ---- Realistic scan: 50 new locations across Mato Grosso, Brazil --------</span></span></span>
 <span class="r-in"><span><span class="co">## The bundled maize datasets are multi-environment trials from Mato Grosso:</span></span></span>
 <span class="r-in"><span><span class="co">## maizeWTH (daily weather), maizeYield (grain yield) and maizeG (genomic</span></span></span>
@@ -257,12 +257,23 @@ column marks sites outside the envelope. `"table"` needs no ggplot2.</p></dd>
 <span class="r-in"><span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FRUE"</span>, <span class="st">"PETP"</span>, <span class="st">"GDD"</span>, <span class="st">"T2M_MAX"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">Wtr</span>  <span class="op">&lt;-</span> <span class="fu"><a href="W_matrix.html">W_matrix</a></span><span class="op">(</span>env.data <span class="op">=</span> <span class="va">maizeWTH</span><span class="op">[</span><span class="va">maizeWTH</span><span class="op">$</span><span class="va">daysFromStart</span> <span class="op">&lt;</span> <span class="fl">100</span>, <span class="op">]</span>,</span></span>
 <span class="r-in"><span>                 var.id <span class="op">=</span> <span class="va">vars</span>, statistic <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> W_matrix -- builds the environmental covariable (W) matrix</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - summarising weather data into environmental covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - centring, scaling and quality-controlling W</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 2. Kernels + a fit that KEEPS the effect chains (required by any scan)</span></span></span>
 <span class="r-in"><span><span class="va">K</span>   <span class="op">&lt;-</span> <span class="fu"><a href="get_kernel.html">get_kernel</a></span><span class="op">(</span>K_G <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>G <span class="op">=</span> <span class="va">maizeG</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                  K_E <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>W <span class="op">=</span> <span class="fu"><a href="env_kernel.html">env_kernel</a></span><span class="op">(</span>env.data <span class="op">=</span> <span class="va">Wtr</span><span class="op">)</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                  data <span class="op">=</span> <span class="va">maizeYield</span>, model <span class="op">=</span> <span class="st">"RNMM"</span>,</span></span>
 <span class="r-in"><span>                  env <span class="op">=</span> <span class="st">"env"</span>, gid <span class="op">=</span> <span class="st">"gid"</span>, y <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> env_kernel -- builds environmental relatedness kernels</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - computing a single environmental kernel</span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="kernel_model.html">kernel_model</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"value"</span>, data <span class="op">=</span> <span class="va">maizeYield</span>, random <span class="op">=</span> <span class="va">K</span>,</span></span>
 <span class="r-in"><span>                    env <span class="op">=</span> <span class="st">"env"</span>, gid <span class="op">=</span> <span class="st">"gid"</span>,</span></span>
 <span class="r-in"><span>                    iterations <span class="op">=</span> <span class="fl">5000</span>, burnin <span class="op">=</span> <span class="fl">1000</span>, keep_effects <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -282,32 +293,135 @@ column marks sites outside the envelope. `"table"` needs no ggplot2.</p></dd>
 <span class="r-in"><span>                       variables.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T2M"</span>, <span class="st">"T2M_MAX"</span>, <span class="st">"T2M_MIN"</span>,</span></span>
 <span class="r-in"><span>                                           <span class="st">"T2MDEW"</span>, <span class="st">"PRECTOT"</span>, <span class="st">"RH2M"</span>,</span></span>
 <span class="r-in"><span>                                           <span class="st">"ALLSKY_SFC_SW_DWN"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> get_weather -- downloads daily weather from NASA POWER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> get_weather() - daily weather from NASA POWER</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> https://docs.ropensci.org/nasapower</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Start .............................. Wed Oct 14 03:15:45 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units ................ 50</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Parallel ........................... [   ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [1/50] MT01 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [2/50] MT02 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [3/50] MT03 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [4/50] MT04 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [5/50] MT05 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [6/50] MT06 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [7/50] MT07 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [8/50] MT08 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [9/50] MT09 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [10/50] MT10 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [11/50] MT11 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [12/50] MT12 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [13/50] MT13 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [14/50] MT14 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [15/50] MT15 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [16/50] MT16 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [17/50] MT17 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [18/50] MT18 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [19/50] MT19 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [20/50] MT20 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [21/50] MT21 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [22/50] MT22 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [23/50] MT23 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [24/50] MT24 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [25/50] MT25 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [26/50] MT26 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [27/50] MT27 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [28/50] MT28 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [29/50] MT29 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [30/50] MT30 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [31/50] MT31 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [32/50] MT32 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [33/50] MT33 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [34/50] MT34 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [35/50] MT35 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [36/50] MT36 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [37/50] MT37 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [38/50] MT38 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [39/50] MT39 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [40/50] MT40 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [41/50] MT41 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [42/50] MT42 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [43/50] MT43 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [44/50] MT44 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [45/50] MT45 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [46/50] MT46 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [47/50] MT47 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [48/50] MT48 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [49/50] MT49 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [50/50] MT50 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing VPD ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing N, RTA ................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing n ........................ [   ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing TH1 ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing TH2 ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing PAR_TEMP ................. [   ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units downloaded ..... 50/50</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Daily weather features ............. 12</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Done ............................... Wed Oct 14 03:16:15 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total time ......................... 29.97s</span>
 <span class="r-in"><span><span class="va">wth_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="processWTH.html">processWTH</a></span><span class="op">(</span><span class="va">wth_new</span><span class="op">)</span>          <span class="co"># derives FRUE, PETP, GDD, ...</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> processWTH -- derives all agro-meteorological parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Dropping existing column(s) before recomputation: N, RTA, VPD</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - radiation parameters computed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - atmospheric-demand parameters computed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - temperature-response parameters computed</span>
 <span class="r-in"><span><span class="va">Wnew</span> <span class="op">&lt;-</span> <span class="fu"><a href="W_matrix.html">W_matrix</a></span><span class="op">(</span>env.data <span class="op">=</span> <span class="va">wth_new</span><span class="op">[</span><span class="va">wth_new</span><span class="op">$</span><span class="va">daysFromStart</span> <span class="op">&lt;</span> <span class="fl">100</span>, <span class="op">]</span>,</span></span>
 <span class="r-in"><span>                 var.id <span class="op">=</span> <span class="va">vars</span>, statistic <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> W_matrix -- builds the environmental covariable (W) matrix</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - summarising weather data into environmental covariables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - centring, scaling and quality-controlling W</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 5. Predict the trained genotypes at all 50 sites</span></span></span>
 <span class="r-in"><span><span class="va">sc</span> <span class="op">&lt;-</span> <span class="fu"><a href="scan_untested_envs.html">scan_untested_envs</a></span><span class="op">(</span><span class="va">fit</span>, W_train <span class="op">=</span> <span class="va">Wtr</span>, W_new <span class="op">=</span> <span class="va">Wnew</span>, K_G <span class="op">=</span> <span class="va">maizeG</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Only 5 training environments. This tool is designed for a LARGE training network; with few environments the covariate-to-performance mapping is poorly estimated.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>7 of 50 new environments are GROSS extrapolations (mahalanobis_ratio &gt; 3 or &gt;50% of covariates outside the training range): MT07, MT08, MT31, MT32, MT40, MT44, MT46. Predictions there are unsupported by the training data (returned unchanged).</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 6. Coverage first: where does the trial network actually support prediction?</span></span></span>
 <span class="r-in"><span><span class="fu">map_scan</span><span class="op">(</span><span class="va">sc</span>, <span class="va">coords</span>, type <span class="op">=</span> <span class="st">"coverage"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="map_scan-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Predicted performance of one genotype across Mato Grosso</span></span></span>
 <span class="r-in"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">maizeG</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="fu">map_scan</span><span class="op">(</span><span class="va">sc</span>, <span class="va">coords</span>, type <span class="op">=</span> <span class="st">"performance"</span>, genotypes <span class="op">=</span> <span class="va">g1</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="map_scan-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Mean predicted performance over the first ten genotypes</span></span></span>
 <span class="r-in"><span><span class="fu">map_scan</span><span class="op">(</span><span class="va">sc</span>, <span class="va">coords</span>, type <span class="op">=</span> <span class="st">"performance"</span>,</span></span>
 <span class="r-in"><span>         genotypes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">maizeG</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, summarise <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="map_scan-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 7. Overlay the Mato Grosso state border for context. geobr serves the</span></span></span>
 <span class="r-in"><span><span class="co">##    official IBGE boundaries for Brazil as sf objects; clip = TRUE also</span></span></span>
 <span class="r-in"><span><span class="co">##    drops any scanned site that falls outside the polygon.</span></span></span>
-<span class="r-in"><span><span class="va">mt</span> <span class="op">&lt;-</span> <span class="fu">geobr</span><span class="fu">::</span><span class="fu">read_state</span><span class="op">(</span>code_state <span class="op">=</span> <span class="st">"MT"</span>, year <span class="op">=</span> <span class="fl">2020</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"geobr"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">&amp;&amp;</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"sf"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">mt</span> <span class="op">&lt;-</span> <span class="fu">geobr</span><span class="fu">::</span><span class="fu"><a href="https://ipea.github.io/geobr/reference/read_state.html" class="external-link">read_state</a></span><span class="op">(</span>code_state <span class="op">=</span> <span class="st">"MT"</span>, year <span class="op">=</span> <span class="fl">2020</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">map_scan</span><span class="op">(</span><span class="va">sc</span>, <span class="va">coords</span>, type <span class="op">=</span> <span class="st">"coverage"</span>, shp <span class="op">=</span> <span class="va">mt</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">map_scan</span><span class="op">(</span><span class="va">sc</span>, <span class="va">coords</span>, type <span class="op">=</span> <span class="st">"performance"</span>, genotypes <span class="op">=</span> <span class="va">g1</span>,</span></span>
 <span class="r-in"><span>         shp <span class="op">=</span> <span class="va">mt</span>, clip <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using year/date 2020</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> duckdb keeps downloaded extensions and secrets in a temporary directory:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> /tmp/RtmpXsMBXe/duckdb</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> This is removed when the R session ends.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Extensions are re-downloaded each session.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Secrets are lost.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> See ?duckdb_storage for details and alternatives.</span>
+<span class="r-plt img"><img src="map_scan-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

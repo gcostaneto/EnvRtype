@@ -70,9 +70,43 @@ A `data.frame` with one row per design point: `noise`, `n_var`,
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 C <- sim_met_C(q = 10, min.cor = 0.2, max.cor = 0.8, seed = 1)
+#> Warning: Rejection sampling failed in 200 tries; C was repaired by eigenvalue clamping.
+#>   Requested off-diagonal range [0.200, 0.800]; realised [0.235, 0.712].
 grid <- sim_W_grid(C, noise = c(0, 0.3, 0.6), n_var = c(20, 100),
                    collinearity = c(0, 0.8), n_rep = 5)
-} # }
+#>   [1/12] noise=0.00  n_var=20  collinearity=0.00
+#>   [2/12] noise=0.30  n_var=20  collinearity=0.00
+#>   [3/12] noise=0.60  n_var=20  collinearity=0.00
+#>   [4/12] noise=0.00  n_var=100  collinearity=0.00
+#>   [5/12] noise=0.30  n_var=100  collinearity=0.00
+#>   [6/12] noise=0.60  n_var=100  collinearity=0.00
+#>   [7/12] noise=0.00  n_var=20  collinearity=0.80
+#>   [8/12] noise=0.30  n_var=20  collinearity=0.80
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#>   [9/12] noise=0.60  n_var=20  collinearity=0.80
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#>   [10/12] noise=0.00  n_var=100  collinearity=0.80
+#>   [11/12] noise=0.30  n_var=100  collinearity=0.80
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#>   [12/12] noise=0.60  n_var=100  collinearity=0.80
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> Warning: Calibration failed; using noise as the raw variance share.
+# }
 ```

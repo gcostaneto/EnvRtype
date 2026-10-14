@@ -81,6 +81,7 @@ See `get_weather_resumable` for the full checkpoint design.
 
 ``` r
 if (FALSE) { # \dontrun{
+## Long-running download job requiring access to SoilGrids.
 grid <- data.frame(env = paste0("P", 1:200),
                    lat = runif(200, -13, -12),
                    lon = runif(200, -56, -55))

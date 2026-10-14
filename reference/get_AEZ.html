@@ -13,7 +13,7 @@ Companion to get_weather and get_soil."><meta property="og:image" content="https
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -185,7 +185,7 @@ Rome, FAO. <a href="https://gaez.fao.org" class="external-link">https://gaez.fao
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Ames_IA"</span>, <span class="st">"Lincoln_NE"</span>, <span class="st">"Piracicaba_BR"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  lat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">42.03</span>, <span class="fl">40.81</span>, <span class="op">-</span><span class="fl">22.71</span><span class="op">)</span>,</span></span>
@@ -193,15 +193,42 @@ Rome, FAO. <a href="https://gaez.fao.org" class="external-link">https://gaez.fao
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Default: uses the raster bundled with the package (offline)</span></span></span>
 <span class="r-in"><span><span class="va">aez</span> <span class="op">&lt;-</span> <span class="fu">get_AEZ</span><span class="op">(</span><span class="va">sites</span><span class="op">$</span><span class="va">env</span>, <span class="va">sites</span><span class="op">$</span><span class="va">lat</span>, <span class="va">sites</span><span class="op">$</span><span class="va">lon</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Using bundled GAEZ raster: aez_v9v2red_5m_CRUTS32_Hist_8110_100_avg.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Extracting cell values at 3 site(s) ...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Done. 3/3 site(s) classified.</span>
 <span class="r-in"><span><span class="va">aez</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             env    lat    lon aez_code                   aez_label    thermal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       Ames_IA  42.03 -93.62       17 Subtropics, cool; semi-arid Subtropics</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    Lincoln_NE  40.81 -96.68       32  Temperate, cool; per-humid  Temperate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Piracicaba_BR -22.71 -47.63        3     Tropics, lowland; humid    Tropics</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    moisture arable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 semi-arid   TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 per-humid   TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     humid   TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Check zone purity in a 25 km neighbourhood</span></span></span>
 <span class="r-in"><span><span class="va">aez25</span> <span class="op">&lt;-</span> <span class="fu">get_AEZ</span><span class="op">(</span><span class="va">sites</span><span class="op">$</span><span class="va">env</span>, <span class="va">sites</span><span class="op">$</span><span class="va">lat</span>, <span class="va">sites</span><span class="op">$</span><span class="va">lon</span>, buffer <span class="op">=</span> <span class="fl">25000</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Using bundled GAEZ raster: aez_v9v2red_5m_CRUTS32_Hist_8110_100_avg.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Extracting majority class within 25000 m ...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Done. 3/3 site(s) classified.</span>
 <span class="r-in"><span><span class="va">aez25</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"env"</span>, <span class="st">"aez_label"</span>, <span class="st">"majority_share"</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             env                   aez_label majority_share</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       Ames_IA Subtropics, cool; semi-arid            1.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    Lincoln_NE Subtropics, cool; semi-arid            0.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Piracicaba_BR     Tropics, lowland; humid            1.0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Raw codes, no labelling</span></span></span>
 <span class="r-in"><span><span class="fu">get_AEZ</span><span class="op">(</span><span class="va">sites</span><span class="op">$</span><span class="va">env</span>, <span class="va">sites</span><span class="op">$</span><span class="va">lat</span>, <span class="va">sites</span><span class="op">$</span><span class="va">lon</span>, legend <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Using bundled GAEZ raster: aez_v9v2red_5m_CRUTS32_Hist_8110_100_avg.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Extracting cell values at 3 site(s) ...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Done. 3/3 site(s) classified.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             env    lat    lon aez_code</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       Ames_IA  42.03 -93.62       17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    Lincoln_NE  40.81 -96.68       32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Piracicaba_BR -22.71 -47.63        3</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co">## A different GAEZ layer you downloaded yourself</span></span></span>
 <span class="r-in"><span><span class="fu">get_AEZ</span><span class="op">(</span><span class="va">sites</span><span class="op">$</span><span class="va">env</span>, <span class="va">sites</span><span class="op">$</span><span class="va">lat</span>, <span class="va">sites</span><span class="op">$</span><span class="va">lon</span>, file <span class="op">=</span> <span class="st">"GAEZ_AEZ_scenario.tif"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>

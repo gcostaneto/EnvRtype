@@ -98,6 +98,7 @@ Brandon Monier, modified by Germano Costa Neto
 
 ``` r
 if (FALSE) { # \dontrun{
+## Requires the live SoilGrids service.
 get_soil(env.id = "NM", lat = -13.05, lon = -56.05,
          variables.names = c("clay", "nitrogen"))
 } # }

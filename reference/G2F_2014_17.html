@@ -19,7 +19,7 @@ Here we used the geographic coordinates from 93 environments (diverse locations 
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,33 +68,104 @@ computational sciences, statistics, and engineering. See https://bmcresnotes.bio
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/gcostaneto/EnvRtype" class="external-link">EnvRtype</a></span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/gcostaneto/EnvRtype" class="external-link">EnvRtype</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">G2F_2014_17</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">G2F_2014_17</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         env     lat       lon      start        end</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 ARH1@2016 34.7299  -90.7597 2016-04-07 2016-09-14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 ARH1@2017 34.7299  -90.7598 2017-04-17 2017-09-24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 ARH2@2016 35.8388  -90.6650 2016-04-23 2016-09-30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 ARH2@2017 35.6747  -90.0749 2017-04-25 2017-10-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 COH1@2017 40.6491 -104.9993 2017-05-31 2017-11-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 DEH1@2014 38.6300  -75.4651 2014-05-05 2014-10-12</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># let's use the first 10 locations only</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">data</span> <span class="op">=</span> <span class="va">G2F_2014_17</span></span></span>
+<span class="r-in"><span><span class="va">data</span>  <span class="op">=</span> <span class="va">G2F_2014_17</span></span></span>
 <span class="r-in"><span><span class="va">env</span>   <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">env</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">lon</span>   <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">lon</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">lat</span>   <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">lat</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">env</span>   <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">env</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">start</span> <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">start</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">end</span> <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">end</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">end</span>   <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">end</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># get_weather() queries the NASA POWER web service</span></span></span>
 <span class="r-in"><span><span class="va">weather.data</span> <span class="op">=</span></span></span>
 <span class="r-in"><span>  <span class="fu">EnvRtype</span><span class="fu">::</span><span class="fu"><a href="get_weather.html">get_weather</a></span><span class="op">(</span>env.id <span class="op">=</span> <span class="va">env</span>,</span></span>
 <span class="r-in"><span>                        lat <span class="op">=</span> <span class="va">lat</span>,</span></span>
 <span class="r-in"><span>                        lon <span class="op">=</span> <span class="va">lon</span>,</span></span>
 <span class="r-in"><span>                        start.day <span class="op">=</span> <span class="va">start</span>,</span></span>
-<span class="r-in"><span>                        end.day <span class="op">=</span> <span class="va">end</span>,</span></span>
-<span class="r-in"><span>                        parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                        end.day <span class="op">=</span> <span class="va">end</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> get_weather -- downloads daily weather from NASA POWER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> get_weather() - daily weather from NASA POWER</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> https://docs.ropensci.org/nasapower</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Start .............................. Wed Oct 14 03:12:22 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units ................ 10</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Parallel ........................... [   ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [1/10] ARH1@2016 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [2/10] ARH1@2017 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [3/10] ARH2@2016 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [4/10] ARH2@2017 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [5/10] COH1@2017 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [6/10] DEH1@2014 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [7/10] DEH1@2015 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [8/10] DEH1@2016 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [9/10] DEH1@2017 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [10/10] GAH1@2014 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Note: no valid data returned for: FROST_DAYS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>       These columns are entirely NA (parameter unavailable at this site/period).</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing VPD ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing N, RTA ................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing n ........................ [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing TH1 ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing TH2 ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing PAR_TEMP ................. [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units downloaded ..... 10/10</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Daily weather features ............. 25</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Done ............................... Wed Oct 14 03:12:33 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total time ......................... 11.44s</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">weather.data</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         env      LON     LAT YEAR MM DD DOY   YYYYMMDD daysFromStart   T2M</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 ARH1@2016 -90.7597 34.7299 2016  4  7  98 2016-04-07             1 15.40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 ARH1@2016 -90.7597 34.7299 2016  4  8  99 2016-04-08             2 12.18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 ARH1@2016 -90.7597 34.7299 2016  4  9 100 2016-04-09             3 11.87</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 ARH1@2016 -90.7597 34.7299 2016  4 10 101 2016-04-10             4 18.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 ARH1@2016 -90.7597 34.7299 2016  4 11 102 2016-04-11             5 17.93</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 ARH1@2016 -90.7597 34.7299 2016  4 12 103 2016-04-12             6 12.87</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   T2M_MAX T2M_MIN T2MDEW ALLSKY_SFC_LW_DWN ALLSKY_SFC_SW_DWN ALLSKY_SFC_SW_DNI</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   23.84    7.19   9.57             26.94             22.46             26.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   18.41    6.35   5.82             24.14             26.30             34.77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   17.73    5.93   5.72             25.33             26.20             33.59</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   24.32   11.47  12.49             29.33             23.85             24.49</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   22.36   11.70  15.98             32.72              2.23              0.22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   18.40    8.57   6.89             26.43             26.05             31.19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ALLSKY_SFC_PAR_TOT ALLSKY_SFC_UVA ALLSKY_SFC_UVB PRECTOT EVPTRNS  QV2M  RH2M</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1              10.17           1.32           0.02    0.00    3.58  7.47 71.33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2              11.56           1.50           0.03    0.00    2.94  5.71 68.86</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3              11.65           1.49           0.03    0.12    2.40  5.70 68.91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4              10.76           1.38           0.03    0.19    4.24  9.06 71.83</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5               1.34           0.20           0.00   28.10    0.89 11.39 88.54</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6              11.61           1.50           0.03    0.19    2.78  6.14 69.11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   GWETROOT GWETTOP FROST_DAYS WS2M       VPD      N    RTA      n      TH1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0.87    0.86         NA 2.96 0.7921423 12.779 34.659  9.590 59.44878</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0.86    0.85         NA 3.18 0.6143665 12.814 34.849 12.785 54.62210</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.86    0.85         NA 2.25 0.5627432 12.850 35.038 12.319 54.15839</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0.85    0.84         NA 5.15 0.7494486 12.885 35.223  8.959 63.46926</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     0.85    0.89         NA 4.07 0.2228091 12.920 35.407  0.080 63.87855</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     0.87    0.86         NA 3.62 0.6214677 12.955 35.588 11.354 55.64748</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       TH2   PAR_TEMP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 60.0452 0.66038961</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 55.4752 0.94909688</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 55.1292 0.98146588</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 63.7364 0.59645233</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 64.8828 0.07473508</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 56.5504 0.90209790</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

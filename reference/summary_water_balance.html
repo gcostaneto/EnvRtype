@@ -13,7 +13,7 @@ genotype-by-environment models."><meta property="og:image" content="https://gcos
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -137,27 +137,204 @@ prediction in multi-environment trials. <em>Heredity</em> 126, 92-106.
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co">## Synthetic daily weather and a uniform soil profile (mapped units).</span></span></span>
+<span class="r-in"><span><span class="va">wth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>daysFromStart <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">120</span>, env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"E1"</span>, <span class="st">"E2"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wth</span><span class="op">$</span><span class="va">PRECTOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">wth</span><span class="op">$</span><span class="va">daysFromStart</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%%</a></span> <span class="fl">10</span> <span class="op">==</span> <span class="fl">0</span>, <span class="fl">25</span>, <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wth</span><span class="op">$</span><span class="va">ETP</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></span>
+<span class="r-in"><span><span class="va">soil</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"E1"</span>, <span class="st">"E2"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">layer</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0_5cm"</span>, <span class="st">"5_15cm"</span>, <span class="st">"15_30cm"</span>, <span class="st">"30_60cm"</span>, <span class="st">"60_100cm"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">soil</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"wv0033|"</span>, <span class="va">layer</span><span class="op">)</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">300</span></span></span>
+<span class="r-in"><span>  <span class="va">soil</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"wv1500|"</span>, <span class="va">layer</span><span class="op">)</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">150</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="water_balance.html">water_balance</a></span><span class="op">(</span><span class="va">wth</span>, <span class="va">soil</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> water_balance -- runs a FAO-56 daily soil water balance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Using 'ETP' as reference evapotranspiration.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> water_balance() - FAO-56 soil water balance</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Allen et al. (1998), FAO Irrigation and Drainage Paper 56</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environments ....................... 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Rooting depth ...................... 300 -&gt; 1000 mm by 60 DAP</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Depletion fraction p ............... 0.55 (adjusted daily for ETc)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [1/2] E1 | TAW 47-150 mm | stressed days 79/120</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [2/2] E2 | TAW 47-150 mm | stressed days 79/120</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Stress days: none=82  mild=18  moderate=90  severe=50</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Done.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Season-level, one row per environment</span></span></span>
 <span class="r-in"><span><span class="fu">summary_water_balance</span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> summary_water_balance -- summarises a water balance by environment/stage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   env n_days mean_Ks min_Ks total_deficit n_stress_days max_consecutive_stress</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  E1    120  0.7295 0.3119       167.684            79                     77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  E2    120  0.7295 0.3119       167.684            79                     77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   total_ETc total_ETa ETa_ETc_ratio total_rain total_irrigation total_drainage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   565.875   398.191        0.7037        300                0          0.855</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   565.875   398.191        0.7037        300                0          0.855</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean_ASW mean_depletion</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  44.4743         0.5815</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  44.4743         0.5815</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## By maize growth stage</span></span></span>
 <span class="r-in"><span><span class="fu">summary_water_balance</span><span class="op">(</span><span class="va">wb</span>, by.interval <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                      time.window  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">14</span>, <span class="fl">35</span>, <span class="fl">60</span>, <span class="fl">90</span>, <span class="fl">120</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      names.window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P-E"</span>, <span class="st">"E-V1"</span>, <span class="st">"V1-V4"</span>,</span></span>
 <span class="r-in"><span>                                       <span class="st">"V4-VT"</span>, <span class="st">"VT-GF"</span>, <span class="st">"GF-PM"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> summary_water_balance -- summarises a water balance by environment/stage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    env interval n_days mean_Ks min_Ks total_deficit n_stress_days</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   E1      P-E     13  1.0000 1.0000         0.000             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   E1     E-V1     21  1.0000 1.0000         0.000             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   E1    V1-V4     25  0.8380 0.5785        23.192            18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   E1    V4-VT     30  0.5341 0.3390        80.374            30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   E1    VT-GF     30  0.5359 0.3119        62.601            30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   E1    GF-PM      1  0.4944 0.4944         1.517             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   E2      P-E     13  1.0000 1.0000         0.000             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   E2     E-V1     21  1.0000 1.0000         0.000             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   E2    V1-V4     25  0.8380 0.5785        23.192            18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  E2    V4-VT     30  0.5341 0.3390        80.374            30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  E2    VT-GF     30  0.5359 0.3119        62.601            30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  E2    GF-PM      1  0.4944 0.4944         1.517             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    max_consecutive_stress total_ETc total_ETa ETa_ETc_ratio total_rain</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                       0    33.184    33.184        1.0000         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                       0    85.216    85.216        1.0000         50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                      16   139.350   116.158        0.8336         50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                      30   172.500    92.126        0.5341         75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                      30   132.625    70.024        0.5280         75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                       1     3.000     1.483        0.4943         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                       0    33.184    33.184        1.0000         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                       0    85.216    85.216        1.0000         50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                      16   139.350   116.158        0.8336         50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                     30   172.500    92.126        0.5341         75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11                     30   132.625    70.024        0.5280         75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12                      1     3.000     1.483        0.4943         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    total_irrigation total_drainage mean_ASW mean_depletion</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                 0          0.855  48.1002         0.1595</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                 0          0.000  60.1676         0.3016</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                 0          0.000  49.3071         0.6056</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                 0          0.000  37.8824         0.7475</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                 0          0.000  34.2662         0.7716</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                 0          0.000  50.9550         0.6603</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                 0          0.855  48.1002         0.1595</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                 0          0.000  60.1676         0.3016</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                 0          0.000  49.3071         0.6056</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                0          0.000  37.8824         0.7475</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11                0          0.000  34.2662         0.7716</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12                0          0.000  50.9550         0.6603</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Default 10-day windows when no breakpoints are given</span></span></span>
 <span class="r-in"><span><span class="fu">summary_water_balance</span><span class="op">(</span><span class="va">wb</span>, by.interval <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> summary_water_balance -- summarises a water balance by environment/stage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    env    interval n_days mean_Ks min_Ks total_deficit n_stress_days</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   E1  Interval_1      9  1.0000 1.0000         0.000             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   E1  Interval_2     10  1.0000 1.0000         0.000             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   E1  Interval_3     10  1.0000 1.0000         0.000             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   E1  Interval_4     10  0.9934 0.9335         0.351             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   E1  Interval_5     10  0.8657 0.6605         7.662             7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   E1  Interval_6     10  0.7360 0.5785        15.179            10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   E1  Interval_7     10  0.6182 0.4384        21.956            10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   E1  Interval_8     10  0.5146 0.3691        27.913            10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   E1  Interval_9     10  0.4695 0.3390        30.505            10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  E1 Interval_10     10  0.4684 0.3119        28.252            10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  E1 Interval_11     10  0.5229 0.3359        20.988            10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  E1 Interval_12     10  0.6163 0.3954        13.361            10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  E1 Interval_13      1  0.4944 0.4944         1.517             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  E2  Interval_1      9  1.0000 1.0000         0.000             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  E2  Interval_2     10  1.0000 1.0000         0.000             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  E2  Interval_3     10  1.0000 1.0000         0.000             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  E2  Interval_4     10  0.9934 0.9335         0.351             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  E2  Interval_5     10  0.8657 0.6605         7.662             7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  E2  Interval_6     10  0.7360 0.5785        15.179            10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  E2  Interval_7     10  0.6182 0.4384        21.956            10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  E2  Interval_8     10  0.5146 0.3691        27.913            10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  E2  Interval_9     10  0.4695 0.3390        30.505            10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  E2 Interval_10     10  0.4684 0.3119        28.252            10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24  E2 Interval_11     10  0.5229 0.3359        20.988            10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25  E2 Interval_12     10  0.6163 0.3954        13.361            10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26  E2 Interval_13      1  0.4944 0.4944         1.517             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    max_consecutive_stress total_ETc total_ETa ETa_ETc_ratio total_rain</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                       0    21.316    21.316        1.0000          0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                       0    32.434    32.434        1.0000         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                       0    41.100    41.100        1.0000         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                       1    49.100    48.749        0.9929         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                       6    56.300    48.638        0.8639         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                      10    57.500    42.321        0.7360         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                      10    57.500    35.544        0.6182         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                      10    57.500    29.587        0.5146         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                      10    57.500    26.995        0.4695         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                     10    53.375    25.122        0.4707         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11                     10    44.208    23.220        0.5252         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12                     10    35.042    21.682        0.6187         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13                      1     3.000     1.483        0.4943         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                      0    21.316    21.316        1.0000          0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15                      0    32.434    32.434        1.0000         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16                      0    41.100    41.100        1.0000         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17                      1    49.100    48.749        0.9929         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18                      6    56.300    48.638        0.8639         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19                     10    57.500    42.321        0.7360         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20                     10    57.500    35.544        0.6182         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                     10    57.500    29.587        0.5146         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22                     10    57.500    26.995        0.4695         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23                     10    53.375    25.122        0.4707         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24                     10    44.208    23.220        0.5252         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25                     10    35.042    21.682        0.6187         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26                      1     3.000     1.483        0.4943         25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    total_irrigation total_drainage mean_ASW mean_depletion</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                 0          0.000  42.5219         0.2006</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                 0          0.855  56.1251         0.1939</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                 0          0.000  61.3250         0.2953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                 0          0.000  58.3600         0.4407</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                 0          0.000  50.4072         0.5860</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                 0          0.000  47.6630         0.6582</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                 0          0.000  43.4536         0.7103</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                 0          0.000  36.5898         0.7561</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                 0          0.000  33.6038         0.7760</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                0          0.000  32.6264         0.7825</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11                0          0.000  33.7186         0.7752</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12                0          0.000  36.4535         0.7570</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13                0          0.000  50.9550         0.6603</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                0          0.000  42.5219         0.2006</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15                0          0.855  56.1251         0.1939</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16                0          0.000  61.3250         0.2953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17                0          0.000  58.3600         0.4407</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18                0          0.000  50.4072         0.5860</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19                0          0.000  47.6630         0.6582</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20                0          0.000  43.4536         0.7103</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                0          0.000  36.5898         0.7561</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22                0          0.000  33.6038         0.7760</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23                0          0.000  32.6264         0.7825</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24                0          0.000  33.7186         0.7752</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25                0          0.000  36.4535         0.7570</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26                0          0.000  50.9550         0.6603</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Rank environments by flowering-period stress</span></span></span>
 <span class="r-in"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu">summary_water_balance</span><span class="op">(</span><span class="va">wb</span>, by.interval <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                           time.window  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">60</span>, <span class="fl">90</span>, <span class="fl">120</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                           names.window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"veg"</span>, <span class="st">"flower"</span>, <span class="st">"fill"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> summary_water_balance -- summarises a water balance by environment/stage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
 <span class="r-in"><span><span class="va">s</span><span class="op">[</span><span class="va">s</span><span class="op">$</span><span class="va">interval</span> <span class="op">==</span> <span class="st">"flower"</span>, <span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">s</span><span class="op">$</span><span class="va">mean_Ks</span><span class="op">[</span><span class="va">s</span><span class="op">$</span><span class="va">interval</span> <span class="op">==</span> <span class="st">"flower"</span><span class="op">]</span><span class="op">)</span>, <span class="op">]</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] env                    interval               n_days                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] mean_Ks                min_Ks                 total_deficit         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] n_stress_days          max_consecutive_stress total_ETc             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] total_ETa              ETa_ETc_ratio          total_rain            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] total_irrigation       total_drainage         mean_ASW              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16] mean_depletion        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;0 rows&gt; (or 0-length row.names)</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

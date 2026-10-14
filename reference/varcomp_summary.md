@@ -49,3 +49,14 @@ varcomp_summary(
 - digits:
 
   integer. Number of decimal places in the summary table. Default 4.
+
+## Value
+
+An object of class `"km_varcomp"`, a list with elements `table` (a
+data.frame of variance components with their absolute values and
+proportions of the phenotypic variance), the individual variances
+`varG`, `varE`, `varGE`, `var_resid` and `var_total`, the heritabilities
+`h2_entry_mean` and `h2_plot`, the genetic correlation `rg`, the counts
+`p` and `q`, the `method` used, and the logical flags
+`negative_residual` and `few_environments`. A dedicated `print` method
+displays the table and derived quantities.

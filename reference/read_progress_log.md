@@ -43,6 +43,7 @@ A `data.frame` with `env`, `key`, `status` (`"ok"` or `"failed"`),
 
 ``` r
 if (FALSE) { # \dontrun{
+## Requires a saved run created by get_soil_resumable().
 lg <- read_progress_log(run.id = "zoning_grid")
 table(lg$status)
 

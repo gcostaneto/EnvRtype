@@ -114,7 +114,7 @@ env_pc_associate(pc, ybar)
 #> 4     y1 PC1  0.1322238 0.83213929 0.83213929 5
 # }
 
-if (FALSE) { # \dontrun{
+# \donttest{
 ## ----------------------------------------------------------------------
 ## WORKED EXAMPLE: marker effect networks -> eigenmarkers -> environmental PCs
 ##
@@ -126,6 +126,33 @@ if (FALSE) { # \dontrun{
 ##   module B markers respond to late-season PRECIPITATION
 ##   module C markers have real but environment-INDEPENDENT effects
 ## ----------------------------------------------------------------------
+
+## --- 0. Simulate markers, weather and phenotypes ---------------------
+set.seed(2026)
+n.gid <- 160
+n.marker <- 90
+n.env <- 20
+envs <- paste0("E", seq_len(n.env))
+drivers <- scale(matrix(rnorm(n.env * 2), n.env, 2))
+rownames(drivers) <- envs
+M <- scale(matrix(rbinom(n.gid * n.marker, 2, 0.5), n.gid, n.marker))
+dimnames(M) <- list(paste0("G", seq_len(n.gid)),
+                    paste0("m", seq_len(n.marker)))
+beta <- matrix(0.2, n.marker, n.env)
+beta[1:30, ] <- rep(0.2 + 0.3 * drivers[, 1], each = 30)
+beta[31:60, ] <- rep(0.2 + 0.3 * drivers[, 2], each = 30)
+signal <- M %*% beta
+Y <- signal + matrix(rnorm(length(signal), sd = 0.3), n.gid, n.env)
+dimnames(Y) <- list(rownames(M), envs)
+
+wth <- expand.grid(daysFromStart = 1:151, env = envs)
+ie <- match(wth$env, envs)
+day <- wth$daysFromStart
+wth$T2M <- 22 + 4 * sin(pi * day / 151) +
+  3 * drivers[ie, 1] * (day >= 50 & day <= 100) +
+  rnorm(nrow(wth), sd = 0.5)
+wth$PRECTOT <- exp(1 + 0.6 * drivers[ie, 2] * (day >= 100) +
+                     rnorm(nrow(wth), sd = 0.1))
 
 ## --- 1. Marker effects per environment (RR-BLUP) ----------------------
 ## Solve via the n x n system: with p markers >> n genotypes this is far
@@ -166,23 +193,53 @@ dimnames(EM) <- list(colnames(beta.hat), paste0("ME", ids))
 
 ## --- 4. Environmental PCA and association -----------------------------
 W  <- env_indices(wth, interval = 3, end.day = 151,
-                  statistic.by = c(PRECTOT = "sum", ETP = "sum"))
+                  statistic.by = c(PRECTOT = "sum"))
+#> ---------------------------------------------------------------
+#> env_indices -- builds interval-resolved environmental indices
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#> ------------------------------------------------------------
+#> env_indices(): 20 environments x 2 factors x 51 intervals = 102 indices
+#>   interval width : 3 day(s), days 1..151
+#> ------------------------------------------------------------
 pc <- env_pca(W)
+#> ---------------------------------------------------------------
+#> env_pca -- runs PCA on the environmental index matrix
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#> ------------------------------------------------------------
+#> env_pca(): 20 environments x 102 indices
+#>   informative PCs: 19 (= n.env - 1)
+#>   PC1 25.7%, PC2 16.4%, cumulative 42.1%
+#> ------------------------------------------------------------
 assoc <- env_pc_associate(pc, EM, n.pc = 9, p.adjust = "BH")
+#> ---------------------------------------------------------------
+#> env_pc_associate -- correlates PCs with an external variable
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#> Strongest: ME1 ~ PC1, r = -0.77, p = 7.77e-05, FDR p = 0.0014 (n = 20)
 head(assoc)
-##  column  PC     r        p    p.adj  n
-##     ME1 PC1  0.99 1.91e-17 6.88e-16 20
-##     ME9 PC2  0.94 1.27e-09 2.29e-08 20
-##    ME12 PC2 -0.73 2.77e-04 3.33e-03 20
+#>   column  PC           r            p       p.adj  n
+#> 1    ME1 PC1 -0.76768107 0.0000776952 0.001398514 20
+#> 2    ME2 PC1  0.73762697 0.0002058673 0.001852806 20
+#> 3    ME1 PC2 -0.62673494 0.0031054106 0.018632464 20
+#> 4    ME2 PC2 -0.60348651 0.0048437536 0.021796891 20
+#> 5    ME2 PC4 -0.12352845 0.6038587012 0.982526789 20
+#> 6    ME2 PC5 -0.09614311 0.6867892239 0.982526789 20
 
 ## --- 5. Name the drivers of an associated PC (paper Fig. 6c) ----------
-k <- 1
+k <- as.integer(sub("PC", "", assoc$PC[1]))
 L <- data.frame(factor = pc$meta$factor, day = pc$meta$day,
                 loading = pc$loadings[, k])
-sort(tapply(abs(L$loading), L$factor, mean), decreasing = TRUE)[1:4]
-##  PC1 -> T2M, GDD, T2M_MIN, T2M_MAX   (temperature: module A recovered)
-##  PC2 -> PRECTOT, PETP, RH2M          (precipitation: module B recovered)
+sort(tapply(abs(L$loading), L$factor, mean), decreasing = TRUE)
+#>        T2M    PRECTOT 
+#> 0.08056294 0.07779317 
 env_loading_curve(pc, pc = k)
+#> ---------------------------------------------------------------
+#> env_loading_curve -- plots seasonal PC loading curves
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+
 
 ## --- 6. Permutation null, and why it is NOT enough --------------------
 ## Permuting environment labels of the eigenmarker breaks the
@@ -192,14 +249,14 @@ perm.max <- replicate(500, {
   rownames(EMp) <- rownames(EM)
   max(abs(env_pc_associate(pc, EMp, n.pc = 9, verbose = FALSE)$r))
 })
-quantile(perm.max, 0.95)   # ~0.66: any |r| below this is noise-compatible
+quantile(perm.max, 0.95)   # compare observed |r| with the permutation null
+#>       95% 
+#> 0.6557894 
 
-## IMPORTANT NEGATIVE RESULT. In this simulation module ME12 contained no
-## enriched markers at all -- it is a clustering artefact -- yet it reached
-## r = -0.73 (FDR q = 0.003) AND passed this permutation test (p = 0.008).
+## A spurious module can pass both FDR adjustment and this permutation test.
 ## The permutation preserves the module definitions, so it cannot detect a
 ## module that was spuriously assembled in the first place. Guard against
 ## this with module stability across resampled genotypes, or by requiring
 ## an independent set of environments -- not with permutation alone.
-} # }
+# }
 ```

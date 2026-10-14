@@ -170,7 +170,7 @@ ever required.
 
 Costa-Neto et al (2021)
 
-EnvRtype v.1.2.3, Sep 2026
+EnvRtype v.0.1.3, Sep 2026
 
 ## Reusing kernels
 
@@ -197,22 +197,79 @@ Germano Costa Neto. Refactored version.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 data("maizeYield"); data("maizeG"); data("maizeWTH")
 
 ECs <- W_matrix(env.data = maizeWTH[maizeWTH$daysFromStart < 100, ],
                 var.id = c("FRUE", "PETP", "SRAD", "T2M_MAX"),
                 statistic = "mean")
+#> ---------------------------------------------------------------
+#> W_matrix -- builds the environmental covariable (W) matrix
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - summarising weather data into environmental covariables
+#>   - centring, scaling and quality-controlling W
 KE <- list(W = env_kernel(env.data = ECs)[[2]])
+#> ---------------------------------------------------------------
+#> env_kernel -- builds environmental relatedness kernels
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - computing a single environmental kernel
 KG <- list(G = maizeG)
 
 ## factored engine (default): no n x n matrix is ever allocated
 K <- get_kernel(K_G = KG, K_E = KE, data = maizeYield, model = "RNMM",
                 env = "env", gid = "gid", y = "value", verbose = TRUE)
+#> 
+#> =========================================================
+#>  get_kernel: envirotype-informed kernels for multi-
+#>    environment genomic prediction. Builds the G, E and
+#>    GxE relationship kernels for the chosen model and
+#>    returns them spectrally decomposed, ready for
+#>    kernel_model().
+#>  Original Version: Costa-Neto et al (2021)
+#>  EnvRtype v.0.1.3, Sep 2026
+#> =========================================================
+#>  model = RNMM    engine = factored
+#> ---------------------------------------------------------
+#>   [1/4] Validating inputs ...                             0.00s  750 obs | 150 gid | 5 env
+#>   [2/4] Aligning relationship matrices ...                0.00s  K_G 150 x 150, K_E 5 x 5
+#>   [3/4] Factorising kernels ...                           0.02s  3 kernels, total rank 807
+#>   [4/4] Assembling output ...                             0.01s  no n x n matrix built
+#> ---------------------------------------------------------
+#>  Kernels: KE_W, KG_G, KGE_GW
+#>  Total rank 807 / 750 observations (107.6%)
+#>  Memory: ~4.8 MB factored vs 13.5 MB dense (3x less)
+#>  Total running time: 0.03s
+#> =========================================================
+#> 
 
 fit <- kernel_model(y = "value", data = maizeYield, random = K,
                     env = "env", gid = "gid",
                     iterations = 5000, burnin = 1000, verbose = TRUE)
+#> 
+#> =========================================================
+#>  kernel_model: Bayesian genomic prediction for multi-
+#>    environment trials. Fits y = 1mu + Xb + sum_j u_j + e
+#>    with u_j ~ N(0, K_j sigma2_j) by Gibbs sampling in the
+#>    spectral basis of each kernel, returning predictions,
+#>    variance components and heritabilities.
+#>  Original Version: Costa-Neto et al (2021)
+#>  EnvRtype v.0.1.3, Sep 2026
+#> =========================================================
+#>  Gibbs sampler after Granato et al (2018) G3
+#> ---------------------------------------------------------
+#>   [1/6] Validating inputs ...                             0.00s  750 obs, 3 kernels
+#>   [2/6] Assembling response and design ...                0.00s  5 env, 150 gid
+#>   [3/6] Spectral decomposition ...                        0.00s  all kernels pre-factored; eigen skipped
+#>   [4/6] Computing prior scales ...                        0.00s  R2 = 0.50 split 'per_kernel', prior_scale 'eigen'
+#>   [5/6] Gibbs sampling (5000 iter) ...                    6.23s  400 draws kept
+#>   [6/6] Variance components and heritability ...          0.00s  method 'gibbs', h2 = 0.073  [postmean needs keep_effects = TRUE]
+#> ---------------------------------------------------------
+#>  Total running time: 6.23s  (sampler 6.23s, 100%)
+#>  Residual variance  : 0.2949
+#> =========================================================
+#> 
 
 ## trim the eigenvalue tail: usually a large speedup, tiny accuracy cost
 K99 <- get_kernel(K_G = KG, K_E = KE, data = maizeYield, model = "RNMM",
@@ -221,5 +278,5 @@ K99 <- get_kernel(K_G = KG, K_E = KE, data = maizeYield, model = "RNMM",
 ## separate marker-predictable from residual genetic variance
 Ki <- get_kernel(K_G = KG, K_E = KE, data = maizeYield, model = "RNMM",
                  intercept.random = TRUE)
-} # }
+# }
 ```

@@ -34,6 +34,15 @@ kernel_model_mc(..., n_chains = 3, seed = 1, tol = 1e-10, scale_kernels = TRUE)
 
   logical. If `TRUE` (default) kernels are scaled before fitting.
 
+## Value
+
+An object of class `"kernel_model"` (the fit of the first chain; see
+[`kernel_model`](https://gcostaneto.github.io/EnvRtype/reference/kernel_model.md))
+with two added elements: `diagnostics`, a data.frame giving the
+Gelman-Rubin `Rhat` and effective sample size `ESS` for the residual
+variance and each kernel-scale parameter, and `all_chains`, the list of
+individual per-chain fits.
+
 ## Details
 
 The decomposition is shared across chains.

@@ -11,7 +11,7 @@ tiny ESS means the chain has not mixed: increase `iterations`."><meta property="
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,6 +73,15 @@ tiny ESS means the chain has not mixed: increase `iterations`.</p>
 <dd><p>logical. If <code>TRUE</code> (default) kernels are scaled before fitting.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>An object of class <code>"kernel_model"</code> (the fit of the first chain;
+  see <code><a href="kernel_model.html">kernel_model</a></code>) with two added elements:
+  <code>diagnostics</code>, a data.frame giving the Gelman-Rubin <code>Rhat</code> and
+  effective sample size <code>ESS</code> for the residual variance and each
+  kernel-scale parameter, and <code>all_chains</code>, the list of individual
+  per-chain fits.</p>
+    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The decomposition is shared across chains.</p>

@@ -66,7 +66,20 @@ kernel_model_clustered(
 
   further arguments passed to `kernel_model`.
 
+## Value
+
+An object of class `"kernel_model"` (see
+[`kernel_model`](https://gcostaneto.github.io/EnvRtype/reference/kernel_model.md))
+with an added `cluster_info` element: a list recording the
+environment-to-cluster `mapping`, the number of clusters `k`, the
+`mechanism` used (`"block"`, `"fixed"` or `"both"`), the `gxe_pattern`,
+the number of added fixed columns `n_fixed_cols` and the names of the
+`blocked_kernels`.
+
 ## Details
 
 Block-diagonalisation MODIFIES the GxE kernels, so any cached
-decomposition for those kernels is dropped and recomputed.
+decomposition for those kernels is dropped and recomputed. Both dense
+and factored kernels are supported. Selected factored kernels are
+reconstructed as dense observation-by-observation matrices before
+blocking; unselected kernels are left unchanged.

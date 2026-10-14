@@ -67,6 +67,16 @@ kernel_cv(
 
   further arguments passed to `kernel_model`.
 
+## Value
+
+A list summarising out-of-sample predictive ability, with components
+`scheme` (the validation scheme used), `folds` (number of folds),
+`accuracy` (overall correlation between held-out predictions and
+observations), `rmse` (overall root-mean-square error), `per_fold` (a
+data.frame of per-fold `accuracy` and `rmse`), `fold_id` (integer fold
+assignment for each row of `data`), `predicted` (held-out predictions)
+and `observed` (the observed response).
+
 ## Details
 
 The kernels are decomposed ONCE and reused across all folds: they depend

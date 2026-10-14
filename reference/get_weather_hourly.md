@@ -152,19 +152,48 @@ Drainage Paper* 56.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 ## Reuse the coordinates of a shipped daily dataset
 sites <- unique(maizeWTH[, c("env", "LON", "LAT")])
 h <- get_weather_hourly(env.id = sites$env, lat = sites$LAT, lon = sites$LON,
                         start.day = "2016-01-01", end.day = "2016-01-31",
                         night.def = "solar")
+#> ---------------------------------------------------------------
+#> get_weather_hourly -- day/night weather from NASA POWER
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - environmental units ......... 5
+#>   - parameters .................. 12/15
+#>   - night definition ............ solar
+#>   - time standard ............... LST
+#>   - return ...................... one row per environment-day
+#>   - [1/5] NM | 31 days | night 5-11 h | complete 30/31
+#>   - [2/5] PM | 31 days | night 5-11 h | complete 30/31
+#>   - [3/5] IP | 31 days | night 5-11 h | complete 30/31
+#>   - [4/5] SE | 31 days | night 5-11 h | complete 30/31
+#>   - [5/5] SO | 31 days | night 5-11 h | complete 30/31
 
 ## Night temperature is not the daily minimum
 with(h, cor(T2M_night_mean, T2M_day_min, use = "complete.obs"))
+#> [1] 0.7978471
 
 ## Fixed night window, wrap-around handled correctly
 h2 <- get_weather_hourly(sites$env, sites$LAT, sites$LON,
                          "2016-01-01", "2016-01-31",
                          night.def = "fixed", night.hours = c(22:23, 0:5))
-} # }
+#> ---------------------------------------------------------------
+#> get_weather_hourly -- day/night weather from NASA POWER
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - environmental units ......... 5
+#>   - parameters .................. 12/15
+#>   - night definition ............ fixed
+#>   - time standard ............... LST
+#>   - return ...................... one row per environment-day
+#>   - [1/5] NM | 31 days | night 2-8 h | complete 30/31
+#>   - [2/5] PM | 31 days | night 2-8 h | complete 30/31
+#>   - [3/5] IP | 31 days | night 2-8 h | complete 30/31
+#>   - [4/5] SE | 31 days | night 2-8 h | complete 30/31
+#>   - [5/5] SO | 31 days | night 2-8 h | complete 30/31
+# }
 ```

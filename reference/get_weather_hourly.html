@@ -15,7 +15,7 @@ wired into the daily pipeline by analogy."><meta property="og:image" content="ht
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -186,21 +186,50 @@ Drainage Paper</em> 56.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co">## Reuse the coordinates of a shipped daily dataset</span></span></span>
 <span class="r-in"><span><span class="va">sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">maizeWTH</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"env"</span>, <span class="st">"LON"</span>, <span class="st">"LAT"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu">get_weather_hourly</span><span class="op">(</span>env.id <span class="op">=</span> <span class="va">sites</span><span class="op">$</span><span class="va">env</span>, lat <span class="op">=</span> <span class="va">sites</span><span class="op">$</span><span class="va">LAT</span>, lon <span class="op">=</span> <span class="va">sites</span><span class="op">$</span><span class="va">LON</span>,</span></span>
 <span class="r-in"><span>                        start.day <span class="op">=</span> <span class="st">"2016-01-01"</span>, end.day <span class="op">=</span> <span class="st">"2016-01-31"</span>,</span></span>
 <span class="r-in"><span>                        night.def <span class="op">=</span> <span class="st">"solar"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> get_weather_hourly -- day/night weather from NASA POWER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - environmental units ......... 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - parameters .................. 12/15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - night definition ............ solar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - time standard ............... LST</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - return ...................... one row per environment-day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - [1/5] NM | 31 days | night 5-11 h | complete 30/31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - [2/5] PM | 31 days | night 5-11 h | complete 30/31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - [3/5] IP | 31 days | night 5-11 h | complete 30/31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - [4/5] SE | 31 days | night 5-11 h | complete 30/31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - [5/5] SO | 31 days | night 5-11 h | complete 30/31</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Night temperature is not the daily minimum</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">h</span>, <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">T2M_night_mean</span>, <span class="va">T2M_day_min</span>, use <span class="op">=</span> <span class="st">"complete.obs"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.7978471</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Fixed night window, wrap-around handled correctly</span></span></span>
 <span class="r-in"><span><span class="va">h2</span> <span class="op">&lt;-</span> <span class="fu">get_weather_hourly</span><span class="op">(</span><span class="va">sites</span><span class="op">$</span><span class="va">env</span>, <span class="va">sites</span><span class="op">$</span><span class="va">LAT</span>, <span class="va">sites</span><span class="op">$</span><span class="va">LON</span>,</span></span>
 <span class="r-in"><span>                         <span class="st">"2016-01-01"</span>, <span class="st">"2016-01-31"</span>,</span></span>
 <span class="r-in"><span>                         night.def <span class="op">=</span> <span class="st">"fixed"</span>, night.hours <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">22</span><span class="op">:</span><span class="fl">23</span>, <span class="fl">0</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> get_weather_hourly -- day/night weather from NASA POWER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - environmental units ......... 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - parameters .................. 12/15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - night definition ............ fixed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - time standard ............... LST</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - return ...................... one row per environment-day</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - [1/5] NM | 31 days | night 2-8 h | complete 30/31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - [2/5] PM | 31 days | night 2-8 h | complete 30/31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - [3/5] IP | 31 days | night 2-8 h | complete 30/31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - [4/5] SE | 31 days | night 2-8 h | complete 30/31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - [5/5] SO | 31 days | night 2-8 h | complete 30/31</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

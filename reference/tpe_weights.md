@@ -84,6 +84,7 @@ climatology still holds.
 
 ``` r
 if (FALSE) { # \dontrun{
+## Requires an observed multi-year weather series (wth).
 rp <- env_risk_profile(wth, planting = "10-15", crop = "maize")
 
 ## How much of the TPE is each drought class at flowering?

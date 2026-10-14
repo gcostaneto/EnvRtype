@@ -11,7 +11,7 @@ balance, following FAO-56."><meta property="og:image" content="https://gcostanet
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -125,10 +125,78 @@ unphysical and indicates a data problem. A warning is raised when this occurs.</
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">env.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_weather.html">get_weather</a></span><span class="op">(</span>lat <span class="op">=</span> <span class="op">-</span><span class="fl">13.05</span>, lon <span class="op">=</span> <span class="op">-</span><span class="fl">56.05</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> get_weather -- downloads daily weather from NASA POWER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> start.day is NULL; matched as 2024-01-18</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> end.day is NULL; matched as 2024-02-17</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> get_weather() - daily weather from NASA POWER</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> https://docs.ropensci.org/nasapower</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Start .............................. Wed Oct 14 03:16:24 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units ................ 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Parallel ........................... [   ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [1/1] env1 downloaded</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Note: no valid data returned for: FROST_DAYS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>       These columns are entirely NA (parameter unavailable at this site/period).</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing VPD ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing N, RTA ................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing n ........................ [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing TH1 ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing TH2 ...................... [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing PAR_TEMP ................. [ x ]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units downloaded ..... 1/1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Daily weather features ............. 25</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Done ............................... Wed Oct 14 03:16:25 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total time ......................... 1.17s</span>
 <span class="r-in"><span><span class="fu">param_atmospheric</span><span class="op">(</span><span class="va">env.data</span>, Alt <span class="op">=</span> <span class="fl">850</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> param_atmospheric -- derives atmospheric-demand parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Slope of saturation vapour pressure curve (SPV, kPa/C)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Vapour pressure deficit (VPD, kPa)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Potential evapotranspiration (ETP, mm/day)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Precipitation balance P - ETP (PETP, mm/day)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          VPD       SPV       ETP       PETP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1.1329342 0.2199688 10.679594  -6.419594</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.8908138 0.2086795  8.653845  19.106155</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.7845527 0.2071375 10.422778  -2.872778</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.6764902 0.2072966  9.653876  -7.783876</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1.0276807 0.2214785  7.748428  -4.998428</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.8150283 0.2145072  7.069940  -2.239940</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.6079081 0.2112529  7.899735   0.580265</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.7429793 0.2130376  6.959234   2.210766</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1.0570758 0.2127664 10.701635  -9.721635</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1.1963363 0.2115765 11.262974 -11.222974</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 1.2402607 0.2137985 10.129089 -10.109089</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 0.9479085 0.2069256  8.669066  -4.779066</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 1.1868980 0.2164249  9.598868   1.591132</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 0.9927726 0.2140709  8.947486  -1.877486</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 1.3280358 0.2268024  9.526170  11.193830</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 0.6186276 0.2023610  6.961476   1.208524</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 0.7202045 0.1957995  4.285090   6.014910</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 0.3776662 0.1847477  5.813851  25.026149</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 0.3128784 0.1788592  7.653222   4.706778</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 0.6340613 0.1897132  9.404194   2.695806</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 0.7824328 0.2029855  8.081383  -3.581383</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 0.8544113 0.2025170  8.436664   5.583336</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 0.6804262 0.2052893  9.529413   1.020587</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 0.6819151 0.2070845  5.632104  13.277896</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 0.3567582 0.1936859  6.436445  15.883555</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 0.5607959 0.1936859  5.106924  -4.176924</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 0.6908651 0.1974738  9.106010  -7.616010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 0.7864117 0.2060269  9.878412  -9.118412</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 0.8475449 0.2098021 10.333451  -5.603451</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 0.8393412 0.2101774  9.779679  -4.299679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 0.9634764 0.2146710  6.338395  -3.368395</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

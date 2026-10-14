@@ -264,6 +264,7 @@ Borg, H. & Grimes, D.W. (1986) Depth development of roots with time.
 
 ``` r
 if (FALSE) { # \dontrun{
+## Requires live NASA POWER and SoilGrids services.
 ## ---------------------------------------------------------------
 ## 1. Minimal use
 ## ---------------------------------------------------------------

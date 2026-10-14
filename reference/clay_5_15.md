@@ -12,9 +12,10 @@ A single-layer GeoTIFF raster read with
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 f <- system.file("extdata", "clay_5_15.tif", package = "EnvRtype")
 clay <- terra::rast(f)
 terra::plot(clay)
-} # }
+
+# }
 ```

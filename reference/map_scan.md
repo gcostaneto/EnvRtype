@@ -214,7 +214,7 @@ head(ww_tab$winners)
 #> 5  S5   2   2         2  G1, G2 0.6456563          edge   FALSE
 #> 6  S6   3   2         2  G1, G2 0.7109495          edge   FALSE
 
-if (FALSE) { # \dontrun{
+# \donttest{
 ## ---- Realistic scan: 50 new locations across Mato Grosso, Brazil --------
 ## The bundled maize datasets are multi-environment trials from Mato Grosso:
 ## maizeWTH (daily weather), maizeYield (grain yield) and maizeG (genomic
@@ -227,12 +227,23 @@ data("maizeWTH"); data("maizeYield"); data("maizeG")
 vars <- c("FRUE", "PETP", "GDD", "T2M_MAX")
 Wtr  <- W_matrix(env.data = maizeWTH[maizeWTH$daysFromStart < 100, ],
                  var.id = vars, statistic = "mean")
+#> ---------------------------------------------------------------
+#> W_matrix -- builds the environmental covariable (W) matrix
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - summarising weather data into environmental covariables
+#>   - centring, scaling and quality-controlling W
 
 ## 2. Kernels + a fit that KEEPS the effect chains (required by any scan)
 K   <- get_kernel(K_G = list(G = maizeG),
                   K_E = list(W = env_kernel(env.data = Wtr)[[2]]),
                   data = maizeYield, model = "RNMM",
                   env = "env", gid = "gid", y = "value")
+#> ---------------------------------------------------------------
+#> env_kernel -- builds environmental relatedness kernels
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - computing a single environmental kernel
 fit <- kernel_model(y = "value", data = maizeYield, random = K,
                     env = "env", gid = "gid",
                     iterations = 5000, burnin = 1000, keep_effects = TRUE)
@@ -252,30 +263,133 @@ wth_new <- get_weather(env.id = coords$env, lat = coords$lat, lon = coords$lon,
                        variables.names = c("T2M", "T2M_MAX", "T2M_MIN",
                                            "T2MDEW", "PRECTOT", "RH2M",
                                            "ALLSKY_SFC_SW_DWN"))
+#> ---------------------------------------------------------------
+#> get_weather -- downloads daily weather from NASA POWER
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#> ---------------------------------------------------------------
+#> get_weather() - daily weather from NASA POWER
+#> https://docs.ropensci.org/nasapower
+#> ---------------------------------------------------------------
+#> Start .............................. Wed Oct 14 03:15:45 2026
+#> Environmental units ................ 50
+#> Parallel ........................... [   ]
+#>   [1/50] MT01 downloaded
+#>   [2/50] MT02 downloaded
+#>   [3/50] MT03 downloaded
+#>   [4/50] MT04 downloaded
+#>   [5/50] MT05 downloaded
+#>   [6/50] MT06 downloaded
+#>   [7/50] MT07 downloaded
+#>   [8/50] MT08 downloaded
+#>   [9/50] MT09 downloaded
+#>   [10/50] MT10 downloaded
+#>   [11/50] MT11 downloaded
+#>   [12/50] MT12 downloaded
+#>   [13/50] MT13 downloaded
+#>   [14/50] MT14 downloaded
+#>   [15/50] MT15 downloaded
+#>   [16/50] MT16 downloaded
+#>   [17/50] MT17 downloaded
+#>   [18/50] MT18 downloaded
+#>   [19/50] MT19 downloaded
+#>   [20/50] MT20 downloaded
+#>   [21/50] MT21 downloaded
+#>   [22/50] MT22 downloaded
+#>   [23/50] MT23 downloaded
+#>   [24/50] MT24 downloaded
+#>   [25/50] MT25 downloaded
+#>   [26/50] MT26 downloaded
+#>   [27/50] MT27 downloaded
+#>   [28/50] MT28 downloaded
+#>   [29/50] MT29 downloaded
+#>   [30/50] MT30 downloaded
+#>   [31/50] MT31 downloaded
+#>   [32/50] MT32 downloaded
+#>   [33/50] MT33 downloaded
+#>   [34/50] MT34 downloaded
+#>   [35/50] MT35 downloaded
+#>   [36/50] MT36 downloaded
+#>   [37/50] MT37 downloaded
+#>   [38/50] MT38 downloaded
+#>   [39/50] MT39 downloaded
+#>   [40/50] MT40 downloaded
+#>   [41/50] MT41 downloaded
+#>   [42/50] MT42 downloaded
+#>   [43/50] MT43 downloaded
+#>   [44/50] MT44 downloaded
+#>   [45/50] MT45 downloaded
+#>   [46/50] MT46 downloaded
+#>   [47/50] MT47 downloaded
+#>   [48/50] MT48 downloaded
+#>   [49/50] MT49 downloaded
+#>   [50/50] MT50 downloaded
+#> Computing VPD ...................... [ x ]
+#> Computing N, RTA ................... [ x ]
+#> Computing n ........................ [   ]
+#> Computing TH1 ...................... [ x ]
+#> Computing TH2 ...................... [ x ]
+#> Computing PAR_TEMP ................. [   ]
+#> Environmental units downloaded ..... 50/50
+#> Daily weather features ............. 12
+#> Done ............................... Wed Oct 14 03:16:15 2026
+#> Total time ......................... 29.97s
 wth_new <- processWTH(wth_new)          # derives FRUE, PETP, GDD, ...
+#> ---------------------------------------------------------------
+#> processWTH -- derives all agro-meteorological parameters
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#> Dropping existing column(s) before recomputation: N, RTA, VPD
+#>   - radiation parameters computed
+#>   - atmospheric-demand parameters computed
+#>   - temperature-response parameters computed
 Wnew <- W_matrix(env.data = wth_new[wth_new$daysFromStart < 100, ],
                  var.id = vars, statistic = "mean")
+#> ---------------------------------------------------------------
+#> W_matrix -- builds the environmental covariable (W) matrix
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - summarising weather data into environmental covariables
+#>   - centring, scaling and quality-controlling W
 
 ## 5. Predict the trained genotypes at all 50 sites
 sc <- scan_untested_envs(fit, W_train = Wtr, W_new = Wnew, K_G = maizeG)
+#> Warning: Only 5 training environments. This tool is designed for a LARGE training network; with few environments the covariate-to-performance mapping is poorly estimated.
+#> Warning: 7 of 50 new environments are GROSS extrapolations (mahalanobis_ratio > 3 or >50% of covariates outside the training range): MT07, MT08, MT31, MT32, MT40, MT44, MT46. Predictions there are unsupported by the training data (returned unchanged).
 
 ## 6. Coverage first: where does the trial network actually support prediction?
 map_scan(sc, coords, type = "coverage")
+
 
 ## Predicted performance of one genotype across Mato Grosso
 g1 <- rownames(maizeG)[1]
 map_scan(sc, coords, type = "performance", genotypes = g1)
 
+
 ## Mean predicted performance over the first ten genotypes
 map_scan(sc, coords, type = "performance",
          genotypes = rownames(maizeG)[1:10], summarise = "mean")
 
+
 ## 7. Overlay the Mato Grosso state border for context. geobr serves the
 ##    official IBGE boundaries for Brazil as sf objects; clip = TRUE also
 ##    drops any scanned site that falls outside the polygon.
+if (requireNamespace("geobr", quietly = TRUE) &&
+    requireNamespace("sf", quietly = TRUE)) {
 mt <- geobr::read_state(code_state = "MT", year = 2020)
 map_scan(sc, coords, type = "coverage", shp = mt)
 map_scan(sc, coords, type = "performance", genotypes = g1,
          shp = mt, clip = TRUE)
-} # }
+}
+#> ℹ Using year/date 2020
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpXsMBXe/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
+
+# }
 ```

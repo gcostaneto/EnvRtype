@@ -227,26 +227,74 @@ Gaussian-process conditional mean.)
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 data("maizeWTH"); data("maizeYield"); data("maizeG")
 
 ## Training covariates (first 100 days after sowing)
 vars <- c("FRUE", "PETP", "GDD", "T2M_MAX")
 Wtr  <- W_matrix(env.data = maizeWTH[maizeWTH$daysFromStart < 100, ],
                  var.id = vars, statistic = "mean")
+#> ---------------------------------------------------------------
+#> W_matrix -- builds the environmental covariable (W) matrix
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - summarising weather data into environmental covariables
+#>   - centring, scaling and quality-controlling W
 
 ## Fit KEEPING the effect chains -- required by the scan
 K   <- get_kernel(K_G = list(G = maizeG),
                   K_E = list(W = env_kernel(env.data = Wtr)[[2]]),
                   data = maizeYield, model = "RNMM",
                   env = "env", gid = "gid", y = "value")
+#> ---------------------------------------------------------------
+#> env_kernel -- builds environmental relatedness kernels
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - computing a single environmental kernel
 fit <- kernel_model(y = "value", data = maizeYield, random = K,
                     env = "env", gid = "gid", keep_effects = TRUE)
 
 ## Predict the trained genotypes at new sites (reuse the training W here)
 sc <- scan_untested_envs(fit, W_train = Wtr, W_new = Wtr, K_G = maizeG)
+#> Warning: Only 5 training environments. This tool is designed for a LARGE training network; with few environments the covariate-to-performance mapping is poorly estimated.
 sc                                   # print method: per-site diagnostics
+#> <scan_untested_envs> 150 genotypes x 5 new environments
+#>   trained on 5 environments | 4 covariates | 100 draws
+#>   GxE included: TRUE | credible level: 0.95 | envelope: keep 
+#> 
+#>  env      position   pred ci_ratio mahal out w_neg max_sim
+#>   NM interpolation -0.491     1.84  0.22  0% -0.78       1
+#>   SO          edge  0.953     3.04  1.00  0% -0.79       1
+#>   PM interpolation  0.519     2.00  0.57  0% -0.49       1
+#>   IP interpolation -1.117     3.35  0.99  0% -0.79       1
+#>   SE interpolation  0.427     2.42  0.73  0% -0.69       1
+#> 
+#>   position: interpolation 4 | edge 1 | mild_extrapolation 0 | gross_extrapolation 0 
+#> 
+#>   Position is GEOMETRIC: where the site sits relative to the training
+#>   covariate cloud. It is not a reliability verdict. Calibrated on 60
+#>   held-out environments:
+#>     ci_width_ratio   vs accuracy       r = -0.66  (best accuracy guide)
+#>     divergence_index vs accuracy       r = -0.41
+#>     max_similarity   vs accuracy       r = +0.12  (NOT predictive)
+#>     max_similarity   vs gain-over-mean r = +0.69  (best gain guide)
+#>   Lower ci_width_ratio = more precise. Higher max_similarity = the
+#>   covariates are more likely to beat a plain genotype mean. To know your
+#>   real accuracy, run leave-environments-out CV on your own data.
 head(sc$yHat)                        # predictions + credible intervals
+#>    gid env       yHat      lower      upper  ci_width
+#> 1 G001  NM -0.4519297 -0.6343264 -0.2475748 0.3867516
+#> 2 G002  NM -0.4883372 -0.6542589 -0.3228566 0.3314023
+#> 3 G003  NM -0.4882496 -0.6542457 -0.3233927 0.3308530
+#> 4 G004  NM -0.5660495 -0.8463357 -0.2748072 0.5715285
+#> 5 G005  NM -0.4501614 -0.7187839 -0.2195134 0.4992705
+#> 6 G006  NM -0.7938049 -1.2915761 -0.3402577 0.9513184
 sc$interpolation[, c("env", "position", "mahalanobis_ratio")]
-} # }
+#>   env      position mahalanobis_ratio
+#> 1  NM interpolation         0.2151366
+#> 2  SO          edge         1.0022725
+#> 3  PM interpolation         0.5666292
+#> 4  IP interpolation         0.9909099
+#> 5  SE interpolation         0.7312492
+# }
 ```

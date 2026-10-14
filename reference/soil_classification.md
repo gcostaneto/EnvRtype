@@ -280,6 +280,7 @@ no cross-site sample, `Mclust` for the underlying model.
 
 ``` r
 if (FALSE) { # \dontrun{
+## This workflow downloads SoilGrids data for a 200-site grid.
 library(mclust)
 
 ## ---------------------------------------------------------------

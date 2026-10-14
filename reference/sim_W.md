@@ -164,44 +164,159 @@ multi-environment prediction. *G3* 13(2), jkac313.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 C <- sim_met_C(q = 10, min.cor = 0.2, max.cor = 0.8, seed = 1)
+#> Warning: Rejection sampling failed in 200 tries; C was repaired by eigenvalue clamping.
+#>   Requested off-diagonal range [0.200, 0.800]; realised [0.235, 0.712].
 
 ## 1. An envirome that recovers ~70% of C (noise is on the outcome scale)
 W <- sim_W(C, noise = 0.3, n_var = 50, seed = 1)
+#> <sim_W>
+#>   environments x covariables . 10 x 50
+#>   r(K_W, C_env) off-diagonal . 0.8001   (target 0.7000)
+#>   r2  % of env relatedness ... 64.0%
+#>   effective rank ............. 7.14 of 50 covariables
+#>   PC1 share .................. 20.6%
+#>   internal variance share a .. 0.0868
+#>   marginal / kernel .......... gaussian / linear
 attr(W, "explained")$r
+#> [1] 0.800051
 
 ## 2. Perfect vs pure-noise enviromes
 W_good  <- sim_W(C, noise = 0.0, n_var = 50)
+#> <sim_W>
+#>   environments x covariables . 10 x 50
+#>   r(K_W, C_env) off-diagonal . 1.0000   (target 1.0000)
+#>   r2  % of env relatedness ... 100.0%
+#>   effective rank ............. 5.84 of 50 covariables
+#>   PC1 share .................. 24.6%
+#>   internal variance share a .. 0.0000
+#>   marginal / kernel .......... gaussian / linear
 W_noise <- sim_W(C, noise = 1.0, n_var = 50)
+#> <sim_W>
+#>   environments x covariables . 10 x 50
+#>   r(K_W, C_env) off-diagonal . -0.0776   (target 0.0000)
+#>   r2  % of env relatedness ... 0.6%
+#>   effective rank ............. 7.36 of 50 covariables
+#>   PC1 share .................. 22.2%
+#>   internal variance share a .. 1.0000
+#>   marginal / kernel .......... gaussian / linear
 
 ## 3. Redundant envirome: many collinear columns, low effective rank
 W <- sim_W(C, noise = 0.3, n_var = 200, collinearity = 0.8, n_blocks = 5)
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> <sim_W>
+#>   environments x covariables . 10 x 200
+#>   r(K_W, C_env) off-diagonal . 0.1501   (target 0.7000)
+#>   r2  % of env relatedness ... 2.3%
+#>   effective rank ............. 8.54 of 200 covariables
+#>   PC1 share .................. 15.2%
+#>   internal variance share a .. 0.3000
+#>   marginal / kernel .......... gaussian / linear
 
 ## 4. Non-Gaussian covariables (rank-preserving marginal transform)
 W <- sim_W(C, noise = 0.3, n_var = 60, marginal = "right-skewed")
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> <sim_W>
+#>   environments x covariables . 10 x 60
+#>   r(K_W, C_env) off-diagonal . 0.2371   (target 0.7000)
+#>   r2  % of env relatedness ... 5.6%
+#>   effective rank ............. 7.77 of 60 covariables
+#>   PC1 share .................. 18.5%
+#>   internal variance share a .. 0.3000
+#>   marginal / kernel .......... right-skewed / linear
 W <- sim_W(C, noise = 0.3, n_var = 60, marginal = "heavy-tailed")
+#> <sim_W>
+#>   environments x covariables . 10 x 60
+#>   r(K_W, C_env) off-diagonal . 0.7213   (target 0.7000)
+#>   r2  % of env relatedness ... 52.0%
+#>   effective rank ............. 7.04 of 60 covariables
+#>   PC1 share .................. 20.1%
+#>   internal variance share a .. 0.0353
+#>   marginal / kernel .......... heavy-tailed / linear
 W <- sim_W(C, noise = 0.3, n_var = 60, marginal = "bounded")
+#> Warning: Calibration failed; using noise as the raw variance share.
+#> <sim_W>
+#>   environments x covariables . 10 x 60
+#>   r(K_W, C_env) off-diagonal . -0.2372   (target 0.7000)
+#>   r2  % of env relatedness ... 5.6%
+#>   effective rank ............. 7.75 of 60 covariables
+#>   PC1 share .................. 19.3%
+#>   internal variance share a .. 0.3000
+#>   marginal / kernel .......... bounded / linear
 
 ## 5. Gaussian RBF kernel instead of the linear WW'
 W <- sim_W(C, noise = 0.3, n_var = 60, kernel = "rbf")
+#> <sim_W>
+#>   environments x covariables . 10 x 60
+#>   r(K_W, C_env) off-diagonal . 0.8003   (target 0.7000)
+#>   r2  % of env relatedness ... 64.0%
+#>   effective rank ............. 6.95 of 60 covariables
+#>   PC1 share .................. 22.2%
+#>   internal variance share a .. 0.0770
+#>   marginal / kernel .......... gaussian / rbf
 W <- sim_W(C, noise = 0.3, n_var = 60, kernel = "rbf", bandwidth = 2)
+#> <sim_W>
+#>   environments x covariables . 10 x 60
+#>   r(K_W, C_env) off-diagonal . 0.5236   (target 0.7000)
+#>   r2  % of env relatedness ... 27.4%
+#>   effective rank ............. 6.89 of 60 covariables
+#>   PC1 share .................. 22.8%
+#>   internal variance share a .. 0.0688
+#>   marginal / kernel .......... gaussian / rbf
 
 ## 6. Inject missing values AFTER the truth is computed
 W <- sim_W(C, noise = 0.3, n_var = 60, na.frac = 0.1)
+#> <sim_W>
+#>   environments x covariables . 10 x 60
+#>   r(K_W, C_env) off-diagonal . 0.6721   (target 0.7000)
+#>   r2  % of env relatedness ... 45.2%
+#>   effective rank ............. 6.84 of 60 covariables
+#>   PC1 share .................. 25.2%
+#>   internal variance share a .. 0.0865
+#>   marginal / kernel .......... gaussian / linear
+#>   missing values injected .... 10.0%
 sum(is.na(W))
+#> [1] 60
 
 ## 7. Named covariable families (sizes must sum to n_var)
 W <- sim_W(C, n_var = 12, family.sizes = c(temp = 4, rain = 5, rad = 3))
+#> <sim_W>
+#>   environments x covariables . 10 x 12
+#>   r(K_W, C_env) off-diagonal . 0.3512   (target 1.0000)
+#>   r2  % of env relatedness ... 12.3%
+#>   effective rank ............. 2.68 of 12 covariables
+#>   PC1 share .................. 53.5%
+#>   internal variance share a .. 0.0000
+#>   marginal / kernel .......... gaussian / linear
 colnames(W)
+#>  [1] "temp_1" "temp_2" "temp_3" "temp_4" "rain_1" "rain_2" "rain_3" "rain_4"
+#>  [9] "rain_5" "rad_1"  "rad_2"  "rad_3" 
 
 ## 8. Custom names and a faster/looser calibration
 W <- sim_W(C, noise = 0.4, n_var = 30, cal.nrep = 5,
            env_names = paste0("Loc", 1:10),
            var_names = paste0("bio", 1:30), seed = 1)
+#> <sim_W>
+#>   environments x covariables . 10 x 30
+#>   r(K_W, C_env) off-diagonal . 0.4270   (target 0.6000)
+#>   r2  % of env relatedness ... 18.2%
+#>   effective rank ............. 6.86 of 30 covariables
+#>   PC1 share .................. 22.7%
+#>   internal variance share a .. 0.1438
+#>   marginal / kernel .......... gaussian / linear
 
 ## 9. Raw (uncalibrated) internal variance share
 W <- sim_W(C, noise = 0.5, n_var = 50, calibrate = FALSE)
+#> <sim_W>
+#>   environments x covariables . 10 x 50
+#>   r(K_W, C_env) off-diagonal . 0.1849   (target 0.5000)
+#>   r2  % of env relatedness ... 3.4%
+#>   effective rank ............. 7.34 of 50 covariables
+#>   PC1 share .................. 21.0%
+#>   internal variance share a .. 0.5000
+#>   marginal / kernel .......... gaussian / linear
 plot(W)
-} # }
+
+# }
 ```

@@ -17,7 +17,7 @@ h2_entry  = varG / (varG + varE/q + varGE/(p*q) + var_resid)
 
     <a class="navbar-brand me-2" href="../index.html">EnvRtype</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,6 +95,18 @@ Taken from <code>fit$meta$y</code> when <code>NULL</code>.</p></dd>
 <dd><p>integer. Number of decimal places in the summary table. Default 4.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>An object of class <code>"km_varcomp"</code>, a list with elements
+  <code>table</code> (a data.frame of variance components with their absolute
+  values and proportions of the phenotypic variance), the individual
+  variances <code>varG</code>, <code>varE</code>, <code>varGE</code>, <code>var_resid</code> and
+  <code>var_total</code>, the heritabilities <code>h2_entry_mean</code> and
+  <code>h2_plot</code>, the genetic correlation <code>rg</code>, the counts <code>p</code>
+  and <code>q</code>, the <code>method</code> used, and the logical flags
+  <code>negative_residual</code> and <code>few_environments</code>. A dedicated
+  <code>print</code> method displays the table and derived quantities.</p>
+    </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

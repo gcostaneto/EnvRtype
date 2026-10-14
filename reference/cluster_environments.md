@@ -188,7 +188,7 @@ cluster_environments(R, distance = "sqrt",
 #> E1 E2 E3 E4 E5 E6 
 #>  1  1  1  2  3  4 
 
-if (FALSE) { # \dontrun{
+# \donttest{
 ## ------------------------------------------------------------------
 ## 4. Full workflow from phenotypes, kernels and a fitted model
 ## ------------------------------------------------------------------
@@ -196,9 +196,20 @@ data("maizeYield"); data("maizeG"); data("maizeWTH")
 
 ECs <- W_matrix(env.data = maizeWTH[maizeWTH$daysFromStart < 100, ],
                 var.id = c("FRUE", "PETP", "SRAD", "T2M_MAX"))
+#> ---------------------------------------------------------------
+#> W_matrix -- builds the environmental covariable (W) matrix
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - summarising weather data into environmental covariables
+#>   - centring, scaling and quality-controlling W
 K <- get_kernel(K_G = list(G = maizeG),
                 K_E = list(W = env_kernel(env.data = ECs)[[2]]),
                 data = maizeYield, model = "RNMM")
+#> ---------------------------------------------------------------
+#> env_kernel -- builds environmental relatedness kernels
+#> Last updated at 09/27/2026
+#> ---------------------------------------------------------------
+#>   - computing a single environmental kernel
 
 ## keep_effects = TRUE is required for $genetic_cor_env
 fit <- kernel_model(y = "value", env = "env", gid = "gid",
@@ -207,10 +218,16 @@ fit <- kernel_model(y = "value", env = "env", gid = "gid",
 
 megaenv <- cluster_environments(fit)
 megaenv$table
+#>   env cluster sil_width
+#> 1  IP       1    1.0000
+#> 2  NM       2    1.0000
+#> 4  SE       3    0.9580
+#> 3  PM       3    0.9566
+#> 5  SO       4    1.0000
 
 ## 5. Feed the clusters into a cluster-aware model
 fit_cl <- kernel_model_clustered(y = "value", data = maizeYield,
                                  random = K, env = "env", gid = "gid",
                                  clusters = megaenv, use = "block")
-} # }
+# }
 ```

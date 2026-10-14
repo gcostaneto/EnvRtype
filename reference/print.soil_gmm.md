@@ -34,6 +34,7 @@ print(x, ...)
 
 ``` r
 if (FALSE) { # \dontrun{
+## Requires a soil_grid data set, as in the soil_classification() example.
 fit <- soil_classification(soil_grid, risk.vars = "soc")
 print(fit)
 } # }
