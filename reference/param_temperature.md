@@ -107,7 +107,7 @@ env.data <- get_weather(lat = -13.05, lon = -56.05)
 #> get_weather() - daily weather from NASA POWER
 #> https://docs.ropensci.org/nasapower
 #> ---------------------------------------------------------------
-#> Start .............................. Thu Oct 22 18:26:40 2026
+#> Start .............................. Thu Oct 22 18:34:53 2026
 #> Environmental units ................ 1
 #> Parallel ........................... [   ]
 #>   [1/1] env1 downloaded
@@ -119,8 +119,8 @@ env.data <- get_weather(lat = -13.05, lon = -56.05)
 #> Computing PAR_TEMP ................. [ x ]
 #> Environmental units downloaded ..... 1/1
 #> Daily weather features ............. 25
-#> Done ............................... Thu Oct 22 18:26:40 2026
-#> Total time ......................... 0.85s
+#> Done ............................... Thu Oct 22 18:34:53 2026
+#> Total time ......................... 0.93s
 param_temperature(env.data)
 #> ---------------------------------------------------------------
 #> param_temperature -- derives temperature-response parameters

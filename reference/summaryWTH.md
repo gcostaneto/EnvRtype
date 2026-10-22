@@ -105,7 +105,7 @@ env.data <- get_weather(lat = -13.05, lon = -56.05)
 #> get_weather() - daily weather from NASA POWER
 #> https://docs.ropensci.org/nasapower
 #> ---------------------------------------------------------------
-#> Start .............................. Thu Oct 22 18:26:57 2026
+#> Start .............................. Thu Oct 22 18:35:09 2026
 #> Environmental units ................ 1
 #> Parallel ........................... [   ]
 #>   [1/1] env1 downloaded
@@ -117,8 +117,8 @@ env.data <- get_weather(lat = -13.05, lon = -56.05)
 #> Computing PAR_TEMP ................. [ x ]
 #> Environmental units downloaded ..... 1/1
 #> Daily weather features ............. 25
-#> Done ............................... Thu Oct 22 18:26:58 2026
-#> Total time ......................... 0.94s
+#> Done ............................... Thu Oct 22 18:35:11 2026
+#> Total time ......................... 1.08s
 summaryWTH(env.data, env.id = "env", statistic = "mean")
 #> ---------------------------------------------------------------
 #> summaryWTH -- summarises weather by environment and interval

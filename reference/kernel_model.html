@@ -51,7 +51,7 @@ total timings; verbose = FALSE (default) is entirely silent."><meta property="og
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Kernel Models for Predicting Phenotypes across Multi-Environment Conditions</h1>
-      <small class="dont-index">Source: <a href="https://github.com/gcostaneto/EnvRtype/blob/Releases/R/env_prediction.R" class="external-link"><code>R/env_prediction.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/gcostaneto/EnvRtype/blob/main/R/env_prediction.R" class="external-link"><code>R/env_prediction.R</code></a></small>
       <div class="d-none name"><code>kernel_model.Rd</code></div>
     </div>
 
@@ -372,7 +372,7 @@ prediction incorporating genotype x environment interaction models.
 <span class="r-out co"><span class="r-pr">#&gt;</span>   kernels      : KE_W, KG_G, KGE_GW </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   iterations   : 5000 (burn-in 1000 , thinning 10 )</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   residual var : 0.2967 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   runtime (s)  : 2.86 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   runtime (s)  : 2.61 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   variance components:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Type        K    Var CI_lower CI_upper SD.var</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Environment (E)        W 0.5952   0.5477   0.6495 0.0331</span>
@@ -423,10 +423,10 @@ prediction incorporating genotype x environment interaction models.
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [2/6] Assembling response and design ...                0.00s  5 env, 150 gid</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [3/6] Spectral decomposition ...                        0.00s  all kernels pre-factored; eigen skipped</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [4/6] Computing prior scales ...                        0.00s  R2 = 0.50 split 'per_kernel', prior_scale 'eigen'</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [5/6] Gibbs sampling (5000 iter) ...                    2.87s  400 draws kept</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [5/6] Gibbs sampling (5000 iter) ...                    2.56s  400 draws kept</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [6/6] Variance components and heritability ...          0.00s  method 'postmean', h2 = 0.121</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Total running time: 2.91s  (sampler 2.87s, 99%)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Total running time: 2.62s  (sampler 2.56s, 98%)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Residual variance  : 0.2984</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> =========================================================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>

@@ -104,7 +104,7 @@ get_spatial(env.dataframe = ref, digital.raster = elevation,
 #> Based on sf::st_as_sf() and terra::extract()
 #> Environmental units ................ 1
 #> Raster features .................... 1
-#> Done ............................... Thu Oct 22 18:25:25 2026
+#> Done ............................... Thu Oct 22 18:33:44 2026
 #> Total time ......................... 0.01s
 #>   env    lat    lng Elevation
 #> 1  NM -13.05 -56.05       300

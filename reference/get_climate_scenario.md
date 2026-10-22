@@ -176,7 +176,7 @@ base <- get_weather(env.id = sites$env, lat = sites$lat, lon = sites$lon,
 #> get_weather() - daily weather from NASA POWER
 #> https://docs.ropensci.org/nasapower
 #> ---------------------------------------------------------------
-#> Start .............................. Thu Oct 22 18:23:18 2026
+#> Start .............................. Thu Oct 22 18:31:54 2026
 #> Environmental units ................ 2
 #> Parallel ........................... [   ]
 #>   [1/2] PIRA downloaded
@@ -189,8 +189,8 @@ base <- get_weather(env.id = sites$env, lat = sites$lat, lon = sites$lon,
 #> Computing PAR_TEMP ................. [ x ]
 #> Environmental units downloaded ..... 2/2
 #> Daily weather features ............. 25
-#> Done ............................... Thu Oct 22 18:23:20 2026
-#> Total time ......................... 1.86s
+#> Done ............................... Thu Oct 22 18:31:56 2026
+#> Total time ......................... 2.3s
 
 ## Mid-century, intermediate scenario, 4-model ensemble.
 ## The default 'models' set covers all four SSPs.

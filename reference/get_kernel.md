@@ -234,13 +234,13 @@ K <- get_kernel(K_G = KG, K_E = KE, data = maizeYield, model = "RNMM",
 #> ---------------------------------------------------------
 #>   [1/4] Validating inputs ...                             0.00s  750 obs | 150 gid | 5 env
 #>   [2/4] Aligning relationship matrices ...                0.00s  K_G 150 x 150, K_E 5 x 5
-#>   [3/4] Factorising kernels ...                           0.02s  3 kernels, total rank 807
-#>   [4/4] Assembling output ...                             0.06s  no n x n matrix built
+#>   [3/4] Factorising kernels ...                           0.01s  3 kernels, total rank 807
+#>   [4/4] Assembling output ...                             0.01s  no n x n matrix built
 #> ---------------------------------------------------------
 #>  Kernels: KE_W, KG_G, KGE_GW
 #>  Total rank 807 / 750 observations (107.6%)
 #>  Memory: ~4.8 MB factored vs 13.5 MB dense (3x less)
-#>  Total running time: 0.07s
+#>  Total running time: 0.02s
 #> =========================================================
 #> 
 
@@ -263,10 +263,10 @@ fit <- kernel_model(y = "value", data = maizeYield, random = K,
 #>   [2/6] Assembling response and design ...                0.00s  5 env, 150 gid
 #>   [3/6] Spectral decomposition ...                        0.00s  all kernels pre-factored; eigen skipped
 #>   [4/6] Computing prior scales ...                        0.00s  R2 = 0.50 split 'per_kernel', prior_scale 'eigen'
-#>   [5/6] Gibbs sampling (5000 iter) ...                    3.18s  400 draws kept
+#>   [5/6] Gibbs sampling (5000 iter) ...                    2.56s  400 draws kept
 #>   [6/6] Variance components and heritability ...          0.00s  method 'gibbs', h2 = 0.073  [postmean needs keep_effects = TRUE]
 #> ---------------------------------------------------------
-#>  Total running time: 3.18s  (sampler 3.18s, 100%)
+#>  Total running time: 2.56s  (sampler 2.56s, 100%)
 #>  Residual variance  : 0.2949
 #> =========================================================
 #> 

@@ -99,7 +99,7 @@ env.data <- get_weather(lat = -13.05, lon = -56.05)
 #> get_weather() - daily weather from NASA POWER
 #> https://docs.ropensci.org/nasapower
 #> ---------------------------------------------------------------
-#> Start .............................. Thu Oct 22 18:26:42 2026
+#> Start .............................. Thu Oct 22 18:34:55 2026
 #> Environmental units ................ 1
 #> Parallel ........................... [   ]
 #>   [1/1] env1 downloaded
@@ -111,8 +111,8 @@ env.data <- get_weather(lat = -13.05, lon = -56.05)
 #> Computing PAR_TEMP ................. [ x ]
 #> Environmental units downloaded ..... 1/1
 #> Daily weather features ............. 25
-#> Done ............................... Thu Oct 22 18:26:43 2026
-#> Total time ......................... 0.94s
+#> Done ............................... Thu Oct 22 18:34:55 2026
+#> Total time ......................... 0.79s
 processWTH(env.data)
 #> ---------------------------------------------------------------
 #> processWTH -- derives all agro-meteorological parameters

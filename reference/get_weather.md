@@ -157,7 +157,7 @@ get_weather(env.id = "NM", lat = -13.05, lon = -56.05,
 #> get_weather() - daily weather from NASA POWER
 #> https://docs.ropensci.org/nasapower
 #> ---------------------------------------------------------------
-#> Start .............................. Thu Oct 22 18:25:25 2026
+#> Start .............................. Thu Oct 22 18:33:44 2026
 #> Environmental units ................ 1
 #> Parallel ........................... [   ]
 #>   [1/1] NM downloaded
@@ -169,8 +169,8 @@ get_weather(env.id = "NM", lat = -13.05, lon = -56.05,
 #> Computing PAR_TEMP ................. [   ]
 #> Environmental units downloaded ..... 1/1
 #> Daily weather features ............. 4
-#> Done ............................... Thu Oct 22 18:25:25 2026
-#> Total time ......................... 0.31s
+#> Done ............................... Thu Oct 22 18:33:45 2026
+#> Total time ......................... 0.37s
 #>     env    LON    LAT YEAR MM DD DOY   YYYYMMDD daysFromStart   T2M PRECTOT
 #> 1    NM -56.05 -13.05 2015  2 15  46 2015-02-15             1 25.25    0.19
 #> 2    NM -56.05 -13.05 2015  2 16  47 2015-02-16             2 25.80    1.57
@@ -429,7 +429,7 @@ get_weather(env.id = c("NM", "SO"),
 #> get_weather() - daily weather from NASA POWER
 #> https://docs.ropensci.org/nasapower
 #> ---------------------------------------------------------------
-#> Start .............................. Thu Oct 22 18:25:25 2026
+#> Start .............................. Thu Oct 22 18:33:45 2026
 #> Environmental units ................ 2
 #> Parallel ........................... [   ]
 #>   [1/2] NM downloaded
@@ -442,8 +442,8 @@ get_weather(env.id = c("NM", "SO"),
 #> Computing PAR_TEMP ................. [ x ]
 #> Environmental units downloaded ..... 2/2
 #> Daily weather features ............. 25
-#> Done ............................... Thu Oct 22 18:25:27 2026
-#> Total time ......................... 2.07s
+#> Done ............................... Thu Oct 22 18:33:47 2026
+#> Total time ......................... 2.12s
 #>     env    LON    LAT YEAR MM DD DOY   YYYYMMDD daysFromStart   T2M T2M_MAX
 #> 1    NM -56.05 -13.05 2015  2 15  46 2015-02-15             1 25.25   27.89
 #> 2    NM -56.05 -13.05 2015  2 16  47 2015-02-16             2 25.80   29.83

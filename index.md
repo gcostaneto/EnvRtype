@@ -25,6 +25,16 @@ envirotyping, simulation and prediction framework.
 
 ## Installation
 
+CRAN Version (0.1.3)
+
+``` r
+
+install.packages("EnvRtype")
+# https://cran.r-project.org/web/packages/EnvRtype/index.html
+```
+
+Developer Version
+
 ``` r
 
 if (!require("devtools")) install.packages("devtools")
