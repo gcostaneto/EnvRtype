@@ -9,7 +9,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/gcostaneto/EnvRtype/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/gcostaneto/EnvRtype/blob/Releases/inst/CITATION)
 
 Costa-Neto, G., Galli, G., Carvalho, H. F., Crossa, J., & Fritsche-Neto,
 R. (2021). EnvRtype: a software to interplay enviromics and quantitative

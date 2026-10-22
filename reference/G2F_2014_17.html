@@ -41,7 +41,7 @@ Here we used the geographic coordinates from 93 environments (diverse locations 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Genome to Fields (G2F) GxE panel (2014-2017)</h1>
-      <small class="dont-index">Source: <a href="https://github.com/gcostaneto/EnvRtype/blob/main/R/data_G2F.R" class="external-link"><code>R/data_G2F.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/gcostaneto/EnvRtype/blob/Releases/R/data_G2F.R" class="external-link"><code>R/data_G2F.R</code></a></small>
       <div class="d-none name"><code>G2F_2014_17.Rd</code></div>
     </div>
 
@@ -103,7 +103,7 @@ computational sciences, statistics, and engineering. See https://bmcresnotes.bio
 <span class="r-msg co"><span class="r-pr">#&gt;</span> get_weather() - daily weather from NASA POWER</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> https://docs.ropensci.org/nasapower</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Start .............................. Wed Oct 14 03:12:22 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Start .............................. Thu Oct 22 18:22:24 2026</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units ................ 10</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Parallel ........................... [   ]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   [1/10] ARH1@2016 downloaded</span>
@@ -116,8 +116,6 @@ computational sciences, statistics, and engineering. See https://bmcresnotes.bio
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   [8/10] DEH1@2016 downloaded</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   [9/10] DEH1@2017 downloaded</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   [10/10] GAH1@2014 downloaded</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Note: no valid data returned for: FROST_DAYS</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       These columns are entirely NA (parameter unavailable at this site/period).</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Computing VPD ...................... [ x ]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Computing N, RTA ................... [ x ]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Computing n ........................ [ x ]</span>
@@ -126,8 +124,8 @@ computational sciences, statistics, and engineering. See https://bmcresnotes.bio
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Computing PAR_TEMP ................. [ x ]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units downloaded ..... 10/10</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Daily weather features ............. 25</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Done ............................... Wed Oct 14 03:12:33 2026</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Total time ......................... 11.44s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Done ............................... Thu Oct 22 18:22:36 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total time ......................... 12.51s</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">weather.data</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         env      LON     LAT YEAR MM DD DOY   YYYYMMDD daysFromStart   T2M</span>
@@ -152,12 +150,12 @@ computational sciences, statistics, and engineering. See https://bmcresnotes.bio
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5               1.34           0.20           0.00   28.10    0.89 11.39 88.54</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6              11.61           1.50           0.03    0.19    2.78  6.14 69.11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   GWETROOT GWETTOP FROST_DAYS WS2M       VPD      N    RTA      n      TH1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0.87    0.86         NA 2.96 0.7921423 12.779 34.659  9.590 59.44878</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0.86    0.85         NA 3.18 0.6143665 12.814 34.849 12.785 54.62210</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.86    0.85         NA 2.25 0.5627432 12.850 35.038 12.319 54.15839</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0.85    0.84         NA 5.15 0.7494486 12.885 35.223  8.959 63.46926</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     0.85    0.89         NA 4.07 0.2228091 12.920 35.407  0.080 63.87855</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     0.87    0.86         NA 3.62 0.6214677 12.955 35.588 11.354 55.64748</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0.87    0.86          0 2.96 0.7921423 12.779 34.659  9.590 59.44878</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0.86    0.85          0 3.18 0.6143665 12.814 34.849 12.785 54.62210</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.86    0.85          0 2.25 0.5627432 12.850 35.038 12.319 54.15839</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0.85    0.84          0 5.15 0.7494486 12.885 35.223  8.959 63.46926</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     0.85    0.89          0 4.07 0.2228091 12.920 35.407  0.080 63.87855</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     0.87    0.86          0 3.62 0.6214677 12.955 35.588 11.354 55.64748</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       TH2   PAR_TEMP</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 60.0452 0.66038961</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 55.4752 0.94909688</span>

@@ -197,7 +197,7 @@ wth <- get_weather(env.id = sites$env, lat = sites$lat, lon = sites$lon,
 #> get_weather() - daily weather from NASA POWER
 #> https://docs.ropensci.org/nasapower
 #> ---------------------------------------------------------------
-#> Start .............................. Wed Oct 14 03:12:56 2026
+#> Start .............................. Thu Oct 22 18:22:51 2026
 #> Environmental units ................ 3
 #> Parallel ........................... [   ]
 #>   [1/3] PIRA downloaded
@@ -211,8 +211,8 @@ wth <- get_weather(env.id = sites$env, lat = sites$lat, lon = sites$lon,
 #> Computing PAR_TEMP ................. [ x ]
 #> Environmental units downloaded ..... 3/3
 #> Daily weather features ............. 25
-#> Done ............................... Wed Oct 14 03:13:02 2026
-#> Total time ......................... 5.8s
+#> Done ............................... Thu Oct 22 18:22:58 2026
+#> Total time ......................... 6.57s
 wth <- processWTH(wth)
 #> ---------------------------------------------------------------
 #> processWTH -- derives all agro-meteorological parameters

@@ -333,7 +333,7 @@ fit
 #>   kernels      : KE_W, KG_G, KGE_GW 
 #>   iterations   : 5000 (burn-in 1000 , thinning 10 )
 #>   residual var : 0.2967 
-#>   runtime (s)  : 5.51 
+#>   runtime (s)  : 2.86 
 #>   variance components:
 #>             Type        K    Var CI_lower CI_upper SD.var
 #>  Environment (E)        W 0.5952   0.5477   0.6495 0.0331
@@ -384,10 +384,10 @@ fit2 <- kernel_model(y = "value", data = maizeYield, random = K,
 #>   [2/6] Assembling response and design ...                0.00s  5 env, 150 gid
 #>   [3/6] Spectral decomposition ...                        0.00s  all kernels pre-factored; eigen skipped
 #>   [4/6] Computing prior scales ...                        0.00s  R2 = 0.50 split 'per_kernel', prior_scale 'eigen'
-#>   [5/6] Gibbs sampling (5000 iter) ...                    5.64s  400 draws kept
+#>   [5/6] Gibbs sampling (5000 iter) ...                    2.87s  400 draws kept
 #>   [6/6] Variance components and heritability ...          0.00s  method 'postmean', h2 = 0.121
 #> ---------------------------------------------------------
-#>  Total running time: 5.70s  (sampler 5.64s, 99%)
+#>  Total running time: 2.91s  (sampler 2.87s, 99%)
 #>  Residual variance  : 0.2984
 #> =========================================================
 #> 

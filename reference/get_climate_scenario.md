@@ -176,13 +176,11 @@ base <- get_weather(env.id = sites$env, lat = sites$lat, lon = sites$lon,
 #> get_weather() - daily weather from NASA POWER
 #> https://docs.ropensci.org/nasapower
 #> ---------------------------------------------------------------
-#> Start .............................. Wed Oct 14 03:13:17 2026
+#> Start .............................. Thu Oct 22 18:23:18 2026
 #> Environmental units ................ 2
 #> Parallel ........................... [   ]
 #>   [1/2] PIRA downloaded
 #>   [2/2] SETE downloaded
-#> Note: no valid data returned for: FROST_DAYS
-#>       These columns are entirely NA (parameter unavailable at this site/period).
 #> Computing VPD ...................... [ x ]
 #> Computing N, RTA ................... [ x ]
 #> Computing n ........................ [ x ]
@@ -191,8 +189,8 @@ base <- get_weather(env.id = sites$env, lat = sites$lat, lon = sites$lon,
 #> Computing PAR_TEMP ................. [ x ]
 #> Environmental units downloaded ..... 2/2
 #> Daily weather features ............. 25
-#> Done ............................... Wed Oct 14 03:13:19 2026
-#> Total time ......................... 1.97s
+#> Done ............................... Thu Oct 22 18:23:20 2026
+#> Total time ......................... 1.86s
 
 ## Mid-century, intermediate scenario, 4-model ensemble.
 ## The default 'models' set covers all four SSPs.

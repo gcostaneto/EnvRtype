@@ -31,7 +31,7 @@ factor, and daily temperature range."><meta property="og:image" content="https:/
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Estimate Thermal Parameters</h1>
-      <small class="dont-index">Source: <a href="https://github.com/gcostaneto/EnvRtype/blob/main/R/env_data_collection_src.R" class="external-link"><code>R/env_data_collection_src.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/gcostaneto/EnvRtype/blob/Releases/R/env_data_collection_src.R" class="external-link"><code>R/env_data_collection_src.R</code></a></small>
       <div class="d-none name"><code>param_temperature.Rd</code></div>
     </div>
 
@@ -136,18 +136,16 @@ Pass <code>method = "legacy"</code> to reproduce earlier output.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> get_weather -- downloads daily weather from NASA POWER</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Last updated at 09/27/2026</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> start.day is NULL; matched as 2024-01-18</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> end.day is NULL; matched as 2024-02-17</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> start.day is NULL; matched as 2024-01-26</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> end.day is NULL; matched as 2024-02-25</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> get_weather() - daily weather from NASA POWER</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> https://docs.ropensci.org/nasapower</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Start .............................. Wed Oct 14 03:16:26 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Start .............................. Thu Oct 22 18:26:40 2026</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units ................ 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Parallel ........................... [   ]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   [1/1] env1 downloaded</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Note: no valid data returned for: FROST_DAYS</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>       These columns are entirely NA (parameter unavailable at this site/period).</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Computing VPD ...................... [ x ]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Computing N, RTA ................... [ x ]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Computing n ........................ [ x ]</span>
@@ -156,8 +154,8 @@ Pass <code>method = "legacy"</code> to reproduce earlier output.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Computing PAR_TEMP ................. [ x ]</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Environmental units downloaded ..... 1/1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Daily weather features ............. 25</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Done ............................... Wed Oct 14 03:16:27 2026</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Total time ......................... 0.92s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Done ............................... Thu Oct 22 18:26:40 2026</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total time ......................... 0.85s</span>
 <span class="r-in"><span><span class="fu">param_temperature</span><span class="op">(</span><span class="va">env.data</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> param_temperature -- derives temperature-response parameters</span>
@@ -169,37 +167,37 @@ Pass <code>method = "legacy"</code> to reproduce earlier output.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Daily temperature range (T2M_RANGE, C)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       GDD      FRUE T2M_RANGE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  18.990 1.0000000     10.22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  17.955 1.0000000      8.15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  17.810 1.0000000      9.14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  17.825 1.0000000      6.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  19.125 1.0000000      9.67</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  18.495 1.0000000      7.43</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  18.195 1.0000000      7.05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  18.360 1.0000000      6.58</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  18.335 1.0000000     10.03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 18.225 1.0000000     11.21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 18.430 1.0000000     11.12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 17.790 1.0000000      9.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 18.670 1.0000000     10.94</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 18.455 1.0000000      9.05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 19.595 1.0000000     12.83</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 17.355 1.0000000      6.11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 16.715 0.9832353      6.73</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 15.595 0.9173529      5.21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 14.975 0.8808824      5.41</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 16.105 0.9473529      8.17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 17.415 1.0000000      9.45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 17.370 1.0000000      9.38</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 17.635 1.0000000      8.49</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 17.805 1.0000000      8.05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 16.505 0.9708824      4.45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 16.505 0.9708824      6.23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 16.880 0.9929412      9.44</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 17.705 1.0000000      9.69</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29 18.060 1.0000000      9.92</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30 18.095 1.0000000     10.17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31 18.510 1.0000000      9.88</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  18.335 1.0000000     10.03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  18.225 1.0000000     11.21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  18.430 1.0000000     11.12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  17.790 1.0000000      9.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  18.670 1.0000000     10.94</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  18.455 1.0000000      9.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  19.595 1.0000000     12.83</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  17.355 1.0000000      6.11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  16.715 0.9832353      6.73</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 15.595 0.9173529      5.21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 14.975 0.8808824      5.41</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 16.105 0.9473529      8.17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 17.415 1.0000000      9.45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 17.370 1.0000000      9.38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 17.635 1.0000000      8.49</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 17.805 1.0000000      8.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 16.505 0.9708824      4.45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 16.505 0.9708824      6.23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 16.880 0.9929412      9.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 17.705 1.0000000      9.69</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 18.060 1.0000000      9.92</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 18.095 1.0000000     10.17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 18.510 1.0000000      9.88</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 16.155 0.9502941      9.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 16.640 0.9788235      5.80</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 16.520 0.9717647      7.60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 17.060 1.0000000      7.24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 17.535 1.0000000      6.63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 17.085 1.0000000      6.55</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 16.705 0.9826471      6.25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 17.335 1.0000000      9.21</span>
 <span class="r-in"><span><span class="fu">param_temperature</span><span class="op">(</span><span class="va">env.data</span>, method <span class="op">=</span> <span class="st">"legacy"</span><span class="op">)</span>  <span class="co"># pre-refactor behaviour</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---------------------------------------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> param_temperature -- derives temperature-response parameters</span>
@@ -211,37 +209,37 @@ Pass <code>method = "legacy"</code> to reproduce earlier output.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Daily temperature range (T2M_RANGE, C)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       GDD      FRUE T2M_RANGE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  18.990 1.0000000     10.22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  17.955 1.0000000      8.15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  17.810 1.0000000      9.14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  17.825 1.0000000      6.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  19.125 1.0000000      9.67</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  18.495 1.0000000      7.43</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  18.195 1.0000000      7.05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  18.360 1.0000000      6.58</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  18.335 1.0000000     10.03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 18.225 1.0000000     11.21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 18.430 1.0000000     11.12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 17.790 1.0000000      9.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 18.670 1.0000000     10.94</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 18.455 1.0000000      9.05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 19.595 1.0000000     12.83</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 17.355 1.0000000      6.11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 16.715 0.9832353      6.73</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 15.595 0.9173529      5.21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 14.975 0.8808824      5.41</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 16.105 0.9473529      8.17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 17.415 1.0000000      9.45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 17.370 1.0000000      9.38</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 17.635 1.0000000      8.49</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 17.805 1.0000000      8.05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 16.505 0.9708824      4.45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 16.505 0.9708824      6.23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 16.880 0.9929412      9.44</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 17.705 1.0000000      9.69</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29 18.060 1.0000000      9.92</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30 18.095 1.0000000     10.17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31 18.510 1.0000000      9.88</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  18.335 1.0000000     10.03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  18.225 1.0000000     11.21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  18.430 1.0000000     11.12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  17.790 1.0000000      9.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  18.670 1.0000000     10.94</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  18.455 1.0000000      9.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  19.595 1.0000000     12.83</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  17.355 1.0000000      6.11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  16.715 0.9832353      6.73</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 15.595 0.9173529      5.21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 14.975 0.8808824      5.41</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 16.105 0.9473529      8.17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 17.415 1.0000000      9.45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 17.370 1.0000000      9.38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 17.635 1.0000000      8.49</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 17.805 1.0000000      8.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 16.505 0.9708824      4.45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 16.505 0.9708824      6.23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 16.880 0.9929412      9.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 17.705 1.0000000      9.69</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 18.060 1.0000000      9.92</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 18.095 1.0000000     10.17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 18.510 1.0000000      9.88</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 16.155 0.9502941      9.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 16.640 0.9788235      5.80</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 16.520 0.9717647      7.60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 17.060 1.0000000      7.24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 17.535 1.0000000      6.63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 17.085 1.0000000      6.55</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 16.705 0.9826471      6.25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 17.335 1.0000000      9.21</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

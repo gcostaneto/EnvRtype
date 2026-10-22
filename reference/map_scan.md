@@ -271,7 +271,7 @@ wth_new <- get_weather(env.id = coords$env, lat = coords$lat, lon = coords$lon,
 #> get_weather() - daily weather from NASA POWER
 #> https://docs.ropensci.org/nasapower
 #> ---------------------------------------------------------------
-#> Start .............................. Wed Oct 14 03:15:45 2026
+#> Start .............................. Thu Oct 22 18:26:00 2026
 #> Environmental units ................ 50
 #> Parallel ........................... [   ]
 #>   [1/50] MT01 downloaded
@@ -332,8 +332,8 @@ wth_new <- get_weather(env.id = coords$env, lat = coords$lat, lon = coords$lon,
 #> Computing PAR_TEMP ................. [   ]
 #> Environmental units downloaded ..... 50/50
 #> Daily weather features ............. 12
-#> Done ............................... Wed Oct 14 03:16:15 2026
-#> Total time ......................... 29.97s
+#> Done ............................... Thu Oct 22 18:26:30 2026
+#> Total time ......................... 30.2s
 wth_new <- processWTH(wth_new)          # derives FRUE, PETP, GDD, ...
 #> ---------------------------------------------------------------
 #> processWTH -- derives all agro-meteorological parameters
@@ -383,7 +383,7 @@ map_scan(sc, coords, type = "performance", genotypes = g1,
 }
 #> ℹ Using year/date 2020
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpXsMBXe/duckdb
+#> ℹ /tmp/RtmprmULDB/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
